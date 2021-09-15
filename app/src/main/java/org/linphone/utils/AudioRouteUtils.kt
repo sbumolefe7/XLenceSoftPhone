@@ -46,11 +46,12 @@ class AudioRouteUtils {
             }
             val typesNames = stringBuilder.toString()
 
-            if (coreContext.core.callsNb == 0) {
-                Log.e("[Audio Route Helper] No call found, aborting [$typesNames] audio route change")
-                return
+            val currentCall = if (coreContext.core.callsNb > 0) {
+                call ?: coreContext.core.currentCall ?: coreContext.core.calls[0]
+            } else {
+                Log.w("[Audio Route Helper] No call found, setting audio route on Core")
+                null
             }
-            val currentCall = call ?: coreContext.core.currentCall ?: coreContext.core.calls[0]
             val conference = coreContext.core.conference
             val capability = if (output)
                 AudioDevice.Capabilities.CapabilityPlay
@@ -63,10 +64,14 @@ class AudioRouteUtils {
                         Log.i("[Audio Route Helper] Found [${audioDevice.type}] ${if (output) "playback" else "recorder"} audio device [${audioDevice.deviceName}], routing conference audio to it")
                         if (output) conference.outputAudioDevice = audioDevice
                         else conference.inputAudioDevice = audioDevice
-                    } else {
+                    } else if (currentCall != null) {
                         Log.i("[Audio Route Helper] Found [${audioDevice.type}] ${if (output) "playback" else "recorder"} audio device [${audioDevice.deviceName}], routing call audio to it")
                         if (output) currentCall.outputAudioDevice = audioDevice
                         else currentCall.inputAudioDevice = audioDevice
+                    } else {
+                        Log.i("[Audio Route Helper] Found [${audioDevice.type}] ${if (output) "playback" else "recorder"} audio device [${audioDevice.deviceName}], changing core default audio device")
+                        if (output) coreContext.core.outputAudioDevice = audioDevice
+                        else coreContext.core.inputAudioDevice = audioDevice
                     }
                     return
                 }
@@ -141,15 +146,21 @@ class AudioRouteUtils {
         }
 
         fun isSpeakerAudioRouteCurrentlyUsed(call: Call? = null): Boolean {
-            if (coreContext.core.callsNb == 0) {
-                Log.w("[Audio Route Helper] No call found, so speaker audio route isn't used")
-                return false
+            val currentCall = if (coreContext.core.callsNb > 0) {
+                call ?: coreContext.core.currentCall ?: coreContext.core.calls[0]
+            } else {
+                Log.w("[Audio Route Helper] No call found, checking audio route on Core")
+                null
             }
-            val currentCall = call ?: coreContext.core.currentCall ?: coreContext.core.calls[0]
             val conference = coreContext.core.conference
 
-            val audioDevice = if (conference != null && conference.isIn) conference.outputAudioDevice else currentCall.outputAudioDevice
-            Log.i("[Audio Route Helper] Playback audio device currently in use is [${audioDevice?.deviceName}] with type (${audioDevice?.type})")
+            val audioDevice = if (conference != null && conference.isIn)
+                conference.outputAudioDevice
+            else if (currentCall != null)
+                currentCall.outputAudioDevice
+            else
+                coreContext.core.outputAudioDevice
+            Log.i("[Audio Route Helper] Playback audio currently in use is [${audioDevice?.deviceName}] with type (${audioDevice?.type})")
             return audioDevice?.type == AudioDevice.Type.Speaker
         }
 
