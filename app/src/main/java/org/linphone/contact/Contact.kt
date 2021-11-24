@@ -136,7 +136,7 @@ open class Contact : Comparable<Contact> {
     }
 
     open fun getContactPictureUri(): Uri? {
-        return null
+        return thumbnailUri
     }
 
     open fun getPerson(): Person {
