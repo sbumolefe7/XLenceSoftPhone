@@ -95,11 +95,6 @@ class ConferenceParticipantDeviceData(
     }
 
     fun setTextureView(textureView: TextureView) {
-        if (!isMe && participantDevice.videoDirection != MediaDirection.SendRecv) {
-            Log.e("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] device video direction is ${participantDevice.videoDirection}, don't set TextureView!")
-            return
-        }
-
         if (textureView.isAvailable) {
             Log.i("[Conference Participant Device] Setting textureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}]")
             if (isMe) { // TODO: remove
