@@ -19,16 +19,12 @@
  */
 package org.linphone.activities.main.conference.fragments
 
-import android.content.ClipData
-import android.content.ClipboardManager
-import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.navGraphViewModels
 import org.linphone.R
 import org.linphone.activities.GenericFragment
 import org.linphone.activities.goBackToDialer
-import org.linphone.activities.main.MainActivity
 import org.linphone.activities.main.conference.viewmodels.ConferenceSchedulingViewModel
 import org.linphone.databinding.ConferenceSchedulingSummaryFragmentBinding
 
@@ -56,21 +52,6 @@ class ConferenceSchedulingSummaryFragment : GenericFragment<ConferenceScheduling
             viewLifecycleOwner,
             {
                 goBackToDialer()
-            }
-        )
-
-        viewModel.copyToClipboardEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { address ->
-                    val clipboard =
-                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip = ClipData.newPlainText("Conference address", address)
-                    clipboard.setPrimaryClip(clip)
-
-                    val activity = requireActivity() as MainActivity
-                    activity.showSnackBar(R.string.conference_schedule_address_copied_to_clipboard)
-                }
             }
         )
 

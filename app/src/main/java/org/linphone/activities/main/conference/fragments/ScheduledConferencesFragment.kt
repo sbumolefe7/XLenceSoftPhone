@@ -19,19 +19,79 @@
  */
 package org.linphone.activities.main.conference.fragments
 
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 import android.os.Bundle
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
+import androidx.recyclerview.widget.LinearLayoutManager
 import org.linphone.R
 import org.linphone.activities.GenericFragment
+import org.linphone.activities.main.MainActivity
+import org.linphone.activities.main.conference.adapters.ScheduledConferencesAdapter
+import org.linphone.activities.main.conference.viewmodels.ScheduledConferencesViewModel
+import org.linphone.activities.navigateToConferenceWaitingRoom
 import org.linphone.databinding.ConferencesScheduledFragmentBinding
+import org.linphone.utils.AppUtils
 
 class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmentBinding>() {
+    private lateinit var viewModel: ScheduledConferencesViewModel
+    private lateinit var adapter: ScheduledConferencesAdapter
+
     override fun getLayoutId(): Int = R.layout.conferences_scheduled_fragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.lifecycleOwner = viewLifecycleOwner
+
+        viewModel = ViewModelProvider(
+            this
+        )[ScheduledConferencesViewModel::class.java]
+        binding.viewModel = viewModel
+
+        adapter = ScheduledConferencesAdapter(
+            viewLifecycleOwner
+        )
+        binding.conferenceInfoList.adapter = adapter
+
+        val layoutManager = LinearLayoutManager(activity)
+        binding.conferenceInfoList.layoutManager = layoutManager
+
+        // Divider between items
+        binding.conferenceInfoList.addItemDecoration(AppUtils.getDividerDecoration(requireContext(), layoutManager))
+
+        viewModel.conferences.observe(
+            viewLifecycleOwner,
+            {
+                adapter.submitList(it)
+            }
+        )
+
+        adapter.copyAddressToClipboardEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume { address ->
+                    val clipboard =
+                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("Conference address", address.asStringUriOnly())
+                    clipboard.setPrimaryClip(clip)
+
+                    val activity = requireActivity() as MainActivity
+                    activity.showSnackBar(R.string.conference_schedule_address_copied_to_clipboard)
+                }
+            }
+        )
+
+        adapter.joinConferenceEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume { address ->
+                    navigateToConferenceWaitingRoom(address)
+                }
+            }
+        )
 
         binding.setBackClickListener {
             goBack()

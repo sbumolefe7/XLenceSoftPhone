@@ -19,4 +19,85 @@
  */
 package org.linphone.activities.main.conference.adapters
 
-class ScheduledConferencesAdapter
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.MutableLiveData
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
+import androidx.recyclerview.widget.RecyclerView
+import org.linphone.R
+import org.linphone.activities.main.conference.data.ScheduledConferenceData
+import org.linphone.core.Address
+import org.linphone.databinding.ConferenceScheduleCellBinding
+import org.linphone.utils.Event
+
+class ScheduledConferencesAdapter(
+    private val viewLifecycleOwner: LifecycleOwner
+) : ListAdapter<ScheduledConferenceData, RecyclerView.ViewHolder>(ConferenceInfoDiffCallback()) {
+
+    val copyAddressToClipboardEvent: MutableLiveData<Event<Address>> by lazy {
+        MutableLiveData<Event<Address>>()
+    }
+
+    val joinConferenceEvent: MutableLiveData<Event<Address>> by lazy {
+        MutableLiveData<Event<Address>>()
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduledConferencesAdapter.ViewHolder {
+        val binding: ConferenceScheduleCellBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(parent.context),
+            R.layout.conference_schedule_cell, parent, false
+        )
+        return ViewHolder(binding)
+    }
+
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        (holder as ScheduledConferencesAdapter.ViewHolder).bind(getItem(position))
+    }
+
+    inner class ViewHolder(
+        val binding: ConferenceScheduleCellBinding
+    ) : RecyclerView.ViewHolder(binding.root) {
+        fun bind(conferenceData: ScheduledConferenceData) {
+            with(binding) {
+                data = conferenceData
+
+                lifecycleOwner = viewLifecycleOwner
+
+                setCopyAddressClickListener {
+                    val address = conferenceData.conferenceInfo.uri
+                    if (address != null) {
+                        copyAddressToClipboardEvent.value = Event(address)
+                    }
+                }
+
+                setJoinConferenceClickListener {
+                    val address = conferenceData.conferenceInfo.uri
+                    if (address != null) {
+                        joinConferenceEvent.value = Event(address)
+                    }
+                }
+
+                executePendingBindings()
+            }
+        }
+    }
+}
+
+private class ConferenceInfoDiffCallback : DiffUtil.ItemCallback<ScheduledConferenceData>() {
+    override fun areItemsTheSame(
+        oldItem: ScheduledConferenceData,
+        newItem: ScheduledConferenceData
+    ): Boolean {
+        return oldItem.conferenceInfo == newItem.conferenceInfo
+    }
+
+    override fun areContentsTheSame(
+        oldItem: ScheduledConferenceData,
+        newItem: ScheduledConferenceData
+    ): Boolean {
+        return false
+    }
+}

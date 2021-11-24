@@ -36,10 +36,7 @@ import org.linphone.activities.main.chat.fragments.ChatRoomCreationFragment
 import org.linphone.activities.main.chat.fragments.DetailChatRoomFragment
 import org.linphone.activities.main.chat.fragments.GroupInfoFragment
 import org.linphone.activities.main.chat.fragments.MasterChatRoomsFragment
-import org.linphone.activities.main.conference.fragments.ConferenceSchedulingFragment
-import org.linphone.activities.main.conference.fragments.ConferenceSchedulingParticipantsListFragment
-import org.linphone.activities.main.conference.fragments.ConferenceSchedulingSummaryFragment
-import org.linphone.activities.main.conference.fragments.ConferenceWaitingRoomFragment
+import org.linphone.activities.main.conference.fragments.*
 import org.linphone.activities.main.contact.fragments.ContactEditorFragment
 import org.linphone.activities.main.contact.fragments.DetailContactFragment
 import org.linphone.activities.main.contact.fragments.MasterContactsFragment
@@ -202,6 +199,16 @@ internal fun ConferenceWaitingRoomFragment.navigateToDialer() {
 }
 
 internal fun DetailChatRoomFragment.navigateToConferenceWaitingRoom(address: Address) {
+    val bundle = Bundle()
+    bundle.putString("Address", address.asStringUriOnly())
+    findMasterNavController().navigate(
+        R.id.action_global_conferenceWaitingRoomFragment,
+        bundle,
+        popupTo(R.id.conferenceWaitingRoomFragment, true)
+    )
+}
+
+internal fun ScheduledConferencesFragment.navigateToConferenceWaitingRoom(address: Address) {
     val bundle = Bundle()
     bundle.putString("Address", address.asStringUriOnly())
     findMasterNavController().navigate(

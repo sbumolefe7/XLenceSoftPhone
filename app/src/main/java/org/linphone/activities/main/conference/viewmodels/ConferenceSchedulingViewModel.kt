@@ -53,10 +53,6 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
     val conferenceCreationInProgress = MutableLiveData<Boolean>()
 
-    val copyToClipboardEvent: MutableLiveData<Event<String>> by lazy {
-        MutableLiveData<Event<String>>()
-    }
-
     val conferenceCreationCompletedEvent: MutableLiveData<Event<Boolean>> by lazy {
         MutableLiveData<Event<Boolean>>()
     }
@@ -229,7 +225,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         selectedAddresses.value?.toArray(participants)
 
         val conferenceInfo = Factory.instance().createConferenceInfo()
-        conferenceInfo.uri = address.value
+        conferenceInfo.uri = Factory.instance().createAddress("sip:video-conference-0@sip.linphone.org") // TODO: use address.value
         conferenceInfo.setParticipants(participants)
         conferenceInfo.organizer = coreContext.core.defaultAccount?.params?.identityAddress
         conferenceInfo.subject = subject.value

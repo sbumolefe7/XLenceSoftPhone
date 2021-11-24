@@ -20,32 +20,75 @@
 package org.linphone.activities.main.conference.data
 
 import androidx.lifecycle.MutableLiveData
+import java.util.concurrent.TimeUnit
+import org.linphone.LinphoneApplication.Companion.coreContext
+import org.linphone.core.ConferenceInfo
+import org.linphone.core.tools.Log
+import org.linphone.utils.LinphoneUtils
+import org.linphone.utils.TimestampUtils
 
-class ScheduledConferenceData {
+class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
     val expanded = MutableLiveData<Boolean>()
 
+    val address = MutableLiveData<String>()
+    val subject = MutableLiveData<String>()
+    val description = MutableLiveData<String>()
     val time = MutableLiveData<String>()
     val duration = MutableLiveData<String>()
     val organizer = MutableLiveData<String>()
-    val subject = MutableLiveData<String>()
-    val description = MutableLiveData<String>()
     val participantsShort = MutableLiveData<String>()
     val participantsExpanded = MutableLiveData<String>()
-    val address = MutableLiveData<String>()
+
+    init {
+        expanded.value = false
+
+        address.value = conferenceInfo.uri?.asStringUriOnly()
+        subject.value = conferenceInfo.subject
+        description.value = conferenceInfo.description
+
+        time.value = TimestampUtils.timeToString(conferenceInfo.dateTime * 1000) // Linphone handles time_t (so in seconds)
+
+        val minutes = conferenceInfo.duration
+        val hours = TimeUnit.MINUTES.toHours(minutes.toLong())
+        val remainMinutes = minutes - TimeUnit.HOURS.toMinutes(hours).toInt()
+        duration.value = TimestampUtils.durationToString(hours.toInt(), remainMinutes)
+
+        val organizerAddress = conferenceInfo.organizer
+        if (organizerAddress != null) {
+            val contact = coreContext.contactsManager.findContactByAddress(organizerAddress)
+            organizer.value = if (contact != null)
+                contact.fullName
+            else
+                LinphoneUtils.getDisplayableAddress(conferenceInfo.organizer)
+        } else {
+            Log.e("[Scheduled Conference] No organizer SIP URI found for: ${conferenceInfo.uri?.asStringUriOnly()}")
+        }
+
+        computeParticipantsLists()
+    }
+
+    fun destroy() {
+    }
 
     fun toggleExpand() {
         expanded.value = expanded.value == false
     }
 
-    fun copyAddress() {
-    }
+    private fun computeParticipantsLists() {
+        var participantsListShort = ""
+        var participantsListExpanded = ""
 
-    fun joinConference() {
-    }
+        for (participant in conferenceInfo.participants) {
+            val contact = coreContext.contactsManager.findContactByAddress(participant)
+            val name = if (contact != null) contact.fullName else LinphoneUtils.getDisplayName(participant)
+            val address = participant.asStringUriOnly()
+            participantsListShort += "$name, "
+            participantsListExpanded += "$name ($address)\n"
+        }
+        participantsListShort = participantsListShort.dropLast(2)
+        participantsListExpanded = participantsListExpanded.dropLast(1)
 
-    fun editConference() {
-    }
-
-    fun deleteConference() {
+        participantsShort.value = participantsListShort
+        participantsExpanded.value = participantsListExpanded
     }
 }
