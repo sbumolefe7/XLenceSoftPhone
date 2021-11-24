@@ -161,7 +161,7 @@ class ConferenceViewModel : ViewModel() {
             }
 
             val layout = conference.layout
-            conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid
+            conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.None
             conferenceActiveSpeakerDisplayMode.value = layout == ConferenceLayout.ActiveSpeaker
             Log.i("[Conference] Conference current layout is: $layout")
         }
@@ -194,7 +194,7 @@ class ConferenceViewModel : ViewModel() {
             if (!conference.subject.isNullOrEmpty()) subject.value = conference.subject
 
             val layout = conference.layout
-            conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid
+            conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.None
             conferenceActiveSpeakerDisplayMode.value = layout == ConferenceLayout.ActiveSpeaker
             Log.i("[Conference] Conference current layout is: $layout")
 
