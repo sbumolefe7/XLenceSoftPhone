@@ -68,9 +68,9 @@ class ConferenceViewModel : ViewModel() {
                 isConferencePaused.value = false
             } else {
                 Log.i("[Conference] Participant added")
-                updateParticipantsList(conference)
-                updateParticipantsDevicesList(conference)
             }
+            updateParticipantsList(conference)
+            updateParticipantsDevicesList(conference)
 
             val count = conferenceParticipantDevices.value.orEmpty().size
             if (count > maxParticipantsForMosaicLayout) {
@@ -86,9 +86,9 @@ class ConferenceViewModel : ViewModel() {
                 isConferencePaused.value = true
             } else {
                 Log.i("[Conference] Participant removed")
-                updateParticipantsList(conference)
-                updateParticipantsDevicesList(conference)
             }
+            updateParticipantsList(conference)
+            updateParticipantsDevicesList(conference)
         }
 
         override fun onParticipantDeviceAdded(
