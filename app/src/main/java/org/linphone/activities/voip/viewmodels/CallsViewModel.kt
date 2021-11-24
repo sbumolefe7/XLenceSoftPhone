@@ -74,17 +74,9 @@ class CallsViewModel : ViewModel() {
 
             val currentCall = core.currentCall
             if (currentCall != null && currentCallData.value?.call != currentCall) {
-                currentCallData.value?.destroy()
-                val viewModel = CallData(currentCall)
-                currentCallData.value = viewModel
-                updateUnreadChatCount()
+                updateCurrentCallData(currentCall)
             } else if (currentCall == null && core.callsNb > 1) {
-                val firstCall = core.calls.first()
-                if (firstCall != null && currentCallData.value?.call != firstCall) {
-                    currentCallData.value?.destroy()
-                    val viewModel = CallData(firstCall)
-                    currentCallData.value = viewModel
-                }
+                updateCurrentCallData(currentCall)
             }
 
             if (state == Call.State.End || state == Call.State.Released || state == Call.State.Error) {
@@ -197,9 +189,49 @@ class CallsViewModel : ViewModel() {
         calls.addAll(callsData.value.orEmpty())
 
         val data = calls.find { it.call == call }
-        calls.remove(data)
+        if (data == null) {
+            Log.w("[Calls] Data for call to remove wasn't found")
+        } else {
+            data.destroy()
+            calls.remove(data)
+        }
 
         callsData.value = calls
+    }
+
+    private fun updateCurrentCallData(currentCall: Call?) {
+        var callToUse = currentCall
+        if (currentCall == null) {
+            Log.w("[Calls] Current call is now null")
+
+            val firstCall = coreContext.core.calls.first()
+            if (firstCall != null && currentCallData.value?.call != firstCall) {
+                Log.i("[Calls] Using first call as \"current\" call")
+                callToUse = firstCall
+            }
+        }
+
+        if (callToUse == null) {
+            Log.w("[Calls] No call found to be used as \"current\"")
+            return
+        }
+
+        var found = false
+        for (callData in callsData.value.orEmpty()) {
+            if (callData.call == callToUse) {
+                Log.i("[Calls] Updating current call to: ${callData.call.remoteAddress.asStringUriOnly()}")
+                currentCallData.value = callData
+                found = true
+                break
+            }
+        }
+        if (!found) {
+            Log.w("[Calls] Call not found in calls data list, shouldn't happen!")
+            val viewModel = CallData(callToUse)
+            currentCallData.value = viewModel
+        }
+
+        updateUnreadChatCount()
     }
 
     private fun updateCallsAndChatCount(): Int {
