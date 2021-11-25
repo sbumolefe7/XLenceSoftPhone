@@ -56,14 +56,14 @@ class TimestampUtils {
             return isSameDay(cal1.time, cal2.time, false)
         }
 
-        fun dateToString(date: Long): String {
+        fun dateToString(date: Long, timestampInSecs: Boolean = true): String {
             val dateFormat: Format = android.text.format.DateFormat.getDateFormat(
                 LinphoneApplication.coreContext.context
             )
             val pattern = (dateFormat as SimpleDateFormat).toLocalizedPattern()
 
             val calendar = Calendar.getInstance()
-            calendar.timeInMillis = date
+            calendar.timeInMillis = if (timestampInSecs) date * 1000 else date
             return SimpleDateFormat(pattern, Locale.getDefault()).format(calendar.time)
         }
 
@@ -80,10 +80,10 @@ class TimestampUtils {
             }
         }
 
-        fun timeToString(time: Long): String {
+        fun timeToString(time: Long, timestampInSecs: Boolean = true): String {
             val use24hFormat = android.text.format.DateFormat.is24HourFormat(LinphoneApplication.coreContext.context)
             val calendar = Calendar.getInstance()
-            calendar.timeInMillis = time
+            calendar.timeInMillis = if (timestampInSecs) time * 1000 else time
 
             return if (use24hFormat) {
                 SimpleDateFormat("HH'h'mm", Locale.getDefault()).format(calendar.time)

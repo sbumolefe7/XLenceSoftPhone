@@ -275,8 +275,8 @@ class ChatMessageContentData(
             conferenceSubject.value = conferenceInfo.subject
             conferenceDescription.value = conferenceInfo.description
 
-            conferenceDate.value = TimestampUtils.dateToString(conferenceInfo.dateTime * 1000) // Linphone handles time_t (so in seconds)
-            conferenceTime.value = TimestampUtils.timeToString(conferenceInfo.dateTime * 1000) // Linphone handles time_t (so in seconds)
+            conferenceDate.value = TimestampUtils.dateToString(conferenceInfo.dateTime)
+            conferenceTime.value = TimestampUtils.timeToString(conferenceInfo.dateTime)
 
             val minutes = conferenceInfo.duration
             val hours = TimeUnit.MINUTES.toHours(minutes.toLong())

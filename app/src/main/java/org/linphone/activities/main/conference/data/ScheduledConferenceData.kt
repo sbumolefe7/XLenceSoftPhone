@@ -47,7 +47,7 @@ class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
         subject.value = conferenceInfo.subject
         description.value = conferenceInfo.description
 
-        time.value = TimestampUtils.timeToString(conferenceInfo.dateTime * 1000) // Linphone handles time_t (so in seconds)
+        time.value = TimestampUtils.timeToString(conferenceInfo.dateTime)
         date.value = TimestampUtils.toString(conferenceInfo.dateTime, onlyDate = true, shortDate = false, hideYear = false)
 
         val minutes = conferenceInfo.duration

@@ -234,7 +234,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         val timestamp = getConferenceStartTimestamp()
         conferenceInfo.dateTime = timestamp
 
-        Log.i("[Conference Creation] Conference date & time set to ${TimestampUtils.dateToString(timestamp * 1000)} ${TimestampUtils.timeToString(timestamp)}, duration = ${conferenceInfo.duration}")
+        Log.i("[Conference Creation] Conference date & time set to ${TimestampUtils.dateToString(timestamp)} ${TimestampUtils.timeToString(timestamp)}, duration = ${conferenceInfo.duration}")
         coreContext.core.sendConferenceInformation(conferenceInfo, "")
 
         conferenceCreationInProgress.value = false
