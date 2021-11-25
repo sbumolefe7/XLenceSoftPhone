@@ -96,6 +96,10 @@ class ControlsViewModel : ViewModel() {
         MutableLiveData<Event<String>>()
     }
 
+    val goToDialer: MutableLiveData<Event<Boolean>> by lazy {
+        MutableLiveData<Event<Boolean>>()
+    }
+
     private val nonEarpieceOutputAudioDevice = MutableLiveData<Boolean>()
 
     private var previewX: Float = 0f
@@ -385,6 +389,14 @@ class ControlsViewModel : ViewModel() {
 
     fun goToConferenceLayout() {
         goToConferenceLayoutSettings.value = Event(true)
+    }
+
+    fun goToDialerForCallTransfer() {
+        goToDialer.value = Event(true)
+    }
+
+    fun goToDialerForNewCall() {
+        goToDialer.value = Event(false)
     }
 
     private fun updateUI() {

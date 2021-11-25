@@ -21,6 +21,7 @@ package org.linphone.activities.voip.fragments
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.os.Bundle
 import android.os.SystemClock
 import android.view.View
@@ -34,6 +35,7 @@ import com.google.android.material.snackbar.Snackbar
 import org.linphone.LinphoneApplication.Companion.coreContext
 import org.linphone.R
 import org.linphone.activities.*
+import org.linphone.activities.main.MainActivity
 import org.linphone.activities.main.chat.viewmodels.ChatRoomViewModel
 import org.linphone.activities.main.chat.viewmodels.ChatRoomViewModelFactory
 import org.linphone.activities.main.viewmodels.DialogViewModel
@@ -175,6 +177,20 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
                             Log.w("[Call] Video display & capture are disabled, don't show video dialog")
                         }
                     }
+                }
+            }
+        )
+
+        controlsViewModel.goToDialer.observe(
+            viewLifecycleOwner,
+            {
+                it.consume { isCallTransfer ->
+                    val intent = Intent()
+                    intent.setClass(requireContext(), MainActivity::class.java)
+                    intent.putExtra("Dialer", true)
+                    intent.putExtra("Transfer", isCallTransfer)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    startActivity(intent)
                 }
             }
         )
