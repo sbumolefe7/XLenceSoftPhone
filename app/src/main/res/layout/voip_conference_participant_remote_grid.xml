@@ -28,7 +28,7 @@
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_margin="30dp"
-                android:visibility="@{data.videoEnabled ? View.GONE : View.VISIBLE, default=gone}"
+                android:visibility="@{data.videoEnabled || !data.isInConference ? View.GONE : View.VISIBLE, default=gone}"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -41,7 +41,7 @@
 
         <org.linphone.activities.voip.views.RoundCornersTextureView
             android:id="@+id/participant_video_surface"
-            android:visibility="@{data.videoEnabled ? View.VISIBLE : View.GONE}"
+            android:visibility="@{data.videoEnabled &amp;&amp; data.isInConference ? View.VISIBLE : View.GONE}"
             participantTextureView="@{data}"
             android:layout_width="0dp"
             android:layout_height="0dp"
