@@ -50,6 +50,7 @@ import org.linphone.R
 import org.linphone.activities.GenericActivity
 import org.linphone.activities.main.settings.SettingListener
 import org.linphone.activities.voip.data.ConferenceParticipantDeviceData
+import org.linphone.activities.voip.views.HorizontalScrollDotsView
 import org.linphone.contact.ContactAvatarView
 import org.linphone.core.tools.Log
 import org.linphone.views.VoiceRecordProgressBar
@@ -611,4 +612,14 @@ fun setParticipantTextureView(
     conferenceParticipantData: ConferenceParticipantDeviceData
 ) {
     conferenceParticipantData.setTextureView(textureView)
+}
+
+@BindingAdapter("app:dotCount")
+fun HorizontalScrollDotsView.setDots(count: Int) {
+    setDotCount(count)
+}
+
+@BindingAdapter("app:selectedDot")
+fun HorizontalScrollDotsView.setSelectedIndex(index: Int) {
+    setSelectedDot(index)
 }

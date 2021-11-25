@@ -124,7 +124,12 @@
 
         <org.linphone.activities.voip.views.HorizontalScrollDotsView
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            app:dotRadius="10dp"
+            app:dotCount="@{conferenceViewModel.conferenceParticipantDevices.size() % 4}"
+            app:selectedDot="@{0}"
+            app:dotColor="@color/voip_gray_background"
+            app:selectedDotColor="@color/voip_dark_gray"/>
 
     </LinearLayout>
 
