@@ -19,5 +19,57 @@
  */
 package org.linphone.activities.voip.views
 
-class HorizontalScrollDotsView {
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.util.AttributeSet
+import android.view.View
+import org.linphone.utils.AppUtils
+
+class HorizontalScrollDotsView : View {
+    private val dotAmount = 3
+
+    private var dotRadius: Float = 5f
+    private var margin: Float = 2f
+
+    private lateinit var paint: Paint
+
+    constructor(context: Context) : super(context) {
+        init(context)
+    }
+    constructor(context: Context, attrs: AttributeSet) : super(context, attrs) {
+        init(context)
+    }
+    constructor(context: Context, attrs: AttributeSet, defStyleAttr: Int) : super(
+        context,
+        attrs,
+        defStyleAttr
+    ) {
+        init(context)
+    }
+
+    fun init(context: Context) {
+        dotRadius = AppUtils.dpToPixels(context, 5f)
+        margin = AppUtils.dpToPixels(context, 5f)
+        paint = Paint()
+        paint.color = Color.parseColor("#4B5964")
+    }
+
+    override fun onDraw(canvas: Canvas) {
+        super.onDraw(canvas)
+
+        for (i in 0 until dotAmount) {
+            canvas.drawCircle((i + 1) * margin + (i * 2 + 1) * dotRadius, dotRadius, dotRadius, paint)
+        }
+    }
+
+    override fun onMeasure(widthMeasureSpec: Int, heightMeasureSpec: Int) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec)
+
+        val width = ((dotRadius * 2 + margin) * dotAmount).toInt()
+        val height: Int = dotRadius.toInt() * 2
+
+        setMeasuredDimension(width, height)
+    }
 }
