@@ -19,7 +19,9 @@
  */
 package org.linphone.activities.main.conference.adapters
 
+import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
@@ -31,12 +33,15 @@ import org.linphone.R
 import org.linphone.activities.main.conference.data.ScheduledConferenceData
 import org.linphone.core.Address
 import org.linphone.databinding.ConferenceScheduleCellBinding
+import org.linphone.databinding.ConferenceScheduleListHeaderBinding
 import org.linphone.utils.Event
+import org.linphone.utils.HeaderAdapter
+import org.linphone.utils.TimestampUtils
 
 class ScheduledConferencesAdapter(
     private val viewLifecycleOwner: LifecycleOwner
-) : ListAdapter<ScheduledConferenceData, RecyclerView.ViewHolder>(ConferenceInfoDiffCallback()) {
-
+) : ListAdapter<ScheduledConferenceData, RecyclerView.ViewHolder>(ConferenceInfoDiffCallback()),
+    HeaderAdapter {
     val copyAddressToClipboardEvent: MutableLiveData<Event<Address>> by lazy {
         MutableLiveData<Event<Address>>()
     }
@@ -55,6 +60,27 @@ class ScheduledConferencesAdapter(
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         (holder as ScheduledConferencesAdapter.ViewHolder).bind(getItem(position))
+    }
+
+    override fun displayHeaderForPosition(position: Int): Boolean {
+        if (position >= itemCount) return false
+        val conferenceInfo = getItem(position)
+        val previousPosition = position - 1
+        return if (previousPosition >= 0) {
+            val previousItem = getItem(previousPosition)
+            !TimestampUtils.isSameDay(previousItem.conferenceInfo.dateTime, conferenceInfo.conferenceInfo.dateTime)
+        } else true
+    }
+
+    override fun getHeaderViewForPosition(context: Context, position: Int): View {
+        val conferenceInfo = getItem(position)
+        val binding: ConferenceScheduleListHeaderBinding = DataBindingUtil.inflate(
+            LayoutInflater.from(context),
+            R.layout.conference_schedule_list_header, null, false
+        )
+        binding.title = conferenceInfo.date.value
+        binding.executePendingBindings()
+        return binding.root
     }
 
     inner class ViewHolder(

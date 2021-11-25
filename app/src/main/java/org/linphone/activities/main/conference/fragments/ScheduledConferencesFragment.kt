@@ -33,7 +33,7 @@ import org.linphone.activities.main.conference.adapters.ScheduledConferencesAdap
 import org.linphone.activities.main.conference.viewmodels.ScheduledConferencesViewModel
 import org.linphone.activities.navigateToConferenceWaitingRoom
 import org.linphone.databinding.ConferencesScheduledFragmentBinding
-import org.linphone.utils.AppUtils
+import org.linphone.utils.RecyclerViewHeaderDecoration
 
 class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmentBinding>() {
     private lateinit var viewModel: ScheduledConferencesViewModel
@@ -59,8 +59,9 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
         val layoutManager = LinearLayoutManager(activity)
         binding.conferenceInfoList.layoutManager = layoutManager
 
-        // Divider between items
-        binding.conferenceInfoList.addItemDecoration(AppUtils.getDividerDecoration(requireContext(), layoutManager))
+        // Displays date header
+        val headerItemDecoration = RecyclerViewHeaderDecoration(requireContext(), adapter)
+        binding.conferenceInfoList.addItemDecoration(headerItemDecoration)
 
         viewModel.conferences.observe(
             viewLifecycleOwner,

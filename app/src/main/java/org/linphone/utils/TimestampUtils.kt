@@ -137,7 +137,7 @@ class TimestampUtils {
             }
 
             val millis = if (timestampInSecs) timestamp * 1000 else timestamp
-            return dateFormat.format(Date(millis))
+            return dateFormat.format(Date(millis)).capitalize(Locale.getDefault())
         }
 
         private fun isSameDay(

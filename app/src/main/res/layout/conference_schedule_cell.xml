@@ -26,23 +26,14 @@
         android:layout_height="wrap_content"
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
-        android:paddingBottom="10dp"
         android:orientation="vertical"
         android:background="?attr/backgroundColor">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            style="@style/conference_invite_title_font"
-            android:text="Lundi 9 Octobre 2020" />
-        <!-- TODO: remove, will be inserted as recyclerview header -->
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="vertical"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             android:background="@{data.expanded ? @drawable/shape_round_gray_background_with_orange_border : @drawable/shape_round_gray_background, default=@drawable/shape_round_gray_background}">
 
             <LinearLayout

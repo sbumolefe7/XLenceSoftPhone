@@ -34,6 +34,7 @@ class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
     val subject = MutableLiveData<String>()
     val description = MutableLiveData<String>()
     val time = MutableLiveData<String>()
+    val date = MutableLiveData<String>()
     val duration = MutableLiveData<String>()
     val organizer = MutableLiveData<String>()
     val participantsShort = MutableLiveData<String>()
@@ -47,6 +48,7 @@ class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
         description.value = conferenceInfo.description
 
         time.value = TimestampUtils.timeToString(conferenceInfo.dateTime * 1000) // Linphone handles time_t (so in seconds)
+        date.value = TimestampUtils.toString(conferenceInfo.dateTime, onlyDate = true, shortDate = false, hideYear = false)
 
         val minutes = conferenceInfo.duration
         val hours = TimeUnit.MINUTES.toHours(minutes.toLong())
