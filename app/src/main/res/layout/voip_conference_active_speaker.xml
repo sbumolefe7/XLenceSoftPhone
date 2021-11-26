@@ -106,9 +106,11 @@
             android:layout_weight="1" />
 
         <HorizontalScrollView
+            android:id="@+id/miniatures"
             android:layout_width="match_parent"
             android:layout_height="150dp"
-            android:layout_marginTop="10dp">
+            android:layout_marginTop="10dp"
+            android:scrollbars="none">
 
             <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="wrap_content"
@@ -125,11 +127,14 @@
         <org.linphone.activities.voip.views.HorizontalScrollDotsView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:dotRadius="10dp"
-            app:dotCount="@{conferenceViewModel.conferenceParticipantDevices.size() % 4}"
+            android:layout_marginTop="5dp"
+            android:layout_marginBottom="5dp"
+            app:dotRadius="5dp"
+            app:itemCount="@{conferenceViewModel.conferenceParticipantDevices.size()}"
             app:selectedDot="@{0}"
             app:dotColor="@color/voip_gray_background"
-            app:selectedDotColor="@color/voip_dark_gray"/>
+            app:selectedDotColor="@color/voip_dark_gray"
+            app:horizontalScrollView="@id/miniatures"/>
 
     </LinearLayout>
 

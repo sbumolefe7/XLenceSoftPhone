@@ -619,6 +619,11 @@ fun HorizontalScrollDotsView.setDots(count: Int) {
     setDotCount(count)
 }
 
+@BindingAdapter("app:itemCount")
+fun HorizontalScrollDotsView.setItems(count: Int) {
+    setItemCount(count)
+}
+
 @BindingAdapter("app:selectedDot")
 fun HorizontalScrollDotsView.setSelectedIndex(index: Int) {
     setSelectedDot(index)
