@@ -27,6 +27,7 @@ import android.os.SystemClock
 import android.view.View
 import android.widget.Chronometer
 import android.widget.LinearLayout
+import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.lifecycle.ViewModelProvider
@@ -101,7 +102,7 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
 
                     if (conferenceViewModel.isInConference.value == true) {
                         Log.i("[Call] Local participant is in conference and current layout is active speaker, updating Core's native window id")
-                        val layout = binding.root.findViewById<LinearLayout>(R.id.conference_active_speaker_layout)
+                        val layout = binding.root.findViewById<RelativeLayout>(R.id.conference_active_speaker_layout)
                         val window = layout.findViewById<RoundCornersTextureView>(R.id.conference_active_speaker_remote_video)
                         coreContext.core.nativeVideoWindowId = window
                     } else {

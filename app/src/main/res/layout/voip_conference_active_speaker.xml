@@ -15,18 +15,18 @@
             type="Integer" />
     </data>
 
-    <LinearLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="@{inflatedVisibility}"
-        android:gravity="center"
-        android:orientation="vertical">
+        android:visibility="@{inflatedVisibility}">
 
         <LinearLayout
+            android:id="@+id/header"
             android:visibility="@{controlsViewModel.fullScreenMode ? View.GONE : View.VISIBLE}"
             android:layout_width="match_parent"
             android:layout_height="60dp"
             android:layout_marginBottom="10dp"
+            android:layout_alignParentTop="true"
             android:gravity="center_vertical"
             android:orientation="horizontal">
 
@@ -74,9 +74,11 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/remote_recording"
             android:visibility="@{conferenceViewModel.isRemotelyRecorded ? View.VISIBLE : View.GONE, default=gone}"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_below="@id/header"
             android:orientation="horizontal"
             android:gravity="center"
             android:layout_marginBottom="10dp"
@@ -99,43 +101,48 @@
         </LinearLayout>
 
         <org.linphone.activities.voip.views.RoundCornersTextureView
-            android:onClick="@{() -> controlsViewModel.toggleFullScreen()}"
             android:id="@+id/conference_active_speaker_remote_video"
+            android:onClick="@{() -> controlsViewModel.toggleFullScreen()}"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_height="match_parent"
+            android:layout_below="@id/remote_recording"
+            android:layout_above="@id/miniatures"/>
 
         <HorizontalScrollView
             android:id="@+id/miniatures"
             android:layout_width="match_parent"
             android:layout_height="150dp"
+            android:layout_above="@id/scroll_indicator"
             android:layout_marginTop="10dp"
             android:scrollbars="none">
 
             <com.google.android.flexbox.FlexboxLayout
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
+                app:alignItems="stretch"
                 app:entries="@{conferenceViewModel.conferenceParticipantDevices}"
-                app:layout="@{@layout/voip_conference_participant_remote_active_speaker_miniature}"
                 app:flexDirection="row"
                 app:flexWrap="nowrap"
-                app:alignItems="stretch"
-                app:justifyContent="flex_start" />
+                app:justifyContent="flex_start"
+                app:layout="@{@layout/voip_conference_participant_remote_active_speaker_miniature}" />
 
         </HorizontalScrollView>
 
         <org.linphone.activities.voip.views.HorizontalScrollDotsView
-            android:layout_width="match_parent"
+            android:id="@+id/scroll_indicator"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_alignParentBottom="true"
             android:layout_marginTop="5dp"
             android:layout_marginBottom="5dp"
+            app:dotColor="@color/voip_gray_background"
             app:dotRadius="5dp"
+            app:horizontalScrollView="@id/miniatures"
             app:itemCount="@{conferenceViewModel.conferenceParticipantDevices.size()}"
             app:selectedDot="@{0}"
-            app:dotColor="@color/voip_gray_background"
-            app:selectedDotColor="@color/voip_dark_gray"
-            app:horizontalScrollView="@id/miniatures"/>
+            app:selectedDotColor="@color/voip_dark_gray" />
 
-    </LinearLayout>
+    </RelativeLayout>
 
 </layout>

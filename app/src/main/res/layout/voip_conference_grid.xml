@@ -108,7 +108,7 @@
             app:flexWrap="wrap"
             app:alignItems="stretch"
             app:alignContent="stretch"
-            app:justifyContent="space_evenly"
+            app:justifyContent="space_between"
             app:showDivider="middle"
             app:dividerDrawable="@drawable/shape_conference_divider"/>
 

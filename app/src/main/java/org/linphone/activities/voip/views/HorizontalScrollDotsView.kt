@@ -52,7 +52,7 @@ class HorizontalScrollDotsView : View {
         val childWidth: Int = (v as HorizontalScrollView).getChildAt(0).measuredWidth
         val scrollViewWidth = v.measuredWidth
         val scrollableX = childWidth - scrollViewWidth
-        
+
         if (scrollableX > 0) {
             val percent = (scrollX.toFloat() * 100 / scrollableX).toDouble()
             if (count > 1) {
