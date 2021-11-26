@@ -144,11 +144,9 @@ class CallsViewModel : ViewModel() {
 
     fun mergeCallsIntoLocalConference() {
         val core = coreContext.core
-        val currentCallVideoEnabled = core.currentCall?.currentParams?.videoEnabled() ?: false
 
         val params = core.createConferenceParams()
-        params.isVideoEnabled = currentCallVideoEnabled
-        Log.i("[Calls] Setting videoEnabled to [$currentCallVideoEnabled] in conference params")
+        params.isVideoEnabled = false // We disable video for local conferencing
 
         val conference = core.conference ?: core.createConferenceWithParams(params)
         conference?.addParticipants(core.calls)
@@ -243,7 +241,7 @@ class CallsViewModel : ViewModel() {
     }
 
     private fun updateInactiveCallsCount() {
-        // TODO handle local conference
+        // TODO: handle local conference
         inactiveCallsCount.value = coreContext.core.callsNb - 1
     }
 }
