@@ -69,7 +69,7 @@ class ConferenceParticipantDeviceData(
     }
 
     init {
-        Log.i("[Conference Participant Device] Created device width Address [${participantDevice.address.asStringUriOnly()}]")
+        Log.i("[Conference Participant Device] Created device width Address [${participantDevice.address.asStringUriOnly()}], is it myself? $isMe")
         participantDevice.addListener(listener)
 
         activeSpeaker.value = false

@@ -67,7 +67,7 @@ class ConferenceViewModel : ViewModel() {
                 Log.i("[Conference] Entered conference")
                 isConferencePaused.value = false
             } else {
-                Log.i("[Conference] Participant added")
+                Log.i("[Conference] Participant added: ${participant.address.asStringUriOnly()}")
             }
             updateParticipantsList(conference)
             updateParticipantsDevicesList(conference)
@@ -85,7 +85,7 @@ class ConferenceViewModel : ViewModel() {
                 Log.i("[Conference] Left conference")
                 isConferencePaused.value = true
             } else {
-                Log.i("[Conference] Participant removed")
+                Log.i("[Conference] Participant removed: ${participant.address.asStringUriOnly()}")
             }
             updateParticipantsList(conference)
             updateParticipantsDevicesList(conference)
@@ -95,7 +95,7 @@ class ConferenceViewModel : ViewModel() {
             conference: Conference,
             participantDevice: ParticipantDevice
         ) {
-            Log.i("[Conference] Participant device added")
+            Log.i("[Conference] Participant device added: ${participantDevice.address.asStringUriOnly()}")
             updateParticipantsDevicesList(conference)
         }
 
@@ -103,7 +103,7 @@ class ConferenceViewModel : ViewModel() {
             conference: Conference,
             participantDevice: ParticipantDevice
         ) {
-            Log.i("[Conference] Participant device removed")
+            Log.i("[Conference] Participant device removed: ${participantDevice.address.asStringUriOnly()}")
             updateParticipantsDevicesList(conference)
         }
 
@@ -114,6 +114,11 @@ class ConferenceViewModel : ViewModel() {
             Log.i("[Conference] Participant admin status changed")
             isMeAdmin.value = conference.me.isAdmin
             updateParticipantsList(conference)
+        }
+
+        override fun onSubjectChanged(conference: Conference, subject: String) {
+            Log.i("[Conference] Subject changed: $subject")
+            this@ConferenceViewModel.subject.value = subject
         }
     }
 
