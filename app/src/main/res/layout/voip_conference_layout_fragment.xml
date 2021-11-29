@@ -102,7 +102,7 @@
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:dialogMessage="@{@string/conference_too_many_participants_for_mosaic_layout}"
+            app:dialogMessage="@{@string/conference_layout_too_many_participants_for_mosaic}"
             app:dismissClickListener="@{dismissDialogClickListener}"/>
 
     </androidx.constraintlayout.widget.ConstraintLayout>

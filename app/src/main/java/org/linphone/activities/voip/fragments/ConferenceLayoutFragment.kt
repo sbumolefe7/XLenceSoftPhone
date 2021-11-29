@@ -23,7 +23,6 @@ import android.os.Bundle
 import android.view.View
 import android.widget.LinearLayout
 import androidx.navigation.navGraphViewModels
-import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
 import org.linphone.activities.GenericFragment
 import org.linphone.activities.voip.viewmodels.ConferenceViewModel
@@ -77,6 +76,15 @@ class ConferenceLayoutFragment : GenericFragment<VoipConferenceLayoutFragmentBin
             }
         )
 
+        conferenceViewModel.conferenceParticipantDevices.observe(
+            viewLifecycleOwner,
+            {
+                if (it.size > conferenceViewModel.maxParticipantsForMosaicLayout) {
+                    showTooManyParticipantsForMosaicLayoutDialog()
+                }
+            }
+        )
+
         binding.setDismissDialogClickListener {
             val dialog = binding.root.findViewById<LinearLayout>(R.id.too_many_participants_dialog)
             dialog?.visibility = View.GONE
@@ -86,9 +94,13 @@ class ConferenceLayoutFragment : GenericFragment<VoipConferenceLayoutFragmentBin
     override fun onResume() {
         super.onResume()
 
-        if (conferenceViewModel.conferenceParticipantDevices.value.orEmpty().size > corePreferences.maxConferenceParticipantsForMosaicLayout) {
-            val dialog = binding.root.findViewById<LinearLayout>(R.id.too_many_participants_dialog)
-            dialog?.visibility = View.VISIBLE
+        if (conferenceViewModel.conferenceParticipantDevices.value.orEmpty().size > conferenceViewModel.maxParticipantsForMosaicLayout) {
+            showTooManyParticipantsForMosaicLayoutDialog()
         }
+    }
+
+    private fun showTooManyParticipantsForMosaicLayoutDialog() {
+        val dialog = binding.root.findViewById<LinearLayout>(R.id.too_many_participants_dialog)
+        dialog?.visibility = View.VISIBLE
     }
 }

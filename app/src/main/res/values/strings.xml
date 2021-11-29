@@ -262,7 +262,8 @@
     <string name="conference_waiting_room_start_call">Start</string>
     <string name="conference_waiting_room_cancel_call">Cancel</string>
     <string name="conference_scheduled">Conferences</string>
-    <string name="conference_too_many_participants_for_mosaic_layout">You can\'t change conference layout as there is too many participants</string>
+    <string name="conference_layout_too_many_participants_for_mosaic">You can\'t change conference layout as there is too many participants</string>
+    <string name="conference_too_many_participants_for_mosaic_layout">There is too many participants for mosaic layout, switching to active speaker</string>
     <string name="conference_participant_paused">(paused)</string>
     <string name="conference_no_schedule">No scheduled conference yet.</string>
     <string name="conference_schedule_organizer">Organizer:</string>

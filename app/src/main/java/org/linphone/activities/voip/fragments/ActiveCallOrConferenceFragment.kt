@@ -115,6 +115,15 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
             }
         )
 
+        conferenceViewModel.conferenceParticipantDevices.observe(
+            viewLifecycleOwner,
+            {
+                if (it.size > conferenceViewModel.maxParticipantsForMosaicLayout) {
+                    showSnackBar(R.string.conference_too_many_participants_for_mosaic_layout)
+                }
+            }
+        )
+
         callsViewModel.currentCallData.observe(
             viewLifecycleOwner,
             {
