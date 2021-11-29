@@ -29,7 +29,7 @@
             android:id="@+id/top_bar"
             android:layout_width="match_parent"
             android:layout_height="@dimen/voip_top_bar_size"
-            android:background="@color/toolbar_color"
+            android:background="?attr/voipToolbarBackgroundColor"
             android:orientation="horizontal">
 
             <LinearLayout
@@ -62,7 +62,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:src="@drawable/voip_chat_rooms_list"
+                android:src="@drawable/icon_call_chat_rooms"
                 android:contentDescription="@string/content_description_go_to_chat_rooms_list"
                 app:layout_constraintEnd_toEndOf="parent"/>
 
@@ -82,7 +82,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/top_bar"
-            android:background="@color/white_color" />
+            android:background="?attr/voipBackgroundBWColor" />
 
         <LinearLayout
             android:id="@+id/footer"
