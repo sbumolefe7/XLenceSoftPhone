@@ -25,7 +25,7 @@
         <LinearLayout
             android:visibility="@{controlsViewModel.fullScreenMode ? View.GONE : View.VISIBLE}"
             android:layout_width="match_parent"
-            android:layout_height="60dp"
+            android:layout_height="@dimen/voip_call_header_height"
             android:layout_marginBottom="10dp"
             android:gravity="center_vertical"
             android:orientation="horizontal">

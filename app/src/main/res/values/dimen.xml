@@ -54,4 +54,5 @@
     <dimen name="voip_counter_bounce_offset">5dp</dimen>
     <dimen name="voip_active_speaker_miniature_width">100dp</dimen>
     <dimen name="voip_active_speaker_miniature_margin">10dp</dimen>
+    <dimen name="voip_call_header_height">60dp</dimen>
 </resources>
