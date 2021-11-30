@@ -172,15 +172,7 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
         isRemotelyPaused.value = isCallRemotelyPaused()
         canBePaused.value = canCallBePaused()
 
-        val conference = call.conference
-        isInRemoteConference.value = conference != null
-        if (conference != null) {
-            remoteConferenceSubject.value = if (conference.subject.isNullOrEmpty()) {
-                AppUtils.getString(R.string.conference_default_title)
-            } else {
-                conference.subject
-            }
-        }
+        updateConferenceInfo()
 
         isOutgoing.value = when (call.state) {
             Call.State.OutgoingInit, Call.State.OutgoingEarlyMedia, Call.State.OutgoingProgress, Call.State.OutgoingRinging -> true
@@ -197,6 +189,23 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
                 delay(1000)
                 update()
             }
+        }
+    }
+
+    private fun updateConferenceInfo() {
+        val conference = call.conference
+        isInRemoteConference.value = conference != null
+        if (conference != null) {
+            remoteConferenceSubject.value = if (conference.subject.isNullOrEmpty()) {
+                if (conference.me.isFocus) {
+                    AppUtils.getString(R.string.conference_local_title)
+                } else {
+                    AppUtils.getString(R.string.conference_default_title)
+                }
+            } else {
+                conference.subject
+            }
+            Log.i("[Call] Found conference related to this call with subject [${remoteConferenceSubject.value}]")
         }
     }
 }
