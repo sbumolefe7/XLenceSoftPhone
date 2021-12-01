@@ -188,17 +188,17 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         conferenceCreationInProgress.value = true
         val params = coreContext.core.createConferenceParams()
         params.isVideoEnabled = true // TODO: Keep this to true ?
-        // TODO: params.setSubject(subject.value)
+        params.subject = subject.value
         val startTime = getConferenceStartTimestamp()
-        // TODO: params.setStartTime(startTime)
+        params.startTime = startTime
         val duration = duration.value?.value ?: 0
-        // TODO: if (duration != 0) params.setEndTime(startTime + duration)
+        if (duration != 0) params.endTime = startTime + duration
 
         val participants = arrayOfNulls<Address>(selectedAddresses.value.orEmpty().size)
         selectedAddresses.value?.toArray(participants)
 
         val localAddress = coreContext.core.defaultAccount?.params?.identityAddress
-        // TODO: coreContext.core.createConferenceOnServer(params, localAddress, participants)
+        coreContext.core.createConferenceOnServer(params, localAddress, participants)
     }
 
     private fun computeTimeZonesList(): List<TimeZoneData> {
