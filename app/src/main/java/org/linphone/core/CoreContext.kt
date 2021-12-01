@@ -230,7 +230,8 @@ class CoreContext(val context: Context, coreConfig: Config) {
                     callErrorMessageResourceId.value = Event(message)
                 } else if (state == Call.State.End &&
                     call.dir == Call.Dir.Outgoing &&
-                    call.errorInfo.reason == Reason.Declined
+                    call.errorInfo.reason == Reason.Declined &&
+                    core.callsNb == 0
                 ) {
                     Log.i("[Context] Call has been declined")
                     val message = context.getString(R.string.call_error_declined)

@@ -51,7 +51,18 @@ class IncomingCallFragment : GenericFragment<VoipCallIncomingFragmentBinding>() 
         callsViewModel.callConnectedEvent.observe(
             viewLifecycleOwner,
             {
-                navigateToActiveCall()
+                it.consume {
+                    navigateToActiveCall()
+                }
+            }
+        )
+
+        callsViewModel.callEndedEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume {
+                    navigateToActiveCall()
+                }
             }
         )
 

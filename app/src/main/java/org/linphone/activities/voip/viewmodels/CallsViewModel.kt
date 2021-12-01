@@ -43,6 +43,10 @@ class CallsViewModel : ViewModel() {
         MutableLiveData<Event<Call>>()
     }
 
+    val callEndedEvent: MutableLiveData<Event<Call>> by lazy {
+        MutableLiveData<Event<Call>>()
+    }
+
     val callUpdateEvent: MutableLiveData<Event<Call>> by lazy {
         MutableLiveData<Event<Call>>()
     }
@@ -75,12 +79,15 @@ class CallsViewModel : ViewModel() {
             val currentCall = core.currentCall
             if (currentCall != null && currentCallData.value?.call != currentCall) {
                 updateCurrentCallData(currentCall)
-            } else if (currentCall == null && core.callsNb > 1) {
+            } else if (currentCall == null && core.callsNb > 0) {
                 updateCurrentCallData(currentCall)
             }
 
             if (state == Call.State.End || state == Call.State.Released || state == Call.State.Error) {
                 removeCallFromList(call)
+                if (core.callsNb > 0) {
+                    callEndedEvent.value = Event(call)
+                }
             } else if (state == Call.State.IncomingEarlyMedia || state == Call.State.IncomingReceived || state == Call.State.OutgoingInit) {
                 if (call != core.currentCall) {
                     addCallToList(call)
@@ -202,9 +209,11 @@ class CallsViewModel : ViewModel() {
         if (currentCall == null) {
             Log.w("[Calls] Current call is now null")
 
-            val firstCall = coreContext.core.calls.first()
+            val firstCall = coreContext.core.calls.find { call ->
+                call.state != Call.State.Error && call.state != Call.State.End && call.state != Call.State.Released
+            }
             if (firstCall != null && currentCallData.value?.call != firstCall) {
-                Log.i("[Calls] Using first call as \"current\" call")
+                Log.i("[Calls] Using [${firstCall.remoteAddress.asStringUriOnly()}] call as \"current\" call")
                 callToUse = firstCall
             }
         }
