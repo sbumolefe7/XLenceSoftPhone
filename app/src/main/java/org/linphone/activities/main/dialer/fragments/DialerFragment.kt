@@ -31,6 +31,7 @@ import android.content.res.Configuration
 import android.net.Uri
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.transition.MaterialSharedAxis
@@ -104,6 +105,7 @@ class DialerFragment : SecureFragment<DialerFragmentBinding>() {
                 // Transfer has been consumed, otherwise it might have been a "bis" use
                 sharedViewModel.pendingCallTransfer = false
                 viewModel.transferVisibility.value = false
+                coreContext.onCallStarted()
             }
         }
 
@@ -161,6 +163,15 @@ class DialerFragment : SecureFragment<DialerFragmentBinding>() {
             {
                 it.consume { url ->
                     displayNewVersionAvailableDialog(url)
+                }
+            }
+        )
+
+        viewModel.onMessageToNotifyEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume { id ->
+                    Toast.makeText(requireContext(), id, Toast.LENGTH_SHORT).show()
                 }
             }
         )

@@ -137,7 +137,7 @@ class DetailContactFragment : GenericFragment<ContactDetailFragmentBinding>() {
             confirmContactRemoval()
         }
 
-        viewModel.onErrorEvent.observe(
+        viewModel.onMessageToNotifyEvent.observe(
             viewLifecycleOwner,
             {
                 it.consume { messageResourceId ->

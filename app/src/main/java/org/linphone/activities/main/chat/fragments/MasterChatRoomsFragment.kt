@@ -357,7 +357,7 @@ class MasterChatRoomsFragment : MasterFragment<ChatRoomMasterFragmentBinding, Ch
                 }
             )
 
-            listViewModel.onErrorEvent.observe(
+            listViewModel.onMessageToNotifyEvent.observe(
                 viewLifecycleOwner,
                 {
                     it.consume { messageResourceId ->

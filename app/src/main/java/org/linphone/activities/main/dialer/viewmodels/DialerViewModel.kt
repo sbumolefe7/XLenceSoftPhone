@@ -211,7 +211,13 @@ class DialerViewModel : LogsUploadViewModel() {
     fun transferCall(): Boolean {
         val addressToCall = enteredUri.value.orEmpty()
         return if (addressToCall.isNotEmpty()) {
-            coreContext.transferCallTo(addressToCall)
+            onMessageToNotifyEvent.value = Event(
+                if (coreContext.transferCallTo(addressToCall)) {
+                    org.linphone.R.string.dialer_transfer_succeded
+                } else {
+                    org.linphone.R.string.dialer_transfer_failed
+                }
+            )
             eraseAll()
             true
         } else {

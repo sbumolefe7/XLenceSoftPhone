@@ -52,7 +52,7 @@ class ChatRoomCreationViewModel : ContactsSelectionViewModel() {
             } else if (state == ChatRoom.State.CreationFailed) {
                 Log.e("[Chat Room Creation] Group chat room creation has failed !")
                 waitForChatRoomCreation.value = false
-                onErrorEvent.value = Event(R.string.chat_room_creation_failed_snack)
+                onMessageToNotifyEvent.value = Event(R.string.chat_room_creation_failed_snack)
             }
         }
     }
@@ -79,7 +79,7 @@ class ChatRoomCreationViewModel : ContactsSelectionViewModel() {
         val address = searchResult.address ?: coreContext.core.interpretUrl(searchResult.phoneNumber ?: "")
         if (address == null) {
             Log.e("[Chat Room Creation] Can't get a valid address from search result $searchResult")
-            onErrorEvent.value = Event(R.string.chat_room_creation_failed_snack)
+            onMessageToNotifyEvent.value = Event(R.string.chat_room_creation_failed_snack)
             waitForChatRoomCreation.value = false
             return
         }

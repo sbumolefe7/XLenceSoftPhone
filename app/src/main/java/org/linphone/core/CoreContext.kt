@@ -473,7 +473,7 @@ class CoreContext(val context: Context, coreConfig: Config) {
         call.terminate()
     }
 
-    fun transferCallTo(addressToCall: String) {
+    fun transferCallTo(addressToCall: String): Boolean {
         val currentCall = core.currentCall ?: core.calls.firstOrNull()
         if (currentCall == null) {
             Log.e("[Context] Couldn't find a call to transfer")
@@ -482,8 +482,10 @@ class CoreContext(val context: Context, coreConfig: Config) {
             if (address != null) {
                 Log.i("[Context] Transferring current call to $addressToCall")
                 currentCall.transferTo(address)
+                return true
             }
         }
+        return false
     }
 
     fun startCall(to: String) {

@@ -21,7 +21,7 @@ package org.linphone.contact
 
 import androidx.lifecycle.MutableLiveData
 import org.linphone.LinphoneApplication.Companion.coreContext
-import org.linphone.activities.main.viewmodels.ErrorReportingViewModel
+import org.linphone.activities.main.viewmodels.MessageNotifierViewModel
 import org.linphone.core.Address
 import org.linphone.core.ChatRoomSecurityLevel
 import org.linphone.utils.AppUtils
@@ -76,7 +76,7 @@ open class GenericContactData(private val sipAddress: Address) : ContactDataInte
     }
 }
 
-abstract class GenericContactViewModel(private val sipAddress: Address) : ErrorReportingViewModel(), ContactDataInterface {
+abstract class GenericContactViewModel(private val sipAddress: Address) : MessageNotifierViewModel(), ContactDataInterface {
     final override val contact: MutableLiveData<Contact> = MutableLiveData<Contact>()
     final override val displayName: MutableLiveData<String> = MutableLiveData<String>()
     final override val securityLevel: MutableLiveData<ChatRoomSecurityLevel> = MutableLiveData<ChatRoomSecurityLevel>()

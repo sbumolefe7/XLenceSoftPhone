@@ -159,7 +159,7 @@ class ChatRoomCreationFragment : SecureFragment<ChatRoomCreationFragmentBinding>
             navigateToGroupInfo()
         }
 
-        viewModel.onErrorEvent.observe(
+        viewModel.onMessageToNotifyEvent.observe(
             viewLifecycleOwner,
             {
                 it.consume { messageResourceId ->

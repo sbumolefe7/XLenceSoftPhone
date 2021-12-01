@@ -21,12 +21,12 @@ package org.linphone.contact
 
 import androidx.lifecycle.MutableLiveData
 import org.linphone.LinphoneApplication.Companion.coreContext
-import org.linphone.activities.main.viewmodels.ErrorReportingViewModel
+import org.linphone.activities.main.viewmodels.MessageNotifierViewModel
 import org.linphone.core.Address
 import org.linphone.core.SearchResult
 import org.linphone.core.tools.Log
 
-open class ContactsSelectionViewModel : ErrorReportingViewModel() {
+open class ContactsSelectionViewModel : MessageNotifierViewModel() {
     val contactsList = MutableLiveData<ArrayList<SearchResult>>()
 
     val sipContactsSelected = MutableLiveData<Boolean>()

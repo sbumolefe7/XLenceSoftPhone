@@ -135,7 +135,7 @@ class DetailCallLogFragment : GenericFragment<HistoryDetailFragmentBinding>() {
             }
         )
 
-        viewModel.onErrorEvent.observe(
+        viewModel.onMessageToNotifyEvent.observe(
             viewLifecycleOwner,
             {
                 it.consume { messageResourceId ->

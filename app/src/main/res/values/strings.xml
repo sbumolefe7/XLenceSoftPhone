@@ -127,6 +127,8 @@
         <item>@string/debug_popup_show_config_file</item>
         <item>@string/cancel</item>
     </string-array>
+    <string name="dialer_transfer_succeded">Call is being transferred</string>
+    <string name="dialer_transfer_failed">Can\'t transfer call</string>
 
     <!-- Chat -->
     <string name="no_chat_history">No conversations</string>

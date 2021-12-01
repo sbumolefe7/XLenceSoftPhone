@@ -83,7 +83,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             error: ConferenceInfoError?
         ) {
             Log.e("[Conference Creation] Conference information wasn't sent to participant ${participant.asStringUriOnly()}")
-            onErrorEvent.value = Event(R.string.conference_schedule_info_not_sent_to_participant)
+            onMessageToNotifyEvent.value = Event(R.string.conference_schedule_info_not_sent_to_participant)
             conferenceCreationInProgress.value = false
         }
 
