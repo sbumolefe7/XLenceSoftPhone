@@ -266,7 +266,7 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
 
     private fun showCallVideoUpdateDialog(call: Call) {
         val viewModel = DialogViewModel(AppUtils.getString(R.string.call_video_update_requested_dialog))
-        dialog = DialogUtils.getDialog(requireContext(), viewModel)
+        dialog = DialogUtils.getCallDialog(requireContext(), viewModel)
 
         viewModel.showCancelButton(
             {

@@ -98,7 +98,7 @@
 
         <include
             android:id="@+id/too_many_participants_dialog"
-            layout="@layout/dialog_simple"
+            layout="@layout/voip_dialog_info"
             android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
