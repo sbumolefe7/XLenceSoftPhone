@@ -430,6 +430,13 @@ class CoreContext(val context: Context, coreConfig: Config) {
         }
     }
 
+    fun videoUpdateRequestTimedOut(call: Call) {
+        coroutineScope.launch {
+            Log.w("[Context] 30 seconds have passed, declining video request")
+            answerCallVideoUpdateRequest(call, false)
+        }
+    }
+
     fun answerCallVideoUpdateRequest(call: Call, accept: Boolean) {
         val params = core.createCallParams(call)
 

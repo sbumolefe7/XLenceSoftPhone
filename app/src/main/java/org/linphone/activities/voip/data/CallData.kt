@@ -54,12 +54,24 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
 
     var contextMenuClickListener: CallContextMenuClickListener? = null
 
+    private var timer: Timer? = null
+
     private val listener = object : CallListenerStub() {
         override fun onStateChanged(call: Call, state: Call.State, message: String) {
             if (call != this@CallData.call) return
             Log.i("[Call] State changed: $state")
 
             update()
+
+            if (call.state == Call.State.UpdatedByRemote) {
+                // User has 30 secs to accept or decline call update
+                startVideoUpdateAcceptanceTimer()
+            } else if (state == Call.State.End || state == Call.State.Released || state == Call.State.Error) {
+                timer?.cancel()
+            } else if (state == Call.State.StreamsRunning) {
+                // Stop call update timer once user has accepted or declined call update
+                timer?.cancel()
+            }
         }
 
         override fun onRemoteRecording(call: Call, recording: Boolean) {
@@ -80,6 +92,7 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
 
     override fun destroy() {
         call.removeListener(listener)
+        timer?.cancel()
         scope.cancel()
 
         super.destroy()
@@ -207,5 +220,21 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
             }
             Log.i("[Call] Found conference related to this call with subject [${remoteConferenceSubject.value}]")
         }
+    }
+
+    private fun startVideoUpdateAcceptanceTimer() {
+        timer?.cancel()
+
+        timer = Timer("Call update timeout")
+        timer?.schedule(
+            object : TimerTask() {
+                override fun run() {
+                    // Decline call update
+                    coreContext.videoUpdateRequestTimedOut(call)
+                }
+            },
+            30000
+        )
+        Log.i("[Call] Starting 30 seconds timer to automatically decline video request")
     }
 }
