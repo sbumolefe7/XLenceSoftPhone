@@ -147,7 +147,6 @@ class DetailChatRoomFragment : MasterFragment<ChatRoomDetailFragmentBinding, Cha
         val chatRoom = sharedViewModel.selectedChatRoom.value
         if (chatRoom == null) {
             Log.e("[Chat Room] Chat room is null, aborting!")
-            // (activity as MainActivity).showSnackBar(R.string.error)
             goBack()
             return
         }

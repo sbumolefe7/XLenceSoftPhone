@@ -43,6 +43,7 @@ import org.linphone.activities.main.contact.fragments.MasterContactsFragment
 import org.linphone.activities.main.dialer.fragments.DialerFragment
 import org.linphone.activities.main.fragments.TabsFragment
 import org.linphone.activities.main.history.fragments.DetailCallLogFragment
+import org.linphone.activities.main.history.fragments.DetailConferenceCallLogFragment
 import org.linphone.activities.main.history.fragments.MasterCallLogsFragment
 import org.linphone.activities.main.settings.fragments.*
 import org.linphone.activities.main.sidemenu.fragments.SideMenuFragment
@@ -536,6 +537,19 @@ internal fun MasterCallLogsFragment.navigateToCallHistory(slidingPane: SlidingPa
     }
 }
 
+internal fun MasterCallLogsFragment.navigateToConferenceCallHistory(slidingPane: SlidingPaneLayout) {
+    if (findNavController().currentDestination?.id == R.id.masterCallLogsFragment) {
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.history_nav_container) as NavHostFragment
+        navHostFragment.navController.navigate(
+            R.id.action_global_detailConferenceCallLogFragment,
+            null,
+            popupTo(R.id.detailCallLogFragment, true)
+        )
+        if (!slidingPane.isOpen) slidingPane.openPane()
+    }
+}
+
 internal fun MasterCallLogsFragment.clearDisplayedCallHistory() {
     if (findNavController().currentDestination?.id == R.id.masterCallLogsFragment) {
         val navHostFragment =
@@ -593,6 +607,16 @@ internal fun DetailCallLogFragment.navigateToDialer(args: Bundle?) {
 
 internal fun DetailCallLogFragment.navigateToEmptyCallHistory() {
     if (findNavController().currentDestination?.id == R.id.detailCallLogFragment) {
+        findNavController().navigate(
+            R.id.action_global_emptyFragment,
+            null,
+            popupTo(R.id.emptyCallHistoryFragment, true)
+        )
+    }
+}
+
+internal fun DetailConferenceCallLogFragment.navigateToEmptyCallHistory() {
+    if (findNavController().currentDestination?.id == R.id.detailConferenceCallLogFragment) {
         findNavController().navigate(
             R.id.action_global_emptyFragment,
             null,

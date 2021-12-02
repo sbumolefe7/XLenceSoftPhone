@@ -31,14 +31,17 @@ import org.linphone.utils.LinphoneUtils
 import org.linphone.utils.TimestampUtils
 
 class CallLogsListViewModel : ViewModel() {
-    val callLogs = MutableLiveData<ArrayList<GroupedCallLogData>>()
-    val missedCallLogs = MutableLiveData<ArrayList<GroupedCallLogData>>()
+    val displayedCallLogs = MutableLiveData<List<GroupedCallLogData>>()
 
-    val missedCallLogsSelected = MutableLiveData<Boolean>()
+    val filter = MutableLiveData<CallLogsFilter>()
 
     val contactsUpdatedEvent: MutableLiveData<Event<Boolean>> by lazy {
         MutableLiveData<Event<Boolean>>()
     }
+
+    private val callLogs = MutableLiveData<ArrayList<GroupedCallLogData>>()
+    private val missedCallLogs = MutableLiveData<ArrayList<GroupedCallLogData>>()
+    private val conferenceCallLogs = MutableLiveData<ArrayList<GroupedCallLogData>>()
 
     private val listener: CoreListenerStub = object : CoreListenerStub() {
         override fun onCallStateChanged(
@@ -59,7 +62,7 @@ class CallLogsListViewModel : ViewModel() {
     }
 
     init {
-        missedCallLogsSelected.value = false
+        filter.value = CallLogsFilter.ALL
         updateCallLogs()
 
         coreContext.core.addListener(listener)
@@ -69,11 +72,28 @@ class CallLogsListViewModel : ViewModel() {
     override fun onCleared() {
         callLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
         missedCallLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
+        conferenceCallLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
+        displayedCallLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
 
         coreContext.contactsManager.removeListener(contactsUpdatedListener)
         coreContext.core.removeListener(listener)
 
         super.onCleared()
+    }
+
+    fun showAllCallLogs() {
+        filter.value = CallLogsFilter.ALL
+        applyFilter()
+    }
+
+    fun showOnlyMissedCallLogs() {
+        filter.value = CallLogsFilter.MISSED
+        applyFilter()
+    }
+
+    fun showOnlyConferenceCallLogs() {
+        filter.value = CallLogsFilter.CONFERENCE
+        applyFilter()
     }
 
     fun deleteCallLogGroup(callLog: GroupedCallLogData?) {
@@ -99,9 +119,12 @@ class CallLogsListViewModel : ViewModel() {
     private fun updateCallLogs() {
         callLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
         missedCallLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
+        conferenceCallLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
+        displayedCallLogs.value.orEmpty().forEach(GroupedCallLogData::destroy)
 
         val list = arrayListOf<GroupedCallLogData>()
         val missedList = arrayListOf<GroupedCallLogData>()
+        val conferenceList = arrayListOf<GroupedCallLogData>()
 
         var previousCallLogGroup: GroupedCallLogData? = null
         var previousMissedCallLogGroup: GroupedCallLogData? = null
@@ -152,5 +175,21 @@ class CallLogsListViewModel : ViewModel() {
 
         callLogs.value = list
         missedCallLogs.value = missedList
+        conferenceCallLogs.value = conferenceList
+        applyFilter()
     }
+
+    private fun applyFilter() {
+        when (filter.value) {
+            CallLogsFilter.MISSED -> displayedCallLogs.value = missedCallLogs.value.orEmpty()
+            CallLogsFilter.CONFERENCE -> displayedCallLogs.value = conferenceCallLogs.value.orEmpty()
+            else -> displayedCallLogs.value = callLogs.value.orEmpty()
+        }
+    }
+}
+
+enum class CallLogsFilter {
+    ALL,
+    MISSED,
+    CONFERENCE
 }

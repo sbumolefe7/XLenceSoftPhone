@@ -17,58 +17,74 @@
  * You should have received a copy of the GNU General Public License
  * along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
-package org.linphone.activities.main.chat.fragments
+package org.linphone.activities.main.history.fragments
 
 import android.os.Bundle
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import org.linphone.R
-import org.linphone.activities.main.chat.viewmodels.EphemeralViewModel
-import org.linphone.activities.main.chat.viewmodels.EphemeralViewModelFactory
-import org.linphone.activities.main.fragments.SecureFragment
+import org.linphone.activities.*
+import org.linphone.activities.main.*
+import org.linphone.activities.main.history.viewmodels.CallLogViewModel
+import org.linphone.activities.main.history.viewmodels.CallLogViewModelFactory
 import org.linphone.activities.main.viewmodels.SharedMainViewModel
 import org.linphone.core.tools.Log
-import org.linphone.databinding.ChatRoomEphemeralFragmentBinding
+import org.linphone.databinding.HistoryConfDetailFragmentBinding
+import org.linphone.utils.Event
 
-class EphemeralFragment : SecureFragment<ChatRoomEphemeralFragmentBinding>() {
-    private lateinit var viewModel: EphemeralViewModel
+class DetailConferenceCallLogFragment : GenericFragment<HistoryConfDetailFragmentBinding>() {
+    private lateinit var viewModel: CallLogViewModel
     private lateinit var sharedViewModel: SharedMainViewModel
 
-    override fun getLayoutId(): Int {
-        return R.layout.chat_room_ephemeral_fragment
-    }
+    override fun getLayoutId(): Int = R.layout.history_conf_detail_fragment
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        isSecure = true
         binding.lifecycleOwner = viewLifecycleOwner
 
         sharedViewModel = requireActivity().run {
             ViewModelProvider(this)[SharedMainViewModel::class.java]
         }
+        binding.sharedMainViewModel = sharedViewModel
 
-        val chatRoom = sharedViewModel.selectedChatRoom.value
-        if (chatRoom == null) {
-            Log.e("[Ephemeral] Chat room is null, aborting!")
+        val callLogGroup = sharedViewModel.selectedCallLogGroup.value
+        if (callLogGroup == null) {
+            Log.e("[History] Call log group is null, aborting!")
             findNavController().navigateUp()
             return
         }
 
         viewModel = ViewModelProvider(
             this,
-            EphemeralViewModelFactory(chatRoom)
-        )[EphemeralViewModel::class.java]
+            CallLogViewModelFactory(callLogGroup.lastCallLog)
+        )[CallLogViewModel::class.java]
         binding.viewModel = viewModel
+
+        useMaterialSharedAxisXForwardAnimation = sharedViewModel.isSlidingPaneSlideable.value == false
+
+        viewModel.relatedCallLogs.value = callLogGroup.callLogs
 
         binding.setBackClickListener {
             goBack()
         }
 
-        binding.setValidClickListener {
-            viewModel.updateChatRoomEphemeralDuration()
-            goBack()
+        viewModel.onMessageToNotifyEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume { messageResourceId ->
+                    (activity as MainActivity).showSnackBar(messageResourceId)
+                }
+            }
+        )
+    }
+
+    override fun goBack() {
+        if (sharedViewModel.isSlidingPaneSlideable.value == true) {
+            sharedViewModel.closeSlidingPaneEvent.value = Event(true)
+        } else {
+            navigateToEmptyCallHistory()
         }
     }
 }

@@ -44,6 +44,7 @@ import org.linphone.activities.main.viewmodels.DialogViewModel
 import org.linphone.activities.main.viewmodels.SharedMainViewModel
 import org.linphone.activities.main.viewmodels.TabsViewModel
 import org.linphone.activities.navigateToCallHistory
+import org.linphone.activities.navigateToConferenceCallHistory
 import org.linphone.activities.navigateToDialer
 import org.linphone.core.tools.Log
 import org.linphone.databinding.HistoryMasterFragmentBinding
@@ -126,22 +127,6 @@ class MasterCallLogsFragment : MasterFragment<HistoryMasterFragmentBinding, Call
             }
         )
         binding.slidingPane.lockMode = SlidingPaneLayout.LOCK_MODE_LOCKED
-        /*binding.slidingPane.addPanelSlideListener(object : SlidingPaneLayout.PanelSlideListener {
-            override fun onPanelSlide(panel: View, slideOffset: Float) { }
-
-            override fun onPanelOpened(panel: View) {
-                if (binding.slidingPane.isSlideable) {
-                    (requireActivity() as MainActivity).hideTabsFragment()
-                }
-            }
-
-            override fun onPanelClosed(panel: View) {
-                if (binding.slidingPane.isSlideable) {
-                    (requireActivity() as MainActivity).showTabsFragment()
-                }
-            }
-        })*/
-
         /* End of shared view model & sliding pane related */
 
         _adapter = CallLogsListAdapter(listSelectionViewModel, viewLifecycleOwner)
@@ -207,32 +192,10 @@ class MasterCallLogsFragment : MasterFragment<HistoryMasterFragmentBinding, Call
         val headerItemDecoration = RecyclerViewHeaderDecoration(requireContext(), adapter)
         binding.callLogsList.addItemDecoration(headerItemDecoration)
 
-        listViewModel.callLogs.observe(
+        listViewModel.displayedCallLogs.observe(
             viewLifecycleOwner,
             { callLogs ->
-                if (listViewModel.missedCallLogsSelected.value == false) {
-                    adapter.submitList(callLogs)
-                }
-            }
-        )
-
-        listViewModel.missedCallLogs.observe(
-            viewLifecycleOwner,
-            { callLogs ->
-                if (listViewModel.missedCallLogsSelected.value == true) {
-                    adapter.submitList(callLogs)
-                }
-            }
-        )
-
-        listViewModel.missedCallLogsSelected.observe(
-            viewLifecycleOwner,
-            {
-                if (it) {
-                    adapter.submitList(listViewModel.missedCallLogs.value)
-                } else {
-                    adapter.submitList(listViewModel.callLogs.value)
-                }
+                adapter.submitList(callLogs)
             }
         )
 
@@ -250,7 +213,11 @@ class MasterCallLogsFragment : MasterFragment<HistoryMasterFragmentBinding, Call
             {
                 it.consume { callLog ->
                     sharedViewModel.selectedCallLogGroup.value = callLog
-                    navigateToCallHistory(binding.slidingPane)
+                    if (callLog.lastCallLog.wasConference()) {
+                        navigateToConferenceCallHistory(binding.slidingPane)
+                    } else {
+                        navigateToCallHistory(binding.slidingPane)
+                    }
                 }
             }
         )
@@ -275,13 +242,6 @@ class MasterCallLogsFragment : MasterFragment<HistoryMasterFragmentBinding, Call
                 }
             }
         )
-
-        binding.setAllCallLogsToggleClickListener {
-            listViewModel.missedCallLogsSelected.value = false
-        }
-        binding.setMissedCallLogsToggleClickListener {
-            listViewModel.missedCallLogsSelected.value = true
-        }
 
         coreContext.core.resetMissedCallsCount()
         coreContext.notificationsManager.dismissMissedCallNotification()
