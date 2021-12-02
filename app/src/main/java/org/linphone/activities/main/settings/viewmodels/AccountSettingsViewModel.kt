@@ -383,6 +383,16 @@ class AccountSettingsViewModel(val account: Account) : GenericSettingsViewModel(
     }
     val linkPhoneNumberEvent = MutableLiveData<Event<Boolean>>()
 
+    val conferenceFactoryUriListener = object : SettingListenerStub() {
+        override fun onTextValueChanged(newValue: String) {
+            val params = account.params.clone()
+            Log.i("[Account Settings] Forcing conference factory on proxy config ${params.identityAddress?.asString()} to value: $newValue")
+            params.conferenceFactoryUri = newValue
+            account.params = params
+        }
+    }
+    val conferenceFactoryUri = MutableLiveData<String>()
+
     init {
         update()
         account.addListener(listener)
@@ -437,6 +447,7 @@ class AccountSettingsViewModel(val account: Account) : GenericSettingsViewModel(
         prefix.value = params.internationalPrefix
         dialPrefix.value = params.useInternationalPrefixForCallsAndChats
         escapePlus.value = params.dialEscapePlusEnabled
+        conferenceFactoryUri.value = params.conferenceFactoryUri
     }
 
     private fun initTransportList() {

@@ -376,14 +376,6 @@ class CoreContext(val context: Context, coreConfig: Config) {
                     account.params = params
                 }
 
-                // TODO: FIXME: remove after conference finished
-                val params = account.params.clone()
-                val uri = "sip:videoconference-factory@sip.linphone.org"
-                Log.i("[Context] Forcing conference factory on proxy config ${params.identityAddress?.asString()} to value: $uri")
-                params.conferenceFactoryUri = uri
-                account.params = params
-                // END OF TODO FIXME
-
                 // Ensure LIME server URL is set if at least one sip.linphone.org proxy
                 if (core.limeX3DhAvailable()) {
                     var url: String? = core.limeX3DhServerUrl
