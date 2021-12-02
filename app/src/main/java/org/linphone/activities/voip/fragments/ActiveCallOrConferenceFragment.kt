@@ -47,7 +47,9 @@ import org.linphone.activities.voip.viewmodels.ConferenceViewModel
 import org.linphone.activities.voip.viewmodels.ControlsViewModel
 import org.linphone.activities.voip.viewmodels.StatisticsListViewModel
 import org.linphone.activities.voip.views.RoundCornersTextureView
+import org.linphone.core.Address
 import org.linphone.core.Call
+import org.linphone.core.ChatRoomBackend
 import org.linphone.core.Factory
 import org.linphone.core.tools.Log
 import org.linphone.databinding.VoipActiveCallOrConferenceFragmentBindingImpl
@@ -289,7 +291,6 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
 
     private fun goToChat() {
         val localSipUri = coreContext.core.defaultAccount?.params?.identityAddress?.asStringUriOnly()
-        // TODO: handle participants list for conference
         val remoteSipUri = if (conferenceViewModel.isInConference.value == true) {
             conferenceViewModel.conferenceAddress.value?.asStringUriOnly()
         } else {
@@ -304,10 +305,23 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
             if (chatRoom == null) {
                 Log.w("[Call] Failed to find existing chat room for local address [$localSipUri] and remote address [$remoteSipUri]")
                 val chatRoomParams = coreContext.core.createDefaultChatRoomParams()
-                // TODO: configure chat room params
+
                 if (conferenceViewModel.isInConference.value == true) {
-                    // TODO: compute conference participants addresses list
+                    chatRoomParams.backend = ChatRoomBackend.FlexisipChat
+                    chatRoomParams.enableGroup(true)
+                    chatRoomParams.subject = conferenceViewModel.subject.value
+
+                    val participants = arrayOfNulls<Address>(conferenceViewModel.conferenceParticipants.value.orEmpty().size)
+                    val addresses = arrayListOf<Address>()
+                    for (participant in conferenceViewModel.conferenceParticipants.value.orEmpty()) {
+                        addresses.add(participant.participant.address)
+                    }
+                    addresses.toArray(participants)
+
+                    Log.i("[Call] Creating chat room with same subject [${chatRoomParams.subject}] & participants as for conference")
+                    chatRoom = coreContext.core.createChatRoom(chatRoomParams, localAddress, participants)
                 } else {
+                    // TODO: configure chat room params
                     chatRoom = coreContext.core.createChatRoom(chatRoomParams, localAddress, arrayOf(remoteSipAddress))
                 }
             }

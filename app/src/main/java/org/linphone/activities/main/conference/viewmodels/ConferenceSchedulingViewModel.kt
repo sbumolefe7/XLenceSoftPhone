@@ -69,6 +69,18 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     private var hour: Int = 0
     private var minutes: Int = 0
 
+    private val chatRoomListener = object : ChatRoomListenerStub() {
+        override fun onStateChanged(room: ChatRoom, state: ChatRoom.State) {
+            if (state == ChatRoom.State.Created) {
+                Log.i("[Conference Creation] Chat room created")
+                room.removeListener(this)
+            } else if (state == ChatRoom.State.CreationFailed) {
+                Log.e("[Conference Creation] Group chat room creation has failed !")
+                room.removeListener(this)
+            }
+        }
+    }
+
     private val listener = object : CoreListenerStub() {
         override fun onConferenceInfoOnSent(core: Core, conferenceInfo: ConferenceInfo) {
             Log.i("[Conference Creation] Conference information successfully sent to all participants")
@@ -103,6 +115,10 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
                     conferenceCreationInProgress.value = false
                     conferenceCreationCompletedEvent.value = Event(true)
                 }
+            } else if (state == Conference.State.TerminationPending) {
+                Log.e("[Conference Creation] Creation of conference failed!")
+                conferenceCreationInProgress.value = false
+                onMessageToNotifyEvent.value = Event(R.string.conference_creation_failed)
             }
         }
     }
@@ -186,19 +202,32 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         }
 
         conferenceCreationInProgress.value = true
-        val params = coreContext.core.createConferenceParams()
+        val core = coreContext.core
+        val participants = arrayOfNulls<Address>(selectedAddresses.value.orEmpty().size)
+        selectedAddresses.value?.toArray(participants)
+        val localAddress = core.defaultAccount?.params?.identityAddress
+
+        // TODO: Temporary workaround for chat room, to be removed once we can get matching chat room from conference
+        val chatRoomParams = core.createDefaultChatRoomParams()
+        chatRoomParams.backend = ChatRoomBackend.FlexisipChat
+        chatRoomParams.enableGroup(true)
+        chatRoomParams.subject = subject.value
+        val chatRoom = core.createChatRoom(chatRoomParams, localAddress, participants)
+        if (chatRoom == null) {
+            Log.e("[Conference Creation] Failed to create a chat room with same subject & participants as for conference")
+        } else {
+            Log.i("[Conference Creation] Creating chat room with same subject [${subject.value}] & participants as for conference")
+            chatRoom.addListener(chatRoomListener)
+        }
+
+        val params = core.createConferenceParams()
         params.isVideoEnabled = true // TODO: Keep this to true ?
         params.subject = subject.value
         val startTime = getConferenceStartTimestamp()
         params.startTime = startTime
         val duration = duration.value?.value ?: 0
         if (duration != 0) params.endTime = startTime + duration
-
-        val participants = arrayOfNulls<Address>(selectedAddresses.value.orEmpty().size)
-        selectedAddresses.value?.toArray(participants)
-
-        val localAddress = coreContext.core.defaultAccount?.params?.identityAddress
-        coreContext.core.createConferenceOnServer(params, localAddress, participants)
+        core.createConferenceOnServer(params, localAddress, participants)
     }
 
     private fun computeTimeZonesList(): List<TimeZoneData> {

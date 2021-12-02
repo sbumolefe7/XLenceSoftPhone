@@ -365,7 +365,7 @@ class DetailChatRoomFragment : MasterFragment<ChatRoomDetailFragmentBinding, Cha
 
                     if ((path.isEmpty() && content.utf8Text.isNullOrEmpty()) || (path.isNotEmpty() && !File(path).exists())) {
                         Log.e("[Chat Message] Content path is [$path], if not null or empty then file doesn't exists...")
-                        (requireActivity() as MainActivity).showSnackBar(R.string.chat_room_file_not_found)
+                        (activity as MainActivity).showSnackBar(R.string.chat_room_file_not_found)
                     } else {
                         if (path.isEmpty()) {
                             val name = content.name
@@ -501,7 +501,7 @@ class DetailChatRoomFragment : MasterFragment<ChatRoomDetailFragmentBinding, Cha
                         if (voiceRecordingDuration < 1000) {
                             Log.w("[Chat Room] Voice recording button has been held for less than a second, considering miss click")
                             chatSendingViewModel.cancelVoiceRecording()
-                            (requireActivity() as MainActivity).showSnackBar(R.string.chat_message_voice_recording_hold_to_record)
+                            (activity as MainActivity).showSnackBar(R.string.chat_message_voice_recording_hold_to_record)
                         } else {
                             Log.i("[Chat Room] Voice recording button has been released, stop recording")
                             chatSendingViewModel.stopVoiceRecording()

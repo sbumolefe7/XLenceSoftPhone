@@ -149,7 +149,7 @@ class DialerFragment : SecureFragment<DialerFragmentBinding>() {
                         val clip = ClipData.newPlainText("Logs url", url)
                         clipboard.setPrimaryClip(clip)
 
-                        val activity = requireActivity() as MainActivity
+                        val activity = activity as MainActivity
                         activity.showSnackBar(R.string.logs_url_copied_to_clipboard)
 
                         AppUtils.shareUploadedLogsUrl(activity, url)

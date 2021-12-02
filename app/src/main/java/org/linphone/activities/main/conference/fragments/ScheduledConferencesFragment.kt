@@ -79,8 +79,7 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
                     val clip = ClipData.newPlainText("Conference address", address.asStringUriOnly())
                     clipboard.setPrimaryClip(clip)
 
-                    val activity = requireActivity() as MainActivity
-                    activity.showSnackBar(R.string.conference_schedule_address_copied_to_clipboard)
+                    (activity as MainActivity).showSnackBar(R.string.conference_schedule_address_copied_to_clipboard)
                 }
             }
         )

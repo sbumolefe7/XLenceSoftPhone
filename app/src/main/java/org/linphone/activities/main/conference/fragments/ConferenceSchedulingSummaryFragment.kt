@@ -25,6 +25,7 @@ import androidx.navigation.navGraphViewModels
 import org.linphone.R
 import org.linphone.activities.GenericFragment
 import org.linphone.activities.goBackToDialer
+import org.linphone.activities.main.MainActivity
 import org.linphone.activities.main.conference.viewmodels.ConferenceSchedulingViewModel
 import org.linphone.databinding.ConferenceSchedulingSummaryFragmentBinding
 
@@ -52,6 +53,15 @@ class ConferenceSchedulingSummaryFragment : GenericFragment<ConferenceScheduling
             viewLifecycleOwner,
             {
                 goBackToDialer()
+            }
+        )
+
+        viewModel.onMessageToNotifyEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume { messageId ->
+                    (activity as MainActivity).showSnackBar(messageId)
+                }
             }
         )
 

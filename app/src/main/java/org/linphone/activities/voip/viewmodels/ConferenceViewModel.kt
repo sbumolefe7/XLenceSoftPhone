@@ -130,7 +130,7 @@ class ConferenceViewModel : ViewModel() {
         ) {
             Log.i("[Conference] Conference state changed: $state")
             isConferencePaused.value = !conference.isIn
-            canResumeConference.value = true // TODO: How can this value be false?
+            canResumeConference.value = true // TODO: Can this value be false?
             isVideoConference.value = conference.currentParams.isVideoEnabled
 
             if (state == Conference.State.Instantiated) {

@@ -152,7 +152,6 @@ class MasterChatRoomsFragment : MasterFragment<ChatRoomMasterFragmentBinding, Ch
 
             override fun onPanelClosed(panel: View) {
                 if (binding.slidingPane.isSlideable) {
-                    // (requireActivity() as MainActivity).showTabsFragment()
                     coreContext.notificationsManager.currentlyDisplayedChatRoomAddress = null
                 }
             }
@@ -319,8 +318,6 @@ class MasterChatRoomsFragment : MasterFragment<ChatRoomMasterFragmentBinding, Ch
                 {
                     if (it.isNotEmpty()) {
                         Log.i("[Chat] Found text to share")
-                        // val activity = requireActivity() as MainActivity
-                        // activity.showSnackBar(R.string.chat_room_toast_choose_for_sharing)
                         listViewModel.textSharingPending.value = true
                         clearDisplayedChatRoom()
                     } else {
@@ -335,8 +332,6 @@ class MasterChatRoomsFragment : MasterFragment<ChatRoomMasterFragmentBinding, Ch
                 {
                     if (it.isNotEmpty()) {
                         Log.i("[Chat] Found ${it.size} files to share")
-                        // val activity = requireActivity() as MainActivity
-                        // activity.showSnackBar(R.string.chat_room_toast_choose_for_sharing)
                         listViewModel.fileSharingPending.value = true
                         clearDisplayedChatRoom()
                     } else {

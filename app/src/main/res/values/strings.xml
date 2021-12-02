@@ -271,6 +271,7 @@
     <string name="conference_no_schedule">No scheduled conference yet.</string>
     <string name="conference_schedule_organizer">Organizer:</string>
     <string name="conference_go_to_chat">Conference\'s chat room</string>
+    <string name="conference_creation_failed">Failed to create conference</string>
 
     <!-- Call -->
     <string name="call_incoming_title">Incoming Call</string>
