@@ -8,11 +8,11 @@
             name="backClickListener"
             type="android.view.View.OnClickListener"/>
         <variable
-            name="nextClickListener"
+            name="applyClickListener"
             type="android.view.View.OnClickListener"/>
         <variable
             name="viewModel"
-            type="org.linphone.activities.main.conference.viewmodels.ConferenceSchedulingViewModel" />
+            type="org.linphone.activities.voip.viewmodels.ConferenceParticipantsViewModel" />
     </data>
 
     <LinearLayout
@@ -47,14 +47,14 @@
                 android:text="@string/conference_schedule_participants_list"/>
 
             <ImageView
-                android:onClick="@{nextClickListener}"
+                android:onClick="@{applyClickListener}"
                 android:enabled="@{viewModel.selectedAddresses.size() > 0}"
                 android:contentDescription="@string/content_description_enter_edition_mode"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
                 android:padding="18dp"
-                android:src="@drawable/icon_next" />
+                android:src="@drawable/icon_apply" />
 
         </LinearLayout>
 

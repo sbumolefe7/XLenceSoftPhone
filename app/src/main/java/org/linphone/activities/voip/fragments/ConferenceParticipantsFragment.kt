@@ -24,6 +24,7 @@ import android.view.View
 import androidx.navigation.navGraphViewModels
 import org.linphone.R
 import org.linphone.activities.GenericFragment
+import org.linphone.activities.navigateToAddParticipants
 import org.linphone.activities.voip.viewmodels.CallsViewModel
 import org.linphone.activities.voip.viewmodels.ConferenceViewModel
 import org.linphone.core.tools.Log
@@ -44,10 +45,6 @@ class ConferenceParticipantsFragment : GenericFragment<VoipConferenceParticipant
 
         binding.conferenceViewModel = conferenceViewModel
 
-        binding.setCancelClickListener {
-            goBack()
-        }
-
         conferenceViewModel.conferenceExists.observe(
             viewLifecycleOwner,
             { exists ->
@@ -57,5 +54,13 @@ class ConferenceParticipantsFragment : GenericFragment<VoipConferenceParticipant
                 }
             }
         )
+
+        binding.setCancelClickListener {
+            goBack()
+        }
+
+        binding.setEditClickListener {
+            navigateToAddParticipants()
+        }
     }
 }

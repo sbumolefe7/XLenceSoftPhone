@@ -49,6 +49,7 @@ import org.linphone.activities.main.settings.fragments.*
 import org.linphone.activities.main.sidemenu.fragments.SideMenuFragment
 import org.linphone.activities.voip.CallActivity
 import org.linphone.activities.voip.fragments.ActiveCallOrConferenceFragment
+import org.linphone.activities.voip.fragments.ConferenceParticipantsFragment
 import org.linphone.activities.voip.fragments.IncomingCallFragment
 import org.linphone.activities.voip.fragments.OutgoingCallFragment
 import org.linphone.contact.NativeContact
@@ -929,6 +930,16 @@ internal fun ActiveCallOrConferenceFragment.navigateToConferenceLayout() {
             R.id.action_activeCallOrConferenceFragment_to_conferenceLayoutFragment,
             null,
             popupTo()
+        )
+    }
+}
+
+internal fun ConferenceParticipantsFragment.navigateToAddParticipants() {
+    if (findNavController().currentDestination?.id == R.id.conferenceParticipantsFragment) {
+        findNavController().navigate(
+            R.id.action_conferenceParticipantsFragment_to_conferenceAddParticipantsFragment,
+            null,
+            popupTo(R.id.conferenceAddParticipantsFragment, true)
         )
     }
 }
