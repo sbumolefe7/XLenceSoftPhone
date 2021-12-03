@@ -13,6 +13,9 @@
         <variable
             name="callsViewModel"
             type="org.linphone.activities.voip.viewmodels.CallsViewModel" />
+        <variable
+            name="conferenceViewModel"
+            type="org.linphone.activities.voip.viewmodels.ConferenceViewModel" />
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -84,7 +87,7 @@
 
             <ImageView
                 android:onClick="@{() -> callsViewModel.mergeCallsIntoLocalConference()}"
-                android:enabled="@{callsViewModel.callsData.size() >= 2}"
+                android:enabled="@{callsViewModel.callsData.size() >= 2 &amp;&amp; !conferenceViewModel.isInConference}"
                 android:layout_width="@dimen/voip_floating_button_size"
                 android:layout_height="@dimen/voip_floating_button_size"
                 android:layout_margin="10dp"

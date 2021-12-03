@@ -207,7 +207,15 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
 
     private fun isCallRemotelyPaused(): Boolean {
         return when (call.state) {
-            Call.State.PausedByRemote -> true
+            Call.State.PausedByRemote -> {
+                val conference = call.conference
+                if (conference != null && conference.me.isFocus) {
+                    Log.w("[Call] State is paused by remote but we are the focus of the conference, so considering call as active")
+                    false
+                } else {
+                    true
+                }
+            }
             else -> false
         }
     }

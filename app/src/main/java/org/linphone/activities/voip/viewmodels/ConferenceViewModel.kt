@@ -63,12 +63,7 @@ class ConferenceViewModel : ViewModel() {
 
     private val conferenceListener = object : ConferenceListenerStub() {
         override fun onParticipantAdded(conference: Conference, participant: Participant) {
-            if (conference.isMe(participant.address)) {
-                Log.i("[Conference] Entered conference")
-                isConferencePaused.value = false
-            } else {
-                Log.i("[Conference] Participant added: ${participant.address.asStringUriOnly()}")
-            }
+            Log.i("[Conference] Participant added: ${participant.address.asStringUriOnly()}")
             updateParticipantsList(conference)
             updateParticipantsDevicesList(conference)
 
@@ -81,12 +76,7 @@ class ConferenceViewModel : ViewModel() {
         }
 
         override fun onParticipantRemoved(conference: Conference, participant: Participant) {
-            if (conference.isMe(participant.address)) {
-                Log.i("[Conference] Left conference")
-                isConferencePaused.value = true
-            } else {
-                Log.i("[Conference] Participant removed: ${participant.address.asStringUriOnly()}")
-            }
+            Log.i("[Conference] Participant removed: ${participant.address.asStringUriOnly()}")
             updateParticipantsList(conference)
             updateParticipantsDevicesList(conference)
         }
@@ -119,6 +109,20 @@ class ConferenceViewModel : ViewModel() {
         override fun onSubjectChanged(conference: Conference, subject: String) {
             Log.i("[Conference] Subject changed: $subject")
             this@ConferenceViewModel.subject.value = subject
+        }
+
+        override fun onParticipantDeviceJoined(conference: Conference, device: ParticipantDevice) {
+            if (conference.isMe(device.address)) {
+                Log.i("[Conference] Entered conference")
+                isConferencePaused.value = false
+            }
+        }
+
+        override fun onParticipantDeviceLeft(conference: Conference, device: ParticipantDevice) {
+            if (conference.isMe(device.address)) {
+                Log.i("[Conference] Left conference")
+                isConferencePaused.value = true
+            }
         }
     }
 

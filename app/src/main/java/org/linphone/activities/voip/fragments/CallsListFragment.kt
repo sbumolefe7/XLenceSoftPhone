@@ -32,12 +32,14 @@ import org.linphone.activities.GenericFragment
 import org.linphone.activities.main.MainActivity
 import org.linphone.activities.voip.data.CallData
 import org.linphone.activities.voip.viewmodels.CallsViewModel
+import org.linphone.activities.voip.viewmodels.ConferenceViewModel
 import org.linphone.databinding.VoipCallContextMenuBindingImpl
 import org.linphone.databinding.VoipCallsListFragmentBinding
 import org.linphone.utils.AppUtils
 
 class CallsListFragment : GenericFragment<VoipCallsListFragmentBinding>() {
     private val callsViewModel: CallsViewModel by navGraphViewModels(R.id.call_nav_graph)
+    private val conferenceViewModel: ConferenceViewModel by navGraphViewModels(R.id.call_nav_graph)
 
     override fun getLayoutId(): Int = R.layout.voip_calls_list_fragment
 
@@ -53,6 +55,7 @@ class CallsListFragment : GenericFragment<VoipCallsListFragmentBinding>() {
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.callsViewModel = callsViewModel
+        binding.conferenceViewModel = conferenceViewModel
 
         binding.setCancelClickListener {
             goBack()
