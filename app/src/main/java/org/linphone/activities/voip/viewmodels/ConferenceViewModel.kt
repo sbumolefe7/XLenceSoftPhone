@@ -60,9 +60,8 @@ class ConferenceViewModel : ViewModel() {
         override fun onParticipantAdded(conference: Conference, participant: Participant) {
             Log.i("[Conference] Participant added: ${participant.address.asStringUriOnly()}")
             updateParticipantsList(conference)
-            updateParticipantsDevicesList(conference)
 
-            val count = conferenceParticipantDevices.value.orEmpty().size
+            val count = conferenceParticipants.value.orEmpty().size
             if (count > maxParticipantsForMosaicLayout) {
                 Log.w("[Conference] More than $maxParticipantsForMosaicLayout participants ($count), forcing active speaker layout")
                 conferenceMosaicDisplayMode.value = false
@@ -73,7 +72,6 @@ class ConferenceViewModel : ViewModel() {
         override fun onParticipantRemoved(conference: Conference, participant: Participant) {
             Log.i("[Conference] Participant removed: ${participant.address.asStringUriOnly()}")
             updateParticipantsList(conference)
-            updateParticipantsDevicesList(conference)
         }
 
         override fun onParticipantDeviceAdded(
