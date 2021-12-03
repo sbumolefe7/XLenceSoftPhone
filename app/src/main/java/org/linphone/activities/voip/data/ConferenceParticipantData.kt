@@ -26,7 +26,7 @@ import org.linphone.core.tools.Log
 import org.linphone.utils.LinphoneUtils
 
 class ConferenceParticipantData(
-    conference: Conference,
+    val conference: Conference,
     val participant: Participant
 ) :
     GenericContactData(participant.address) {
@@ -39,5 +39,14 @@ class ConferenceParticipantData(
         isAdmin.value = participant.isAdmin
         isMeAdmin.value = conference.me.isAdmin
         Log.i("[Conference Participant] Participant ${participant.address.asStringUriOnly()} is ${if (participant.isAdmin) "admin" else "not admin"}")
+    }
+
+    fun removeParticipantFromConference() {
+        if (conference.me.isAdmin) {
+            Log.i("[Conference Participant] Removing participant ${participant.address.asStringUriOnly()} from conference")
+            conference.removeParticipant(participant)
+        } else {
+            Log.e("[Conference Participant] Can't remove participant ${participant.address.asStringUriOnly()} from conference, you aren't admin")
+        }
     }
 }

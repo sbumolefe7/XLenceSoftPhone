@@ -27,6 +27,7 @@
 
         <ImageView
             android:id="@+id/delete"
+            android:onClick="@{() -> data.removeParticipantFromConference()}"
             android:visibility="@{data.isMeAdmin ? View.VISIBLE : View.INVISIBLE}"
             android:layout_width="40dp"
             android:layout_height="40dp"
@@ -42,14 +43,15 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toStartOf="@id/delete">
+            android:layout_toStartOf="@id/delete"
+            android:layout_marginStart="5dp">
 
             <LinearLayout
                 android:id="@+id/isAdminLayout"
-                android:visibility="@{data.isAdmin ? View.VISIBLE : View.GONE}"
+                android:visibility="@{data.isAdmin ? View.VISIBLE : View.GONE, default=gone}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp">
+                android:layout_marginEnd="10dp">
 
                 <ImageView
                     android:layout_width="20dp"
@@ -76,7 +78,7 @@
                 android:visibility="@{(data.isAdmin || !data.isMeAdmin) ? View.GONE : View.VISIBLE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="20dp">
+                android:layout_marginEnd="10dp">
 
                 <ImageView
                     android:layout_width="20dp"

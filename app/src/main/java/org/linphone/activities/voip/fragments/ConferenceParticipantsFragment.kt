@@ -26,6 +26,7 @@ import org.linphone.R
 import org.linphone.activities.GenericFragment
 import org.linphone.activities.voip.viewmodels.CallsViewModel
 import org.linphone.activities.voip.viewmodels.ConferenceViewModel
+import org.linphone.core.tools.Log
 import org.linphone.databinding.VoipConferenceParticipantsFragmentBinding
 
 class ConferenceParticipantsFragment : GenericFragment<VoipConferenceParticipantsFragmentBinding>() {
@@ -46,5 +47,15 @@ class ConferenceParticipantsFragment : GenericFragment<VoipConferenceParticipant
         binding.setCancelClickListener {
             goBack()
         }
+
+        conferenceViewModel.conferenceExists.observe(
+            viewLifecycleOwner,
+            { exists ->
+                if (!exists) {
+                    Log.w("[Conference Participants] Conference no longer exists, going back")
+                    goBack()
+                }
+            }
+        )
     }
 }

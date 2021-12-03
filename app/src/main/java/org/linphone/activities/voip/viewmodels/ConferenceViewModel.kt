@@ -152,7 +152,7 @@ class ConferenceViewModel : ViewModel() {
                 } else {
                     conference.subject
                 }
-            } else if (state == Conference.State.Terminated || state == Conference.State.TerminationFailed) {
+            } else if (state == Conference.State.TerminationPending) {
                 conferenceExists.value = false
                 isVideoConference.value = false
 
