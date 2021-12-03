@@ -87,7 +87,7 @@
 
             <ImageView
                 android:onClick="@{() -> callsViewModel.mergeCallsIntoLocalConference()}"
-                android:enabled="@{callsViewModel.callsData.size() >= 2 &amp;&amp; !conferenceViewModel.isInConference}"
+                android:enabled="@{callsViewModel.callsData.size() >= 2 &amp;&amp; !conferenceViewModel.conferenceExists}"
                 android:layout_width="@dimen/voip_floating_button_size"
                 android:layout_height="@dimen/voip_floating_button_size"
                 android:layout_margin="10dp"

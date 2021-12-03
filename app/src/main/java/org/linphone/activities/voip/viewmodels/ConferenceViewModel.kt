@@ -33,12 +33,15 @@ import org.linphone.utils.AppUtils
 import org.linphone.utils.LinphoneUtils
 
 class ConferenceViewModel : ViewModel() {
-    val isConferencePaused = MutableLiveData<Boolean>()
+    val conferenceExists = MutableLiveData<Boolean>()
+    val subject = MutableLiveData<String>()
+    val isConferenceLocallyPaused = MutableLiveData<Boolean>()
     val canResumeConference = MutableLiveData<Boolean>()
-
+    val isVideoConference = MutableLiveData<Boolean>()
     val isMeConferenceFocus = MutableLiveData<Boolean>()
     val isMeAdmin = MutableLiveData<Boolean>()
 
+    val conference = MutableLiveData<Conference>()
     val conferenceAddress = MutableLiveData<Address>()
 
     val conferenceParticipants = MutableLiveData<List<ConferenceParticipantData>>()
@@ -48,16 +51,8 @@ class ConferenceViewModel : ViewModel() {
 
     val flexboxLayoutDirection = MutableLiveData<Int>()
 
-    val isInConference = MutableLiveData<Boolean>()
-
-    val isVideoConference = MutableLiveData<Boolean>()
-
     val isRecording = MutableLiveData<Boolean>()
     val isRemotelyRecorded = MutableLiveData<Boolean>()
-
-    val subject = MutableLiveData<String>()
-
-    val conference = MutableLiveData<Conference>()
 
     val maxParticipantsForMosaicLayout = corePreferences.maxConferenceParticipantsForMosaicLayout
 
@@ -114,14 +109,14 @@ class ConferenceViewModel : ViewModel() {
         override fun onParticipantDeviceJoined(conference: Conference, device: ParticipantDevice) {
             if (conference.isMe(device.address)) {
                 Log.i("[Conference] Entered conference")
-                isConferencePaused.value = false
+                isConferenceLocallyPaused.value = false
             }
         }
 
         override fun onParticipantDeviceLeft(conference: Conference, device: ParticipantDevice) {
             if (conference.isMe(device.address)) {
                 Log.i("[Conference] Left conference")
-                isConferencePaused.value = true
+                isConferenceLocallyPaused.value = true
             }
         }
     }
@@ -133,12 +128,12 @@ class ConferenceViewModel : ViewModel() {
             state: Conference.State
         ) {
             Log.i("[Conference] Conference state changed: $state")
-            isConferencePaused.value = !conference.isIn
+            isConferenceLocallyPaused.value = !conference.isIn
             canResumeConference.value = true // TODO: Can this value be false?
             isVideoConference.value = conference.currentParams.isVideoEnabled
 
             if (state == Conference.State.Instantiated) {
-                isInConference.value = true
+                conferenceExists.value = true
                 this@ConferenceViewModel.conference.value = conference
                 conference.addListener(conferenceListener)
             } else if (state == Conference.State.Created) {
@@ -158,7 +153,7 @@ class ConferenceViewModel : ViewModel() {
                     conference.subject
                 }
             } else if (state == Conference.State.Terminated || state == Conference.State.TerminationFailed) {
-                isInConference.value = false
+                conferenceExists.value = false
                 isVideoConference.value = false
 
                 conference.removeListener(conferenceListener)
@@ -194,8 +189,8 @@ class ConferenceViewModel : ViewModel() {
             this@ConferenceViewModel.conference.value = conference
             conference.addListener(conferenceListener)
 
-            isInConference.value = true
-            isConferencePaused.value = !conference.isIn
+            conferenceExists.value = true
+            isConferenceLocallyPaused.value = !conference.isIn
             isMeConferenceFocus.value = conference.me.isFocus
             isMeAdmin.value = conference.me.isAdmin
             isVideoConference.value = conference.currentParams.isVideoEnabled

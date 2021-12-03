@@ -94,7 +94,7 @@
 
             <TextView
                 android:onClick="@{() -> controlsViewModel.goToDialerForCallTransfer()}"
-                android:visibility="@{conferenceViewModel.isInConference ? View.GONE : View.VISIBLE}"
+                android:visibility="@{conferenceViewModel.conferenceExists ? View.GONE : View.VISIBLE}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -106,7 +106,7 @@
 
             <TextView
                 android:onClick="@{() -> controlsViewModel.goToConferenceParticipantsList()}"
-                android:visibility="@{conferenceViewModel.isInConference ? View.VISIBLE : View.GONE, default=gone}"
+                android:visibility="@{conferenceViewModel.conferenceExists ? View.VISIBLE : View.GONE, default=gone}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -118,7 +118,7 @@
 
             <TextView
                 android:onClick="@{() -> controlsViewModel.goToDialerForNewCall()}"
-                android:visibility="@{conferenceViewModel.isInConference ? View.GONE : View.VISIBLE}"
+                android:visibility="@{conferenceViewModel.conferenceExists ? View.GONE : View.VISIBLE}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
@@ -130,7 +130,7 @@
 
             <TextView
                 android:onClick="@{() -> controlsViewModel.goToConferenceLayout()}"
-                android:visibility="@{conferenceViewModel.isInConference ? View.VISIBLE : View.GONE, default=gone}"
+                android:visibility="@{conferenceViewModel.conferenceExists ? View.VISIBLE : View.GONE, default=gone}"
                 android:enabled="@{conferenceViewModel.isVideoConference}"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

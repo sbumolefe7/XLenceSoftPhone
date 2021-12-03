@@ -99,7 +99,7 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
                 if (it) {
                     startTimer(R.id.active_speaker_conference_timer)
 
-                    if (conferenceViewModel.isInConference.value == true) {
+                    if (conferenceViewModel.conferenceExists.value == true) {
                         Log.i("[Call] Local participant is in conference and current layout is active speaker, updating Core's native window id")
                         val layout = binding.root.findViewById<RelativeLayout>(R.id.conference_active_speaker_layout)
                         val window = layout.findViewById<RoundCornersTextureView>(R.id.conference_active_speaker_remote_video)

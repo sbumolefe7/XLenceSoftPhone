@@ -254,7 +254,7 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
 
     private fun updateConferenceInfo() {
         val conference = call.conference
-        isInRemoteConference.value = conference != null
+        isInRemoteConference.value = conference != null && !conference.me.isFocus
         if (conference != null) {
             remoteConferenceSubject.value = if (conference.subject.isNullOrEmpty()) {
                 if (conference.me.isFocus) {
