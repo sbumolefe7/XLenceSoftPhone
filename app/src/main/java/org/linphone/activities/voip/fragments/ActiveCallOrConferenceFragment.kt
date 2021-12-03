@@ -47,10 +47,7 @@ import org.linphone.activities.voip.viewmodels.ConferenceViewModel
 import org.linphone.activities.voip.viewmodels.ControlsViewModel
 import org.linphone.activities.voip.viewmodels.StatisticsListViewModel
 import org.linphone.activities.voip.views.RoundCornersTextureView
-import org.linphone.core.Address
-import org.linphone.core.Call
-import org.linphone.core.ChatRoomBackend
-import org.linphone.core.Factory
+import org.linphone.core.*
 import org.linphone.core.tools.Log
 import org.linphone.databinding.VoipActiveCallOrConferenceFragmentBindingImpl
 import org.linphone.mediastream.video.capture.CaptureTextureView
@@ -290,64 +287,26 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
     }
 
     private fun goToChat() {
-        val localSipUri = coreContext.core.defaultAccount?.params?.identityAddress?.asStringUriOnly()
-        val remoteSipUri = if (conferenceViewModel.isInConference.value == true) {
-            conferenceViewModel.conferenceAddress.value?.asStringUriOnly()
-        } else {
-            coreContext.core.currentCall?.remoteAddress?.asStringUriOnly()
-        }
-
-        if (localSipUri != null && remoteSipUri != null) {
-            val localAddress = Factory.instance().createAddress(localSipUri)
-            val remoteSipAddress = Factory.instance().createAddress(remoteSipUri)
-            var chatRoom = coreContext.core.searchChatRoom(null, localAddress, remoteSipAddress, arrayOfNulls(0))
-            if (chatRoom == null) chatRoom = coreContext.core.searchChatRoom(null, localAddress, null, arrayOf(remoteSipAddress))
-            if (chatRoom == null) {
-                Log.w("[Call] Failed to find existing chat room for local address [$localSipUri] and remote address [$remoteSipUri]")
-                val chatRoomParams = coreContext.core.createDefaultChatRoomParams()
-
-                if (conferenceViewModel.isInConference.value == true) {
-                    chatRoomParams.backend = ChatRoomBackend.FlexisipChat
-                    chatRoomParams.enableGroup(true)
-                    chatRoomParams.subject = conferenceViewModel.subject.value
-
-                    val participants = arrayOfNulls<Address>(conferenceViewModel.conferenceParticipants.value.orEmpty().size)
-                    val addresses = arrayListOf<Address>()
-                    for (participant in conferenceViewModel.conferenceParticipants.value.orEmpty()) {
-                        addresses.add(participant.participant.address)
-                    }
-                    addresses.toArray(participants)
-
-                    Log.i("[Call] Creating chat room with same subject [${chatRoomParams.subject}] & participants as for conference")
-                    chatRoom = coreContext.core.createChatRoom(chatRoomParams, localAddress, participants)
-                } else {
-                    // TODO: configure chat room params
-                    chatRoom = coreContext.core.createChatRoom(chatRoomParams, localAddress, arrayOf(remoteSipAddress))
-                }
+        val chatRoom = callsViewModel.currentCallData.value?.chatRoom
+        if (chatRoom != null) {
+            // Create the view model now so it won't be done in the ChatFragment's onCreate()
+            val chatViewModel = requireActivity().run {
+                ViewModelProvider(
+                    this,
+                    ChatRoomViewModelFactory(chatRoom)
+                )[ChatRoomViewModel::class.java]
             }
 
-            if (chatRoom != null) {
-                // Create the view model now so it won't be done in the ChatFragment's onCreate()
-                val chatViewModel = requireActivity().run {
-                    ViewModelProvider(
-                        this,
-                        ChatRoomViewModelFactory(chatRoom)
-                    )[ChatRoomViewModel::class.java]
-                }
+            val bundle = Bundle()
+            // Use chat room peer address to simply search process in ChatFragment
+            bundle.putString("RemoteSipUri", chatRoom.peerAddress.asStringUriOnly())
 
-                val bundle = Bundle()
-                // Use chat room peer address to simply search process in ChatFragment
-                bundle.putString("RemoteSipUri", chatRoom.peerAddress.asStringUriOnly())
-                bundle.putString("LocalSipUri", localSipUri)
+            val localSipUri = coreContext.core.defaultAccount?.params?.identityAddress?.asStringUriOnly()
+            bundle.putString("LocalSipUri", localSipUri)
 
-                navigateToChat(bundle)
-            } else {
-                Log.e("[Call] Failed to create a chat room for local address [$localSipUri] and remote address [$remoteSipUri]!")
-                controlsViewModel.chatRoomCreationInProgress.value = false
-                showSnackBar(R.string.chat_room_failed_to_create)
-            }
+            navigateToChat(bundle)
         } else {
-            Log.e("[Call] Failed to get either local [$localSipUri] or remote [$remoteSipUri] SIP address!")
+            Log.e("[Call] Failed to get a valid chat room from current CallData object!")
             controlsViewModel.chatRoomCreationInProgress.value = false
             showSnackBar(R.string.chat_room_failed_to_create)
         }

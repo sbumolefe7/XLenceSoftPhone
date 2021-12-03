@@ -136,19 +136,58 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
     }
 
     private fun initChatRoom() {
-        val localSipUri = coreContext.core.defaultAccount?.params?.identityAddress?.asStringUriOnly()
+        val core = coreContext.core
+        val localSipUri = core.defaultAccount?.params?.identityAddress?.asStringUriOnly()
         val remoteSipUri = call.remoteAddress.asStringUriOnly()
+        val conference = call.conference
 
         if (localSipUri != null) {
             val localAddress = Factory.instance().createAddress(localSipUri)
             val remoteSipAddress = Factory.instance().createAddress(remoteSipUri)
-            chatRoom = coreContext.core.searchChatRoom(null, localAddress, remoteSipAddress, arrayOfNulls(0))
-            if (chatRoom == null) chatRoom = coreContext.core.searchChatRoom(null, localAddress, null, arrayOf(remoteSipAddress))
+            chatRoom = core.searchChatRoom(null, localAddress, remoteSipAddress, arrayOfNulls(0))
+
             if (chatRoom == null) {
                 Log.w("[Call] Failed to find existing chat room for local address [$localSipUri] and remote address [$remoteSipUri]")
-                val chatRoomParams = coreContext.core.createDefaultChatRoomParams()
-                // TODO: configure chat room params
-                chatRoom = coreContext.core.createChatRoom(chatRoomParams, localAddress, arrayOf(remoteSipAddress))
+                var chatRoomParams: ChatRoomParams? = null
+                if (conference != null) {
+                    val params = core.createDefaultChatRoomParams()
+                    params.subject = conference.subject
+                    params.backend = ChatRoomBackend.FlexisipChat
+                    params.enableGroup(true)
+                    chatRoomParams = params
+                }
+
+                chatRoom = core.searchChatRoom(
+                    chatRoomParams,
+                    localAddress,
+                    null,
+                    arrayOf(remoteSipAddress)
+                )
+            }
+
+            if (chatRoom == null) {
+                val chatRoomParams = core.createDefaultChatRoomParams()
+
+                if (conference != null) {
+                    Log.w("[Call] Failed to find existing chat room with same subject & participants, creating it")
+                    chatRoomParams.backend = ChatRoomBackend.FlexisipChat
+                    chatRoomParams.enableGroup(true)
+                    chatRoomParams.subject = conference.subject
+
+                    val participants = arrayOfNulls<Address>(conference.participantCount)
+                    val addresses = arrayListOf<Address>()
+                    for (participant in conference.participantList) {
+                        addresses.add(participant.address)
+                    }
+                    addresses.toArray(participants)
+
+                    Log.i("[Call] Creating chat room with same subject [${chatRoomParams.subject}] & participants as for conference")
+                    chatRoom = core.createChatRoom(chatRoomParams, localAddress, participants)
+                } else {
+                    Log.w("[Call] Failed to find existing chat room with same participants, creating it")
+                    // TODO: configure chat room params
+                    chatRoom = core.createChatRoom(chatRoomParams, localAddress, arrayOf(remoteSipAddress))
+                }
             }
 
             if (chatRoom == null) {
