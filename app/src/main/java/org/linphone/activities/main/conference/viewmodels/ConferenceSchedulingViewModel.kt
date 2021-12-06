@@ -65,9 +65,9 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     var duration = MutableLiveData<Duration>()
     val durationList: List<Duration> = computeDurationList()
 
-    private var date: Long = 0
-    private var hour: Int = 0
-    private var minutes: Int = 0
+    var dateTimestamp: Long = System.currentTimeMillis()
+    var hour: Int = 0
+    var minutes: Int = 0
 
     private val chatRoomListener = object : ChatRoomListenerStub() {
         override fun onStateChanged(room: ChatRoom, state: ChatRoom.State) {
@@ -168,8 +168,8 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     }
 
     fun setDate(d: Long) {
-        date = d
-        formattedDate.value = TimestampUtils.dateToString(date, false)
+        dateTimestamp = d
+        formattedDate.value = TimestampUtils.dateToString(dateTimestamp, false)
     }
 
     fun setTime(h: Int, m: Int) {
@@ -272,7 +272,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
     private fun getConferenceStartTimestamp(): Long {
         val calendar = Calendar.getInstance(TimeZone.getTimeZone(timeZone.value?.id ?: TimeZone.getDefault().id))
-        calendar.timeInMillis = date
+        calendar.timeInMillis = dateTimestamp
         calendar.set(Calendar.HOUR_OF_DAY, hour)
         calendar.set(Calendar.MINUTE, minutes)
         return calendar.timeInMillis / 1000 // Linphone expects a time_t (so in seconds)

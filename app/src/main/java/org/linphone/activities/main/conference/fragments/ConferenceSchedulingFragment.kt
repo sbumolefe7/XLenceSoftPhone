@@ -62,6 +62,7 @@ class ConferenceSchedulingFragment : GenericFragment<ConferenceSchedulingFragmen
                 MaterialDatePicker.Builder.datePicker()
                     .setCalendarConstraints(constraintsBuilder.build())
                     .setTitleText(R.string.conference_schedule_date)
+                    .setSelection(viewModel.dateTimestamp)
                     .build()
             picker.addOnPositiveButtonClickListener {
                 val selection = picker.selection
@@ -79,6 +80,8 @@ class ConferenceSchedulingFragment : GenericFragment<ConferenceSchedulingFragmen
                 MaterialTimePicker.Builder()
                     .setTimeFormat(clockFormat)
                     .setTitleText(R.string.conference_schedule_time)
+                    .setHour(viewModel.hour)
+                    .setMinute(viewModel.minutes)
                     .build()
             picker.addOnPositiveButtonClickListener {
                 viewModel.setTime(picker.hour, picker.minute)
