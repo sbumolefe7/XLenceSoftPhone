@@ -109,12 +109,9 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
                 Log.i("[Conference Creation] Conference address will be ${conference.conferenceAddress.asStringUriOnly()}")
                 address.value = conference.conferenceAddress
 
-                if (scheduleForLater.value == true) {
-                    sendConferenceInfo()
-                } else {
-                    conferenceCreationInProgress.value = false
-                    conferenceCreationCompletedEvent.value = Event(true)
-                }
+                // Send conference info even when conf is not scheduled for later
+                // as the conference server doesn't invite participants automatically
+                sendConferenceInfo()
             } else if (state == Conference.State.TerminationPending) {
                 Log.e("[Conference Creation] Creation of conference failed!")
                 conferenceCreationInProgress.value = false
@@ -258,12 +255,15 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         conferenceInfo.setParticipants(participants)
         conferenceInfo.organizer = coreContext.core.defaultAccount?.params?.identityAddress
         conferenceInfo.subject = subject.value
-        conferenceInfo.description = description.value
-        conferenceInfo.duration = duration.value?.value ?: 0
-        val timestamp = getConferenceStartTimestamp()
-        conferenceInfo.dateTime = timestamp
 
-        Log.i("[Conference Creation] Conference date & time set to ${TimestampUtils.dateToString(timestamp)} ${TimestampUtils.timeToString(timestamp)}, duration = ${conferenceInfo.duration}")
+        if (scheduleForLater.value == true) {
+            conferenceInfo.description = description.value
+            conferenceInfo.duration = duration.value?.value ?: 0
+            val timestamp = getConferenceStartTimestamp()
+            conferenceInfo.dateTime = timestamp
+            Log.i("[Conference Creation] Conference date & time set to ${TimestampUtils.dateToString(timestamp)} ${TimestampUtils.timeToString(timestamp)}, duration = ${conferenceInfo.duration}")
+        }
+
         coreContext.core.sendConferenceInformation(conferenceInfo, "")
 
         conferenceCreationInProgress.value = false
