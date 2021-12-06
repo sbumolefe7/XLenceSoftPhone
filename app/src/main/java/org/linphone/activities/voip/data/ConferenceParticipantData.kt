@@ -41,6 +41,24 @@ class ConferenceParticipantData(
         Log.i("[Conference Participant] Participant ${participant.address.asStringUriOnly()} is ${if (participant.isAdmin) "admin" else "not admin"}")
     }
 
+    fun setAdmin() {
+        if (conference.me.isAdmin) {
+            Log.i("[Conference Participant] Participant ${participant.address.asStringUriOnly()} will be set as admin")
+            conference.setParticipantAdminStatus(participant, true)
+        } else {
+            Log.e("[Conference Participant] You aren't admin, you can't change participants admin rights")
+        }
+    }
+
+    fun unsetAdmin() {
+        if (conference.me.isAdmin) {
+            Log.i("[Conference Participant] Participant ${participant.address.asStringUriOnly()} will be unset as admin")
+            conference.setParticipantAdminStatus(participant, false)
+        } else {
+            Log.e("[Conference Participant] You aren't admin, you can't change participants admin rights")
+        }
+    }
+
     fun removeParticipantFromConference() {
         if (conference.me.isAdmin) {
             Log.i("[Conference Participant] Removing participant ${participant.address.asStringUriOnly()} from conference")

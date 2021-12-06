@@ -30,6 +30,7 @@ import org.linphone.activities.voip.data.ConferenceParticipantDeviceData
 import org.linphone.core.*
 import org.linphone.core.tools.Log
 import org.linphone.utils.AppUtils
+import org.linphone.utils.Event
 import org.linphone.utils.LinphoneUtils
 
 class ConferenceViewModel : ViewModel() {
@@ -53,6 +54,10 @@ class ConferenceViewModel : ViewModel() {
 
     val isRecording = MutableLiveData<Boolean>()
     val isRemotelyRecorded = MutableLiveData<Boolean>()
+
+    val participantAdminStatusChangedEvent: MutableLiveData<Event<ConferenceParticipantData>> by lazy {
+        MutableLiveData<Event<ConferenceParticipantData>>()
+    }
 
     val maxParticipantsForMosaicLayout = corePreferences.maxConferenceParticipantsForMosaicLayout
 
@@ -97,6 +102,12 @@ class ConferenceViewModel : ViewModel() {
             Log.i("[Conference] Participant admin status changed")
             isMeAdmin.value = conference.me.isAdmin
             updateParticipantsList(conference)
+            val participantData = conferenceParticipants.value.orEmpty().find { data -> data.participant.address.weakEqual(participant.address) }
+            if (participantData != null) {
+                participantAdminStatusChangedEvent.value = Event(participantData)
+            } else {
+                Log.w("[Conference] Failed to find participant [${participant.address.asStringUriOnly()}] in conferenceParticipants list")
+            }
         }
 
         override fun onSubjectChanged(conference: Conference, subject: String) {

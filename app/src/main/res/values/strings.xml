@@ -272,6 +272,8 @@
     <string name="conference_schedule_organizer">Organizer:</string>
     <string name="conference_go_to_chat">Conference\'s chat room</string>
     <string name="conference_creation_failed">Failed to create conference</string>
+    <string name="conference_admin_set">%s is now admin</string>
+    <string name="conference_admin_unset">%s is no longer admin</string>
 
     <!-- Call -->
     <string name="call_incoming_title">Incoming Call</string>

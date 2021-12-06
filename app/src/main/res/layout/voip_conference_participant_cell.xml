@@ -48,6 +48,7 @@
 
             <LinearLayout
                 android:id="@+id/isAdminLayout"
+                android:onClick="@{() -> data.unsetAdmin()}"
                 android:visibility="@{data.isAdmin ? View.VISIBLE : View.GONE, default=gone}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -75,6 +76,7 @@
 
             <LinearLayout
                 android:id="@+id/isNotAdminLayout"
+                android:onClick="@{() -> data.setAdmin()}"
                 android:visibility="@{(data.isAdmin || !data.isMeAdmin) ? View.GONE : View.VISIBLE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
