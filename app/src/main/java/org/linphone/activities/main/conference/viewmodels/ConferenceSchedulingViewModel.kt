@@ -254,7 +254,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         selectedAddresses.value?.toArray(participants)
 
         val conferenceInfo = Factory.instance().createConferenceInfo()
-        conferenceInfo.uri = Factory.instance().createAddress("sip:video-conference-0@sip.linphone.org") // TODO: use address.value
+        conferenceInfo.uri = address.value
         conferenceInfo.setParticipants(participants)
         conferenceInfo.organizer = coreContext.core.defaultAccount?.params?.identityAddress
         conferenceInfo.subject = subject.value
