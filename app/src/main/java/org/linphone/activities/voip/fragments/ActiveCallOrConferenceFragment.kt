@@ -244,6 +244,11 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
             binding?.lifecycleOwner = viewLifecycleOwner
         }
 
+        binding.stubbedRemotelyPausedCall.setOnInflateListener { _, inflated ->
+            val binding = DataBindingUtil.bind<ViewDataBinding>(inflated)
+            binding?.lifecycleOwner = viewLifecycleOwner
+        }
+
         binding.stubbedPausedConference.setOnInflateListener { _, inflated ->
             val binding = DataBindingUtil.bind<ViewDataBinding>(inflated)
             binding?.lifecycleOwner = viewLifecycleOwner

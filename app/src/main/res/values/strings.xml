@@ -304,6 +304,8 @@
     <string name="call_context_action_hangup">Terminate call</string>
     <string name="call_remote_recording">This call is being recorded.</string>
     <string name="call_remotely_paused_title">Call has been paused by remote.</string>
+    <string name="call_locally_paused_title">You have paused the call.</string>
+    <string name="call_locally_paused_subtitle">Click on play button to resume it.</string>
 
     <!-- Call stats -->
     <string name="call_stats_audio">Audio</string>
