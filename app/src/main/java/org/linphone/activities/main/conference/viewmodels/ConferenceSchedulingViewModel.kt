@@ -169,7 +169,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
     fun setDate(d: Long) {
         date = d
-        formattedDate.value = TimestampUtils.dateToString(date)
+        formattedDate.value = TimestampUtils.dateToString(date, false)
     }
 
     fun setTime(h: Int, m: Int) {
