@@ -186,6 +186,13 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
                             Log.w("[Call] Video display & capture are disabled, don't show video dialog")
                         }
                     }
+
+                    val conference = call.conference
+                    if (conference != null && conferenceViewModel.conference.value == null) {
+                        Log.i("[Call] Found conference attached to call and no conference in dedicated view model, init & configure it")
+                        conferenceViewModel.initConference(conference)
+                        conferenceViewModel.configureConference(conference)
+                    }
                 }
             }
         )

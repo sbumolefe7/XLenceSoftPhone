@@ -206,13 +206,13 @@ class ConferenceViewModel : ViewModel() {
         isRecording.value = conference.value?.isRecording
     }
 
-    private fun initConference(conference: Conference) {
+    fun initConference(conference: Conference) {
         conferenceExists.value = true
         this@ConferenceViewModel.conference.value = conference
         conference.addListener(conferenceListener)
     }
 
-    private fun configureConference(conference: Conference) {
+    fun configureConference(conference: Conference) {
         updateParticipantsList(conference)
         updateParticipantsDevicesList(conference)
 
