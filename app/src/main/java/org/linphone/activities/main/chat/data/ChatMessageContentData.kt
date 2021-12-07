@@ -27,6 +27,9 @@ import android.text.style.UnderlineSpan
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.media.AudioFocusRequestCompat
+import java.io.BufferedReader
+import java.io.FileReader
+import java.lang.StringBuilder
 import java.text.SimpleDateFormat
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -285,7 +288,23 @@ class ChatMessageContentData(
 
             conferenceParticipantCount.value = String.format(AppUtils.getString(R.string.conference_invite_participants_count), conferenceInfo.participants.size + 1) // +1 for organizer
         } else {
-            Log.e("[Content] Failed to create conference info from ICS: ${content.utf8Text}")
+            if (content.filePath != null) {
+                try {
+                    val br = BufferedReader(FileReader(content.filePath))
+                    var line: String?
+                    val textBuilder = StringBuilder()
+                    while (br.readLine().also { line = it } != null) {
+                        textBuilder.append(line)
+                        textBuilder.append('\n')
+                    }
+                    br.close()
+                    Log.e("[Content] Failed to create conference info from ICS file [${content.filePath}]: $textBuilder")
+                } catch (e: Exception) {
+                    Log.e("[Content] Failed to read content of ICS file [${content.filePath}]: $e")
+                }
+            } else {
+                Log.e("[Content] Failed to create conference info from ICS: ${content.utf8Text}")
+            }
         }
     }
 
