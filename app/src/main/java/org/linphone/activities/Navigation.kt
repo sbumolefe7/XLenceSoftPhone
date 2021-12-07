@@ -182,14 +182,24 @@ internal fun ConferenceSchedulingParticipantsListFragment.navigateToSummary() {
     }
 }
 
-internal fun ConferenceSchedulingSummaryFragment.goBackToDialer() {
+internal fun ConferenceSchedulingSummaryFragment.goToScheduledConferences() {
     if (findNavController().currentDestination?.id == R.id.conferenceSchedulingSummaryFragment) {
         findNavController().navigate(
-            R.id.action_global_dialerFragment,
+            R.id.action_global_scheduledConferencesFragment,
             null,
-            popupTo(R.id.dialerFragment, true)
+            popupTo(R.id.dialerFragment, false)
         )
     }
+}
+
+internal fun ConferenceSchedulingSummaryFragment.navigateToConferenceWaitingRoom(address: Address) {
+    val bundle = Bundle()
+    bundle.putString("Address", address.asStringUriOnly())
+    findMasterNavController().navigate(
+        R.id.action_global_conferenceWaitingRoomFragment,
+        bundle,
+        popupTo(R.id.dialerFragment, false)
+    )
 }
 
 internal fun ConferenceWaitingRoomFragment.navigateToDialer() {

@@ -24,9 +24,10 @@ import android.view.View
 import androidx.navigation.navGraphViewModels
 import org.linphone.R
 import org.linphone.activities.GenericFragment
-import org.linphone.activities.goBackToDialer
+import org.linphone.activities.goToScheduledConferences
 import org.linphone.activities.main.MainActivity
 import org.linphone.activities.main.conference.viewmodels.ConferenceSchedulingViewModel
+import org.linphone.activities.navigateToConferenceWaitingRoom
 import org.linphone.databinding.ConferenceSchedulingSummaryFragmentBinding
 
 class ConferenceSchedulingSummaryFragment : GenericFragment<ConferenceSchedulingSummaryFragmentBinding>() {
@@ -52,7 +53,13 @@ class ConferenceSchedulingSummaryFragment : GenericFragment<ConferenceScheduling
         viewModel.conferenceCreationCompletedEvent.observe(
             viewLifecycleOwner,
             {
-                goBackToDialer()
+                it.consume { address ->
+                    if (viewModel.scheduleForLater.value == true) {
+                        goToScheduledConferences()
+                    } else {
+                        navigateToConferenceWaitingRoom(address)
+                    }
+                }
             }
         )
 

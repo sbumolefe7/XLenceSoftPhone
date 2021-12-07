@@ -53,8 +53,8 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
     val conferenceCreationInProgress = MutableLiveData<Boolean>()
 
-    val conferenceCreationCompletedEvent: MutableLiveData<Event<Boolean>> by lazy {
-        MutableLiveData<Event<Boolean>>()
+    val conferenceCreationCompletedEvent: MutableLiveData<Event<Address>> by lazy {
+        MutableLiveData<Event<Address>>()
     }
 
     val continueEnabled: MediatorLiveData<Boolean> = MediatorLiveData()
@@ -85,7 +85,13 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         override fun onConferenceInfoOnSent(core: Core, conferenceInfo: ConferenceInfo) {
             Log.i("[Conference Creation] Conference information successfully sent to all participants")
             conferenceCreationInProgress.value = false
-            conferenceCreationCompletedEvent.value = Event(true)
+
+            val conferenceAddress = conferenceInfo.uri
+            if (conferenceAddress == null) {
+                Log.e("[Conference Creation] Conference address is null!")
+            } else {
+                conferenceCreationCompletedEvent.value = Event(conferenceAddress)
+            }
         }
 
         override fun onConferenceInfoOnParticipantError(
@@ -247,6 +253,12 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     }
 
     private fun sendConferenceInfo() {
+        val conferenceAddress = address.value
+        if (conferenceAddress == null) {
+            Log.e("[Conference Creation] Remote conference address is null!")
+            return
+        }
+
         val participants = arrayOfNulls<Address>(selectedAddresses.value.orEmpty().size)
         selectedAddresses.value?.toArray(participants)
 
@@ -267,7 +279,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         coreContext.core.sendConferenceInformation(conferenceInfo, "")
 
         conferenceCreationInProgress.value = false
-        conferenceCreationCompletedEvent.value = Event(true)
+        conferenceCreationCompletedEvent.value = Event(conferenceAddress)
     }
 
     private fun getConferenceStartTimestamp(): Long {
