@@ -37,7 +37,6 @@ class ConferenceViewModel : ViewModel() {
     val conferenceExists = MutableLiveData<Boolean>()
     val subject = MutableLiveData<String>()
     val isConferenceLocallyPaused = MutableLiveData<Boolean>()
-    val canResumeConference = MutableLiveData<Boolean>()
     val isVideoConference = MutableLiveData<Boolean>()
     val isMeAdmin = MutableLiveData<Boolean>()
 
@@ -216,7 +215,6 @@ class ConferenceViewModel : ViewModel() {
         updateParticipantsList(conference)
         updateParticipantsDevicesList(conference)
 
-        canResumeConference.value = true // TODO: Can this value be false?
         isConferenceLocallyPaused.value = !conference.isIn
         isMeAdmin.value = conference.me.isAdmin
         isVideoConference.value = conference.currentParams.isVideoEnabled

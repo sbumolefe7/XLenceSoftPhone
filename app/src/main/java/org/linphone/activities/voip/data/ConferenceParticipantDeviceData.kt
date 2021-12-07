@@ -97,7 +97,7 @@ class ConferenceParticipantDeviceData(
     fun setTextureView(textureView: TextureView) {
         if (textureView.isAvailable) {
             Log.i("[Conference Participant Device] Setting textureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}]")
-            if (isMe) { // TODO: remove?
+            if (isMe) {
                 coreContext.core.nativePreviewWindowId = textureView
             } else {
                 participantDevice.nativeVideoWindowId = textureView
@@ -110,7 +110,7 @@ class ConferenceParticipantDeviceData(
                     height: Int
                 ) {
                     Log.i("[Conference Participant Device] Setting textureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}]")
-                    if (isMe) { // TODO: remove?
+                    if (isMe) {
                         coreContext.core.nativePreviewWindowId = textureView
                     } else {
                         participantDevice.nativeVideoWindowId = textureView
