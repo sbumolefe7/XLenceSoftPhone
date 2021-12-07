@@ -39,12 +39,9 @@ class ConferenceViewModel : ViewModel() {
     val isConferenceLocallyPaused = MutableLiveData<Boolean>()
     val canResumeConference = MutableLiveData<Boolean>()
     val isVideoConference = MutableLiveData<Boolean>()
-    val isMeConferenceFocus = MutableLiveData<Boolean>()
     val isMeAdmin = MutableLiveData<Boolean>()
 
     val conference = MutableLiveData<Conference>()
-    val conferenceAddress = MutableLiveData<Address>()
-
     val conferenceParticipants = MutableLiveData<List<ConferenceParticipantData>>()
     val conferenceParticipantDevices = MutableLiveData<List<ConferenceParticipantDeviceData>>()
     val conferenceMosaicDisplayMode = MutableLiveData<Boolean>()
@@ -137,46 +134,23 @@ class ConferenceViewModel : ViewModel() {
             state: Conference.State
         ) {
             Log.i("[Conference] Conference state changed: $state")
-            isConferenceLocallyPaused.value = !conference.isIn
-            canResumeConference.value = true // TODO: Can this value be false?
             isVideoConference.value = conference.currentParams.isVideoEnabled
 
-            if (state == Conference.State.Instantiated) {
-                conferenceExists.value = true
-                this@ConferenceViewModel.conference.value = conference
-                conference.addListener(conferenceListener)
-            } else if (state == Conference.State.Created) {
-                updateParticipantsList(conference)
-                updateParticipantsDevicesList(conference)
-
-                isMeConferenceFocus.value = conference.me.isFocus
-                isMeAdmin.value = conference.me.isAdmin
-                conferenceAddress.value = conference.conferenceAddress
-                subject.value = if (conference.subject.isNullOrEmpty()) {
-                    if (conference.me.isFocus) {
-                        AppUtils.getString(R.string.conference_local_title)
-                    } else {
-                        AppUtils.getString(R.string.conference_default_title)
-                    }
-                } else {
-                    conference.subject
+            when (state) {
+                Conference.State.Instantiated -> {
+                    initConference(conference)
                 }
-            } else if (state == Conference.State.TerminationPending) {
-                conferenceExists.value = false
-                isVideoConference.value = false
-
-                conference.removeListener(conferenceListener)
-
-                conferenceParticipants.value.orEmpty().forEach(ConferenceParticipantData::destroy)
-                conferenceParticipantDevices.value.orEmpty().forEach(ConferenceParticipantDeviceData::destroy)
-                conferenceParticipants.value = arrayListOf()
-                conferenceParticipantDevices.value = arrayListOf()
+                Conference.State.Created -> {
+                    initConference(conference)
+                    configureConference(conference)
+                }
+                Conference.State.TerminationPending -> {
+                    terminateConference(conference)
+                }
+                else -> {}
             }
 
-            val layout = conference.layout
-            conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.None
-            conferenceActiveSpeakerDisplayMode.value = layout == ConferenceLayout.ActiveSpeaker
-            Log.i("[Conference] Conference current layout is: $layout")
+            updateConferenceLayout(conference)
         }
     }
 
@@ -195,29 +169,14 @@ class ConferenceViewModel : ViewModel() {
         val conference = coreContext.core.conference ?: coreContext.core.currentCall?.conference
         if (conference != null) {
             Log.i("[Conference] Found an existing conference: $conference")
-            this@ConferenceViewModel.conference.value = conference
-            conference.addListener(conferenceListener)
-
-            conferenceExists.value = true
-            isConferenceLocallyPaused.value = !conference.isIn
-            isMeConferenceFocus.value = conference.me.isFocus
-            isMeAdmin.value = conference.me.isAdmin
-            isVideoConference.value = conference.currentParams.isVideoEnabled
-            conferenceAddress.value = conference.conferenceAddress
-            if (!conference.subject.isNullOrEmpty()) subject.value = conference.subject
-
-            val layout = conference.layout
-            conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.None
-            conferenceActiveSpeakerDisplayMode.value = layout == ConferenceLayout.ActiveSpeaker
-            Log.i("[Conference] Conference current layout is: $layout")
-
-            updateParticipantsList(conference)
-            updateParticipantsDevicesList(conference)
+            initConference(conference)
+            configureConference(conference)
         }
     }
 
     override fun onCleared() {
         coreContext.core.removeListener(listener)
+        conference.value?.removeListener(conferenceListener)
 
         conferenceParticipants.value.orEmpty().forEach(ConferenceParticipantData::destroy)
         conferenceParticipantDevices.value.orEmpty().forEach(ConferenceParticipantDeviceData::destroy)
@@ -226,52 +185,71 @@ class ConferenceViewModel : ViewModel() {
     }
 
     fun pauseConference() {
-        val defaultProxyConfig = coreContext.core.defaultProxyConfig
-        val localAddress = defaultProxyConfig?.identityAddress
-        val participants = arrayOf<Address>()
-        val remoteConference = coreContext.core.searchConference(null, localAddress, conferenceAddress.value, participants)
-        val localConference = coreContext.core.searchConference(null, conferenceAddress.value, conferenceAddress.value, participants)
-        val conference = remoteConference ?: localConference
-
-        if (conference != null) {
-            Log.i("[Conference] Leaving conference with address ${conferenceAddress.value?.asStringUriOnly()} temporarily")
-            conference.leave()
-        } else {
-            Log.w("[Conference] Unable to find conference with address ${conferenceAddress.value?.asStringUriOnly()}")
-        }
+        Log.i("[Conference] Leaving conference temporarily")
+        conference.value?.leave()
     }
 
     fun resumeConference() {
-        val defaultProxyConfig = coreContext.core.defaultProxyConfig
-        val localAddress = defaultProxyConfig?.identityAddress
-        val participants = arrayOf<Address>()
-        val remoteConference = coreContext.core.searchConference(null, localAddress, conferenceAddress.value, participants)
-        val localConference = coreContext.core.searchConference(null, conferenceAddress.value, conferenceAddress.value, participants)
-        val conference = remoteConference ?: localConference
-
-        if (conference != null) {
-            Log.i("[Conference] Entering again conference with address ${conferenceAddress.value?.asStringUriOnly()}")
-            conference.enter()
-        } else {
-            Log.w("[Conference] Unable to find conference with address ${conferenceAddress.value?.asStringUriOnly()}")
-        }
+        Log.i("[Conference] Entering conference again")
+        conference.value?.enter()
     }
 
     fun toggleRecording() {
-        val conference = coreContext.core.conference
-        if (conference == null) {
-            Log.e("[Conference] Failed to find conference!")
-            return
-        }
-
-        if (conference.isRecording) {
-            conference.stopRecording()
+        if (conference.value?.isRecording == true) {
+            Log.i("[Conference] Stopping conference recording")
+            conference.value?.stopRecording()
         } else {
             val path = LinphoneUtils.getRecordingFilePathForConference()
             Log.i("[Conference] Starting recording in file $path")
-            conference.startRecording(path)
+            conference.value?.startRecording(path)
         }
-        isRecording.value = conference.isRecording
+        isRecording.value = conference.value?.isRecording
+    }
+
+    private fun initConference(conference: Conference) {
+        conferenceExists.value = true
+        this@ConferenceViewModel.conference.value = conference
+        conference.addListener(conferenceListener)
+    }
+
+    private fun configureConference(conference: Conference) {
+        updateParticipantsList(conference)
+        updateParticipantsDevicesList(conference)
+
+        canResumeConference.value = true // TODO: Can this value be false?
+        isConferenceLocallyPaused.value = !conference.isIn
+        isMeAdmin.value = conference.me.isAdmin
+        isVideoConference.value = conference.currentParams.isVideoEnabled
+        subject.value = if (conference.subject.isNullOrEmpty()) {
+            if (conference.me.isFocus) {
+                AppUtils.getString(R.string.conference_local_title)
+            } else {
+                AppUtils.getString(R.string.conference_default_title)
+            }
+        } else {
+            conference.subject
+        }
+
+        updateConferenceLayout(conference)
+    }
+
+    private fun updateConferenceLayout(conference: Conference) {
+        val layout = conference.layout
+        conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.None
+        conferenceActiveSpeakerDisplayMode.value = layout == ConferenceLayout.ActiveSpeaker
+        Log.i("[Conference] Conference current layout is: $layout")
+    }
+
+    private fun terminateConference(conference: Conference) {
+        conferenceExists.value = false
+        isVideoConference.value = false
+
+        conference.removeListener(conferenceListener)
+
+        conferenceParticipants.value.orEmpty().forEach(ConferenceParticipantData::destroy)
+        conferenceParticipantDevices.value.orEmpty().forEach(ConferenceParticipantDeviceData::destroy)
+        conferenceParticipants.value = arrayListOf()
+        conferenceParticipantDevices.value = arrayListOf()
     }
 
     private fun updateParticipantsList(conference: Conference) {
