@@ -13,6 +13,7 @@
 
         <attr name="backgroundColor" format="color"/>
         <attr name="backgroundColor2" format="color"/>
+        <attr name="backgroundColor3" format="color"/>
         <attr name="backgroundContrastColor" format="color"/>
         <attr name="dividerColor" format="color"/>
 
@@ -23,7 +24,6 @@
         <attr name="drawableTintColor3" format="color"/>
 
         <attr name="lightToolbarBackgroundColor" format="color"/>
-        <attr name="lightToolbarBackgroundDisabledColor" format="color"/>
         <attr name="lightToolbarTextColor" format="color"/>
         <attr name="darkToolbarBackgroundColor" format="color"/>
         <attr name="darkToolbarTextColor" format="color"/>

@@ -75,8 +75,8 @@
             android:layout_height="@dimen/contact_avatar_size"
             android:layout_alignParentLeft="true"
             android:adjustViewBounds="true"
-            android:contentDescription="@null"
             android:background="@drawable/contact_avatar_bg"
+            android:contentDescription="@null"
             app:glideAvatar="@{imagePath}" />
 
         <ImageView

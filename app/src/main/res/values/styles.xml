@@ -16,7 +16,6 @@
         <item name="android:textColorPrimary">@color/light_primary_text_color</item>
         <item name="android:textColorSecondary">@color/grey_color</item>
         <item name="android:textColorHint">@color/light_grey_color</item>
-        <item name="android:colorBackground">@color/white_color</item>
         <item name="android:textColorPrimaryInverse">@color/white_color</item>
 
         <item name="accentColor">@color/primary_color</item>
@@ -29,6 +28,7 @@
 
         <item name="backgroundColor">@color/white_color</item>
         <item name="backgroundColor2">@color/header_background_color</item>
+        <item name="backgroundColor3">@color/voip_light_gray</item>
         <item name="backgroundContrastColor">@color/dark_grey_color</item>
         <item name="dividerColor">@color/light_grey_color</item>
 
@@ -39,7 +39,6 @@
         <item name="drawableTintColor3">@color/light_grey_color</item>
 
         <item name="lightToolbarBackgroundColor">@color/toolbar_color</item>
-        <item name="lightToolbarBackgroundDisabledColor">@color/light_grey_color</item>
         <item name="lightToolbarTextColor">@color/dark_grey_color</item>
         <item name="darkToolbarBackgroundColor">@color/dark_grey_color</item>
         <item name="darkToolbarTextColor">@color/white_color</item>
