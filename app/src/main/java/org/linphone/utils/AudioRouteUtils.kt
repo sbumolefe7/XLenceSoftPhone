@@ -101,11 +101,10 @@ class AudioRouteUtils {
             types: List<AudioDevice.Type>,
             skipTelecom: Boolean = false
         ) {
-            val currentCall = call ?: coreContext.core.currentCall ?: coreContext.core.calls[0]
-            if ((call != null || currentCall != null) && !skipTelecom && TelecomHelper.exists()) {
-                val callToUse = call ?: currentCall
+            val currentCall = call ?: coreContext.core.currentCall ?: if (coreContext.core.callsNb > 0) coreContext.core.calls[0] else null
+            if (currentCall != null && !skipTelecom && TelecomHelper.exists()) {
                 Log.i("[Audio Route Helper] Call provided & Telecom Helper exists, trying to dispatch audio route change through Telecom API")
-                val connection = TelecomHelper.get().findConnectionForCallId(callToUse.callLog.callId)
+                val connection = TelecomHelper.get().findConnectionForCallId(currentCall.callLog.callId)
                 if (connection != null) {
                     val route = when (types.first()) {
                         AudioDevice.Type.Earpiece -> CallAudioState.ROUTE_EARPIECE
@@ -120,8 +119,8 @@ class AudioRouteUtils {
                     Compatibility.changeAudioRouteForTelecomManager(connection, route)
                 } else {
                     Log.w("[Audio Route Helper] Telecom Helper found but no matching connection!")
-                    applyAudioRouteChange(callToUse, types)
-                    changeCaptureDeviceToMatchAudioRoute(callToUse, types)
+                    applyAudioRouteChange(currentCall, types)
+                    changeCaptureDeviceToMatchAudioRoute(currentCall, types)
                 }
             } else {
                 applyAudioRouteChange(call, types)
