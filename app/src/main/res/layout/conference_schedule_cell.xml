@@ -50,7 +50,7 @@
                     android:drawablePadding="5dp"
                     style="@style/conference_invite_desc_font"
                     android:text="@{data.time + ` (` + data.duration + `)`}"
-                    app:drawableStartCompat="@drawable/conference_schedule_time_default" />
+                    app:drawableStartCompat="@drawable/icon_schedule_time" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -97,7 +97,7 @@
                     style="@style/conference_invite_desc_font"
                     android:maxLines="2"
                     android:text="@{data.participantsShort}"
-                    app:drawableStartCompat="@drawable/conference_schedule_participants_default" />
+                    app:drawableStartCompat="@drawable/icon_schedule_participants" />
 
                 <ImageView
                     android:onClick="@{() -> data.toggleExpand()}"

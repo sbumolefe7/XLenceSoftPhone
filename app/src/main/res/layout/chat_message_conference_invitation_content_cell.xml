@@ -44,8 +44,10 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:drawablePadding="5dp"
             style="@style/conference_invite_desc_font"
-            android:text="@{data.conferenceParticipantCount, default=`3 participants`}"/>
+            android:text="@{data.conferenceParticipantCount, default=`3 participants`}"
+            app:drawableStartCompat="@drawable/icon_schedule_participants"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -54,7 +56,7 @@
             android:drawablePadding="5dp"
             style="@style/conference_invite_desc_font"
             android:text="@{data.conferenceDate, default=`Mon. October 9th, 2021`}"
-            app:drawableStartCompat="@drawable/conference_schedule_calendar_default" />
+            app:drawableStartCompat="@drawable/icon_schedule_date" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -63,7 +65,7 @@
             android:drawablePadding="5dp"
             style="@style/conference_invite_desc_font"
             android:text="@{data.conferenceTime + ` (` + data.conferenceDuration + `)`, default=`5:35 PM (2 hours)`}"
-            app:drawableStartCompat="@drawable/conference_schedule_time_default" />
+            app:drawableStartCompat="@drawable/icon_schedule_time" />
 
         <TextView
             android:visibility="@{data.conferenceDescription.length() == 0 ? View.GONE : View.VISIBLE}"
