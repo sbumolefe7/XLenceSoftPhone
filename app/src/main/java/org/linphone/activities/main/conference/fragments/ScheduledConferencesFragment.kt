@@ -93,6 +93,15 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
             }
         )
 
+        adapter.deleteConferenceInfoEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume { data ->
+                    viewModel.deleteConferenceInfo(data)
+                }
+            }
+        )
+
         binding.setBackClickListener {
             goBack()
         }

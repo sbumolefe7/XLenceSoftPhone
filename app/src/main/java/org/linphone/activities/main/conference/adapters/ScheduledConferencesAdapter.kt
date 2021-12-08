@@ -50,6 +50,10 @@ class ScheduledConferencesAdapter(
         MutableLiveData<Event<Pair<String, String?>>>()
     }
 
+    val deleteConferenceInfoEvent: MutableLiveData<Event<ScheduledConferenceData>> by lazy {
+        MutableLiveData<Event<ScheduledConferenceData>>()
+    }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduledConferencesAdapter.ViewHolder {
         val binding: ConferenceScheduleCellBinding = DataBindingUtil.inflate(
             LayoutInflater.from(parent.context),
@@ -104,6 +108,10 @@ class ScheduledConferencesAdapter(
                     if (address != null) {
                         joinConferenceEvent.value = Event(Pair(address.asStringUriOnly(), conferenceData.conferenceInfo.subject))
                     }
+                }
+
+                setDeleteConferenceClickListener {
+                    deleteConferenceInfoEvent.value = Event(conferenceData)
                 }
 
                 executePendingBindings()

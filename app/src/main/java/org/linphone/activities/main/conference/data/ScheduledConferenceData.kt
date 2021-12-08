@@ -69,7 +69,11 @@ class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
         computeParticipantsLists()
     }
 
-    fun destroy() {
+    fun destroy() {}
+
+    fun delete() {
+        Log.w("[Scheduled Conference] Deleting conference info with URI: ${conferenceInfo.uri?.asStringUriOnly()}")
+        coreContext.core.deleteConferenceInformation(conferenceInfo)
     }
 
     fun toggleExpand() {
