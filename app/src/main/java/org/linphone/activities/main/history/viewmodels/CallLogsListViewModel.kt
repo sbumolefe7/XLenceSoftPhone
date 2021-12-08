@@ -129,8 +129,11 @@ class CallLogsListViewModel : ViewModel() {
         var previousCallLogGroup: GroupedCallLogData? = null
         var previousMissedCallLogGroup: GroupedCallLogData? = null
         for (callLog in coreContext.core.callLogs) {
-            if (previousCallLogGroup == null) {
+            if (previousCallLogGroup == null || callLog.wasConference()) {
                 previousCallLogGroup = GroupedCallLogData(callLog)
+                if (callLog.wasConference()) {
+                    conferenceList.add(previousCallLogGroup)
+                }
             } else if (previousCallLogGroup.lastCallLog.localAddress.weakEqual(callLog.localAddress) &&
                 previousCallLogGroup.lastCallLog.remoteAddress.weakEqual(callLog.remoteAddress)
             ) {

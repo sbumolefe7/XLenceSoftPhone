@@ -113,7 +113,7 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
 
     val isConferenceCallLog = callLog.wasConference()
 
-    val subject = "Test subject" // TODO: get real subject
+    val subject = callLog.conferenceInfo?.subject
 
     override val showGroupChatAvatar: Boolean
         get() = isConferenceCallLog
