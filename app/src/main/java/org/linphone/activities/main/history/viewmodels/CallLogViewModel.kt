@@ -27,6 +27,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
+import org.linphone.activities.main.conference.data.ConferenceSchedulingParticipantData
 import org.linphone.contact.GenericContactViewModel
 import org.linphone.core.*
 import org.linphone.core.tools.Log
@@ -115,6 +116,8 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
 
     val subject = callLog.conferenceInfo?.subject
 
+    val participantsData = MutableLiveData<ArrayList<ConferenceSchedulingParticipantData>>()
+
     override val showGroupChatAvatar: Boolean
         get() = isConferenceCallLog
 
@@ -133,6 +136,15 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
 
     init {
         waitForChatRoomCreation.value = false
+
+        val conferenceInfo = callLog.conferenceInfo
+        if (conferenceInfo != null) {
+            val list = arrayListOf<ConferenceSchedulingParticipantData>()
+            for (participant in conferenceInfo.participants) {
+                list.add(ConferenceSchedulingParticipantData(participant, false))
+            }
+            participantsData.value = list
+        }
     }
 
     override fun onCleared() {
@@ -141,6 +153,7 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
     }
 
     fun destroy() {
+        participantsData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
     }
 
     fun startCall() {

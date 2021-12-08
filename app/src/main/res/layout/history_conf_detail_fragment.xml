@@ -60,7 +60,7 @@
             android:layout_height="match_parent"
             android:layout_below="@id/top_bar"
             android:orientation="vertical"
-            android:paddingTop="20dp"
+            android:paddingTop="10dp"
             android:paddingBottom="5dp">
 
             <LinearLayout
@@ -141,12 +141,12 @@
                 android:layout_height="0dp"
                 android:layout_weight="1">
 
-                <!--<LinearLayout
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
                     app:entries="@{viewModel.participantsData}"
-                    app:layout="@{@layout/conference_scheduling_participant_cell}" />-->
+                    app:layout="@{@layout/conference_scheduling_participant_cell}" />
 
             </androidx.core.widget.NestedScrollView>
 
