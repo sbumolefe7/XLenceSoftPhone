@@ -567,7 +567,7 @@ internal fun MasterCallLogsFragment.navigateToConferenceCallHistory(slidingPane:
         navHostFragment.navController.navigate(
             R.id.action_global_detailConferenceCallLogFragment,
             null,
-            popupTo(R.id.detailCallLogFragment, true)
+            popupTo(R.id.detailConferenceCallLogFragment, true)
         )
         if (!slidingPane.isOpen) slidingPane.openPane()
     }

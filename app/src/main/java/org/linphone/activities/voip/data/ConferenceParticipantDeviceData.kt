@@ -74,7 +74,6 @@ class ConferenceParticipantDeviceData(
 
         activeSpeaker.value = false
 
-        // TODO: What happens if we have disabled video locally?
         videoEnabled.value = participantDevice.videoDirection == MediaDirection.SendOnly || participantDevice.videoDirection == MediaDirection.SendRecv
 
         isInConference.value = participantDevice.isInConference
