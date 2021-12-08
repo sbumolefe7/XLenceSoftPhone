@@ -114,9 +114,10 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
 
     val isConferenceCallLog = callLog.wasConference()
 
-    val subject = callLog.conferenceInfo?.subject
-
-    val participantsData = MutableLiveData<ArrayList<ConferenceSchedulingParticipantData>>()
+    val conferenceSubject = callLog.conferenceInfo?.subject
+    val conferenceParticipantsData = MutableLiveData<ArrayList<ConferenceSchedulingParticipantData>>()
+    val conferenceTime = MutableLiveData<String>()
+    val conferenceDate = MutableLiveData<String>()
 
     override val showGroupChatAvatar: Boolean
         get() = isConferenceCallLog
@@ -139,11 +140,13 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
 
         val conferenceInfo = callLog.conferenceInfo
         if (conferenceInfo != null) {
+            conferenceTime.value = TimestampUtils.timeToString(conferenceInfo.dateTime)
+            conferenceDate.value = TimestampUtils.toString(conferenceInfo.dateTime, onlyDate = true, shortDate = false, hideYear = false)
             val list = arrayListOf<ConferenceSchedulingParticipantData>()
             for (participant in conferenceInfo.participants) {
                 list.add(ConferenceSchedulingParticipantData(participant, false))
             }
-            participantsData.value = list
+            conferenceParticipantsData.value = list
         }
     }
 
@@ -153,7 +156,7 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
     }
 
     fun destroy() {
-        participantsData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
+        conferenceParticipantsData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
     }
 
     fun startCall() {
