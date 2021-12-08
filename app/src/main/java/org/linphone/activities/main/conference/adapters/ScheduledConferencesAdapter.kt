@@ -46,8 +46,8 @@ class ScheduledConferencesAdapter(
         MutableLiveData<Event<Address>>()
     }
 
-    val joinConferenceEvent: MutableLiveData<Event<Address>> by lazy {
-        MutableLiveData<Event<Address>>()
+    val joinConferenceEvent: MutableLiveData<Event<Pair<String, String?>>> by lazy {
+        MutableLiveData<Event<Pair<String, String?>>>()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ScheduledConferencesAdapter.ViewHolder {
@@ -102,7 +102,7 @@ class ScheduledConferencesAdapter(
                 setJoinConferenceClickListener {
                     val address = conferenceData.conferenceInfo.uri
                     if (address != null) {
-                        joinConferenceEvent.value = Event(address)
+                        joinConferenceEvent.value = Event(Pair(address.asStringUriOnly(), conferenceData.conferenceInfo.subject))
                     }
                 }
 

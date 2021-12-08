@@ -264,6 +264,7 @@
     <string name="conference_display_mode_active_speaker">Active speaker mode</string>
     <string name="conference_waiting_room_start_call">Start</string>
     <string name="conference_waiting_room_cancel_call">Cancel</string>
+    <string name="conference_waiting_room_video_disabled">Video is currently disabled</string>
     <string name="conference_scheduled">Conferences</string>
     <string name="conference_layout_too_many_participants_for_mosaic">You can\'t change conference layout as there is too many participants</string>
     <string name="conference_too_many_participants_for_mosaic_layout">There is too many participants for mosaic layout, switching to active speaker</string>

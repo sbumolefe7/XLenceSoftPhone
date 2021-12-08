@@ -86,8 +86,8 @@ class ChatMessagesListAdapter(
         MutableLiveData<Event<Content>>()
     }
 
-    val callConferenceEvent: MutableLiveData<Event<Address>> by lazy {
-        MutableLiveData<Event<Address>>()
+    val callConferenceEvent: MutableLiveData<Event<Pair<String, String?>>> by lazy {
+        MutableLiveData<Event<Pair<String, String?>>>()
     }
 
     val scrollToChatMessageEvent: MutableLiveData<Event<ChatMessage>> by lazy {
@@ -99,8 +99,8 @@ class ChatMessagesListAdapter(
             openContentEvent.value = Event(content)
         }
 
-        override fun onCallConference(address: Address) {
-            callConferenceEvent.value = Event(address)
+        override fun onCallConference(address: String, subject: String?) {
+            callConferenceEvent.value = Event(Pair(address, subject))
         }
     }
 

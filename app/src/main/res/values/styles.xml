@@ -138,6 +138,16 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+    <style name="conference_waiting_room_no_video_font" parent="@android:style/TextAppearance.Medium">
+        <item name="android:textColor">@color/white_color</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+
+    <style name="conference_waiting_room_subject_font" parent="@android:style/TextAppearance.Large">
+        <item name="android:textColor">@color/white_color</item>
+        <item name="android:textSize">20sp</item>
+    </style>
+
     <!-- Call related -->
 
     <style name="call_remote_name_font" parent="@android:style/TextAppearance.Medium">

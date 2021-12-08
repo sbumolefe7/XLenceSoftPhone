@@ -50,6 +50,9 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
         )[ConferenceWaitingRoomViewModel::class.java]
         binding.viewModel = viewModel
 
+        val conferenceSubject = arguments?.getString("Subject")
+        viewModel.subject.value = conferenceSubject
+
         viewModel.cancelConferenceJoiningEvent.observe(
             viewLifecycleOwner,
             {

@@ -422,8 +422,8 @@ class DetailChatRoomFragment : MasterFragment<ChatRoomDetailFragmentBinding, Cha
         adapter.callConferenceEvent.observe(
             viewLifecycleOwner,
             {
-                it.consume { address ->
-                    navigateToConferenceWaitingRoom(address)
+                it.consume { pair ->
+                    navigateToConferenceWaitingRoom(pair.first, pair.second)
                 }
             }
         )

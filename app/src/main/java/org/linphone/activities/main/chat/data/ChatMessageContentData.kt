@@ -85,7 +85,7 @@ class ChatMessageContentData(
     val conferenceDate = MutableLiveData<String>()
     val conferenceTime = MutableLiveData<String>()
     val conferenceDuration = MutableLiveData<String>()
-    var conferenceAddress: Address? = null
+    var conferenceAddress = MutableLiveData<String>()
 
     val isAlone: Boolean
         get() {
@@ -272,9 +272,10 @@ class ChatMessageContentData(
 
     private fun parseConferenceInvite(content: Content) {
         val conferenceInfo = Factory.instance().createConferenceInfoFromIcalendarContent(content)
-        if (conferenceInfo != null) {
-            conferenceAddress = conferenceInfo.uri
-            Log.i("[Content] Created conference info from ICS with address ${conferenceAddress?.asStringUriOnly()}")
+        val conferenceUri = conferenceInfo?.uri?.asStringUriOnly()
+        if (conferenceInfo != null && conferenceUri != null) {
+            conferenceAddress.value = conferenceUri
+            Log.i("[Content] Created conference info from ICS with address ${conferenceAddress.value}")
             conferenceSubject.value = conferenceInfo.subject
             conferenceDescription.value = conferenceInfo.description
 
@@ -287,7 +288,7 @@ class ChatMessageContentData(
             conferenceDuration.value = TimestampUtils.durationToString(hours.toInt(), remainMinutes)
 
             conferenceParticipantCount.value = String.format(AppUtils.getString(R.string.conference_invite_participants_count), conferenceInfo.participants.size + 1) // +1 for organizer
-        } else {
+        } else if (conferenceInfo == null) {
             if (content.filePath != null) {
                 try {
                     val br = BufferedReader(FileReader(content.filePath))
@@ -305,16 +306,18 @@ class ChatMessageContentData(
             } else {
                 Log.e("[Content] Failed to create conference info from ICS: ${content.utf8Text}")
             }
+        } else if (conferenceInfo.uri == null) {
+            Log.e("[Content] Failed to find the conference URI in conference info [$conferenceInfo]")
         }
     }
 
     fun callConferenceAddress() {
-        val address = conferenceAddress
+        val address = conferenceAddress.value
         if (address == null) {
             Log.e("[Content] Can't call null conference address!")
             return
         }
-        listener?.onCallConference(address)
+        listener?.onCallConference(address, conferenceSubject.value)
     }
 
     /** Voice recording specifics */
@@ -416,5 +419,5 @@ class ChatMessageContentData(
 interface OnContentClickedListener {
     fun onContentClicked(content: Content)
 
-    fun onCallConference(address: Address)
+    fun onCallConference(address: String, subject: String?)
 }

@@ -32,6 +32,8 @@ import org.linphone.utils.Event
 import org.linphone.utils.PermissionHelper
 
 class ConferenceWaitingRoomViewModel : ViewModel() {
+    val subject = MutableLiveData<String>()
+
     val isMicrophoneMuted = MutableLiveData<Boolean>()
 
     val isSpeakerSelected = MutableLiveData<Boolean>()

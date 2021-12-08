@@ -265,7 +265,7 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
             } else {
                 conference.subject
             }
-            Log.i("[Call] Found conference related to this call with subject [${remoteConferenceSubject.value}]")
+            Log.d("[Call] Found conference related to this call with subject [${remoteConferenceSubject.value}]")
         }
     }
 

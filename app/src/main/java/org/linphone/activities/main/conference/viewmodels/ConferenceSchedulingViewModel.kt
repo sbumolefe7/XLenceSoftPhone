@@ -53,8 +53,8 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
     val conferenceCreationInProgress = MutableLiveData<Boolean>()
 
-    val conferenceCreationCompletedEvent: MutableLiveData<Event<Address>> by lazy {
-        MutableLiveData<Event<Address>>()
+    val conferenceCreationCompletedEvent: MutableLiveData<Event<Pair<String, String?>>> by lazy {
+        MutableLiveData<Event<Pair<String, String?>>>()
     }
 
     val continueEnabled: MediatorLiveData<Boolean> = MediatorLiveData()
@@ -90,7 +90,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             if (conferenceAddress == null) {
                 Log.e("[Conference Creation] Conference address is null!")
             } else {
-                conferenceCreationCompletedEvent.value = Event(conferenceAddress)
+                conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), conferenceInfo.subject))
             }
         }
 
@@ -279,7 +279,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         coreContext.core.sendConferenceInformation(conferenceInfo, "")
 
         conferenceCreationInProgress.value = false
-        conferenceCreationCompletedEvent.value = Event(conferenceAddress)
+        conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), subject.value))
     }
 
     private fun getConferenceStartTimestamp(): Long {

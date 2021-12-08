@@ -87,8 +87,8 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
         adapter.joinConferenceEvent.observe(
             viewLifecycleOwner,
             {
-                it.consume { address ->
-                    navigateToConferenceWaitingRoom(address)
+                it.consume { pair ->
+                    navigateToConferenceWaitingRoom(pair.first, pair.second)
                 }
             }
         )

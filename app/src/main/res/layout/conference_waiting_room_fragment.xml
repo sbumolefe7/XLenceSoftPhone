@@ -14,12 +14,34 @@
         android:layout_height="match_parent"
         android:background="?attr/voipBackgroundColor">
 
+        <TextView
+            android:id="@+id/conference_subject"
+            style="@style/conference_waiting_room_subject_font"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_margin="20dp"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="10dp"
+            android:text="@{viewModel.subject, default=`Conference subject`}" />
+
+        <TextView
+            style="@style/conference_waiting_room_no_video_font"
+            android:visibility="@{viewModel.isVideoEnabled ? View.GONE : View.VISIBLE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="@string/conference_waiting_room_video_disabled"/>
+
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:visibility="@{viewModel.isVideoEnabled ? View.VISIBLE : View.GONE, default=gone}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_above="@id/conference_controls"
+            android:layout_below="@id/conference_subject"
             android:layout_marginStart="10dp"
-            android:layout_marginTop="20dp"
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/shape_remote_video_background">
@@ -28,24 +50,24 @@
                 android:id="@+id/local_preview_video_surface"
                 android:layout_width="0dp"
                 android:layout_height="0dp"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:alignTopRight="false"
-                app:displayMode="black_bars" />
+                app:displayMode="black_bars"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
-                android:onClick="@{() -> viewModel.switchCamera()}"
-                android:visibility="@{viewModel.isSwitchCameraAvailable ? View.VISIBLE : View.GONE}"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="5dp"
+                android:contentDescription="@string/content_description_switch_camera"
+                android:onClick="@{() -> viewModel.switchCamera()}"
                 android:padding="10dp"
                 android:src="@drawable/icon_call_camera_switch"
-                android:contentDescription="@string/content_description_switch_camera"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"/>
+                android:visibility="@{viewModel.isSwitchCameraAvailable ? View.VISIBLE : View.GONE}"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

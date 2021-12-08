@@ -192,9 +192,13 @@ internal fun ConferenceSchedulingSummaryFragment.goToScheduledConferences() {
     }
 }
 
-internal fun ConferenceSchedulingSummaryFragment.navigateToConferenceWaitingRoom(address: Address) {
+internal fun ConferenceSchedulingSummaryFragment.navigateToConferenceWaitingRoom(
+    address: String,
+    subject: String?
+) {
     val bundle = Bundle()
-    bundle.putString("Address", address.asStringUriOnly())
+    bundle.putString("Address", address)
+    bundle.putString("Subject", subject)
     findMasterNavController().navigate(
         R.id.action_global_conferenceWaitingRoomFragment,
         bundle,
@@ -210,9 +214,13 @@ internal fun ConferenceWaitingRoomFragment.navigateToDialer() {
     )
 }
 
-internal fun DetailChatRoomFragment.navigateToConferenceWaitingRoom(address: Address) {
+internal fun DetailChatRoomFragment.navigateToConferenceWaitingRoom(
+    address: String,
+    subject: String?
+) {
     val bundle = Bundle()
-    bundle.putString("Address", address.asStringUriOnly())
+    bundle.putString("Address", address)
+    bundle.putString("Subject", subject)
     findMasterNavController().navigate(
         R.id.action_global_conferenceWaitingRoomFragment,
         bundle,
@@ -220,9 +228,13 @@ internal fun DetailChatRoomFragment.navigateToConferenceWaitingRoom(address: Add
     )
 }
 
-internal fun ScheduledConferencesFragment.navigateToConferenceWaitingRoom(address: Address) {
+internal fun ScheduledConferencesFragment.navigateToConferenceWaitingRoom(
+    address: String,
+    subject: String?
+) {
     val bundle = Bundle()
-    bundle.putString("Address", address.asStringUriOnly())
+    bundle.putString("Address", address)
+    bundle.putString("Subject", subject)
     findMasterNavController().navigate(
         R.id.action_global_conferenceWaitingRoomFragment,
         bundle,

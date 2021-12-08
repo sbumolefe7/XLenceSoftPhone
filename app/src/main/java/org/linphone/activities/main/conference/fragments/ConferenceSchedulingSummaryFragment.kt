@@ -53,11 +53,11 @@ class ConferenceSchedulingSummaryFragment : GenericFragment<ConferenceScheduling
         viewModel.conferenceCreationCompletedEvent.observe(
             viewLifecycleOwner,
             {
-                it.consume { address ->
+                it.consume { pair ->
                     if (viewModel.scheduleForLater.value == true) {
                         goToScheduledConferences()
                     } else {
-                        navigateToConferenceWaitingRoom(address)
+                        navigateToConferenceWaitingRoom(pair.first, pair.second)
                     }
                 }
             }
