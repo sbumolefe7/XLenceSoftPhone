@@ -35,7 +35,7 @@
             android:layout_marginTop="5dp"
             android:background="@{data.expanded ? @drawable/shape_round_gray_background_with_orange_border : @drawable/shape_round_gray_background, default=@drawable/shape_round_gray_background}">
 
-            <LinearLayout
+            <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
@@ -44,30 +44,28 @@
                 android:orientation="horizontal">
 
                 <TextView
-                    android:layout_width="0dp"
+                    android:id="@+id/time"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_weight="1"
+                    android:layout_alignParentStart="true"
                     android:drawablePadding="5dp"
                     style="@style/conference_invite_desc_font"
                     android:text="@{data.time + ` (` + data.duration + `)`}"
                     app:drawableStartCompat="@drawable/icon_schedule_time" />
 
                 <TextView
+                    android:layout_toEndOf="@id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginEnd="5dp"
-                    style="@style/conference_invite_desc_font"
-                    android:text="@string/conference_schedule_organizer" />
-
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_alignParentEnd="true"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="5dp"
+                    android:ellipsize="end"
+                    android:gravity="end"
                     style="@style/conference_invite_desc_font"
-                    android:text="@{data.organizer}" />
+                    android:text="@{@string/conference_schedule_organizer + ` ` + data.organizer}" />
 
-            </LinearLayout>
+            </RelativeLayout>
 
             <TextView
                 android:layout_width="match_parent"

@@ -40,7 +40,8 @@ class LinphoneUtils {
     companion object {
         private const val RECORDING_DATE_PATTERN = "dd-MM-yyyy-HH-mm-ss"
 
-        fun getDisplayName(address: Address): String {
+        fun getDisplayName(address: Address?): String {
+            if (address == null) return "[null]"
             if (address.displayName == null) {
                 val account = coreContext.core.accountList.find { account ->
                     account.params.identityAddress?.asStringUriOnly() == address.asStringUriOnly()

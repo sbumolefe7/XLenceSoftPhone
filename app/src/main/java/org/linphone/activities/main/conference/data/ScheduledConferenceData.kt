@@ -61,7 +61,7 @@ class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
             organizer.value = if (contact != null)
                 contact.fullName
             else
-                LinphoneUtils.getDisplayableAddress(conferenceInfo.organizer)
+                LinphoneUtils.getDisplayName(conferenceInfo.organizer)
         } else {
             Log.e("[Scheduled Conference] No organizer SIP URI found for: ${conferenceInfo.uri?.asStringUriOnly()}")
         }
