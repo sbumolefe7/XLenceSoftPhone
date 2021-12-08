@@ -78,6 +78,7 @@ class ConferenceParticipantDeviceData(
         videoEnabled.value = participantDevice.videoDirection == MediaDirection.SendOnly || participantDevice.videoDirection == MediaDirection.SendRecv
 
         isInConference.value = participantDevice.isInConference
+        Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}], is in conf? ${isInConference.value}, is video enabled? ${videoEnabled.value}")
     }
 
     override fun destroy() {
@@ -103,6 +104,7 @@ class ConferenceParticipantDeviceData(
                 participantDevice.nativeVideoWindowId = textureView
             }
         } else {
+            Log.i("[Conference Participant Device] Got textureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}], but it is not available yet")
             textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
                 override fun onSurfaceTextureAvailable(
                     surface: SurfaceTexture,
