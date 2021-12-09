@@ -82,7 +82,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     }
 
     private val listener = object : CoreListenerStub() {
-        override fun onConferenceInfoOnSent(core: Core, conferenceInfo: ConferenceInfo) {
+        override fun onConferenceInfoSent(core: Core, conferenceInfo: ConferenceInfo) {
             Log.i("[Conference Creation] Conference information successfully sent to all participants")
             conferenceCreationInProgress.value = false
 
@@ -94,7 +94,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             }
         }
 
-        override fun onConferenceInfoOnParticipantError(
+        override fun onConferenceInfoParticipantError(
             core: Core,
             conferenceInfo: ConferenceInfo,
             participant: Address,
@@ -105,24 +105,13 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             conferenceCreationInProgress.value = false
         }
 
-        override fun onConferenceStateChanged(
-            core: Core,
-            conference: Conference,
-            state: Conference.State?
-        ) {
-            Log.i("[Conference Creation] Conference state changed: $state")
-            if (state == Conference.State.CreationPending) {
-                Log.i("[Conference Creation] Conference address will be ${conference.conferenceAddress.asStringUriOnly()}")
-                address.value = conference.conferenceAddress
+        override fun onConferenceInfoCreated(core: Core, conferenceInfo: ConferenceInfo) {
+            Log.i("[Conference Creation] Conference info created, address will be ${conferenceInfo.uri?.asStringUriOnly()}")
+            address.value = conferenceInfo.uri
 
-                // Send conference info even when conf is not scheduled for later
-                // as the conference server doesn't invite participants automatically
-                sendConferenceInfo()
-            } else if (state == Conference.State.TerminationPending) {
-                Log.e("[Conference Creation] Creation of conference failed!")
-                conferenceCreationInProgress.value = false
-                onMessageToNotifyEvent.value = Event(R.string.conference_creation_failed)
-            }
+            // Send conference info even when conf is not scheduled for later
+            // as the conference server doesn't invite participants automatically
+            sendConferenceInfo(conferenceInfo)
         }
     }
 
@@ -139,7 +128,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             it.id == TimeZone.getDefault().id
         }
         duration.value = durationList.find {
-            it.value == 60
+            it.value == 3600
         }
 
         continueEnabled.value = false
@@ -222,14 +211,16 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             Log.i("[Conference Creation] Creating chat room with same subject [${subject.value}] & participants as for conference")
             chatRoom.addListener(chatRoomListener)
         }
+        // END OF TODO
 
         val params = core.createConferenceParams()
-        params.isVideoEnabled = true // TODO: Keep this to true ?
+        params.isVideoEnabled = true
         params.subject = subject.value
         val startTime = getConferenceStartTimestamp()
         params.startTime = startTime
         val duration = duration.value?.value ?: 0
         if (duration != 0) params.endTime = startTime + duration
+        params.description = description.value
         core.createConferenceOnServer(params, localAddress, participants)
     }
 
@@ -238,7 +229,8 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     }
 
     private fun computeDurationList(): List<Duration> {
-        return arrayListOf(Duration(30, "30min"), Duration(60, "1h"), Duration(120, "2h"))
+        // Duration value is in seconds to match SDK time_t
+        return arrayListOf(Duration(1800, "30min"), Duration(3600, "1h"), Duration(7200, "2h"))
     }
 
     private fun allMandatoryFieldsFilled(): Boolean {
@@ -252,30 +244,12 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
                 )
     }
 
-    private fun sendConferenceInfo() {
-        val conferenceAddress = address.value
+    private fun sendConferenceInfo(conferenceInfo: ConferenceInfo) {
+        val conferenceAddress = conferenceInfo.uri
         if (conferenceAddress == null) {
             Log.e("[Conference Creation] Remote conference address is null!")
             return
         }
-
-        val participants = arrayOfNulls<Address>(selectedAddresses.value.orEmpty().size)
-        selectedAddresses.value?.toArray(participants)
-
-        val conferenceInfo = Factory.instance().createConferenceInfo()
-        conferenceInfo.uri = address.value
-        conferenceInfo.setParticipants(participants)
-        conferenceInfo.organizer = coreContext.core.defaultAccount?.params?.identityAddress
-        conferenceInfo.subject = subject.value
-
-        if (scheduleForLater.value == true) {
-            conferenceInfo.description = description.value
-            conferenceInfo.duration = duration.value?.value ?: 0
-            val timestamp = getConferenceStartTimestamp()
-            conferenceInfo.dateTime = timestamp
-            Log.i("[Conference Creation] Conference date & time set to ${TimestampUtils.dateToString(timestamp)} ${TimestampUtils.timeToString(timestamp)}, duration = ${conferenceInfo.duration}")
-        }
-
         coreContext.core.sendConferenceInformation(conferenceInfo, "")
 
         conferenceCreationInProgress.value = false
