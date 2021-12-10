@@ -14,6 +14,7 @@
         <attr name="backgroundColor" format="color"/>
         <attr name="backgroundColor2" format="color"/>
         <attr name="backgroundColor3" format="color"/>
+        <attr name="backgroundColor4" format="color"/>
         <attr name="backgroundContrastColor" format="color"/>
         <attr name="dividerColor" format="color"/>
 
@@ -37,6 +38,7 @@
         <attr name="voipToolbarBackgroundColor" format="color" />
         <attr name="voipDrawableColor" format="color" />
         <attr name="voipTextColor" format="color" />
+        <attr name="voipTextColor2" format="color" />
         <attr name="voipFormBackgroundColor" format="color" />
         <attr name="voipFormFieldBackgroundColor" format="color" />
         <attr name="voipFormDisabledFieldBackgroundColor" format="color" />

@@ -77,7 +77,7 @@
                     android:layout_toEndOf="@id/time"
                     android:ellipsize="end"
                     android:gravity="end"
-                    android:text="@{@string/conference_schedule_organizer + ` ` + data.organizer}" />
+                    android:text="@{@string/conference_schedule_organizer + ` ` + data.organizer, default=`Organizer: Me`}" />
 
             </RelativeLayout>
 
@@ -89,7 +89,7 @@
                 android:layout_marginEnd="5dp"
                 style="@style/conference_invite_subject_font"
                 android:maxLines="2"
-                android:text="@{data.subject}"/>
+                android:text="@{data.subject, default=`Lorem Ipsum`}"/>
 
             <LinearLayout
                 android:visibility="@{data.expanded ? View.GONE : View.VISIBLE}"
@@ -109,7 +109,7 @@
                     android:layout_marginEnd="10dp"
                     style="@style/conference_invite_desc_font"
                     android:maxLines="2"
-                    android:text="@{data.participantsShort}"
+                    android:text="@{data.participantsShort, default=`Daryl Martin`}"
                     app:drawableStartCompat="@drawable/icon_schedule_participants" />
 
                 <ImageView
@@ -146,7 +146,7 @@
                     android:layout_height="wrap_content"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentStart="true"
-                    android:src="@drawable/conference_schedule_participants_default"/>
+                    android:src="@drawable/icon_schedule_participants"/>
 
                 <EditText
                     style="@style/conference_invite_desc_font"
@@ -178,7 +178,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
-                    style="@style/conference_scheduling_font"
+                    style="@style/conference_scheduling_font_alt"
                     android:text="@string/conference_description_title"/>
 
                 <TextView
@@ -194,7 +194,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    style="@style/conference_scheduling_font"
+                    style="@style/conference_scheduling_font_alt"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
@@ -215,8 +215,8 @@
                         android:padding="10dp"
                         android:maxLines="1"
                         android:ellipsize="end"
-                        style="@style/conference_scheduling_font"
-                        android:background="?attr/backgroundColor"
+                        style="@style/conference_scheduling_address_font"
+                        android:background="@color/white_color"
                         android:text="@{data.address}"/>
 
                     <ImageView
