@@ -54,7 +54,7 @@ class DialogUtils {
             return dialog
         }
 
-        fun getCallDialog(context: Context, viewModel: DialogViewModel): Dialog {
+        fun getVoipDialog(context: Context, viewModel: DialogViewModel): Dialog {
             val dialog = Dialog(context, R.style.AppTheme)
             dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
 

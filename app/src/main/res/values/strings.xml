@@ -275,6 +275,8 @@
     <string name="conference_creation_failed">Failed to create conference</string>
     <string name="conference_admin_set">%s is now admin</string>
     <string name="conference_admin_unset">%s is no longer admin</string>
+    <string name="conference_schedule_info_created">Conference has been scheduled</string>
+    <string name="conference_info_confirm_removal">Do you really want to delete this conference?</string>
 
     <!-- Call -->
     <string name="call_incoming_title">Incoming Call</string>

@@ -216,11 +216,15 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         val params = core.createConferenceParams()
         params.isVideoEnabled = true
         params.subject = subject.value
-        val startTime = getConferenceStartTimestamp()
-        params.startTime = startTime
-        val duration = duration.value?.value ?: 0
-        if (duration != 0) params.endTime = startTime + duration
         params.description = description.value
+        if (scheduleForLater.value == true) {
+            val startTime = getConferenceStartTimestamp()
+            params.startTime = startTime
+            val duration = duration.value?.value ?: 0
+            if (duration != 0) params.endTime = startTime + duration
+        } else {
+            // TODO: Set startTime to -1?
+        }
         core.createConferenceOnServer(params, localAddress, participants)
     }
 

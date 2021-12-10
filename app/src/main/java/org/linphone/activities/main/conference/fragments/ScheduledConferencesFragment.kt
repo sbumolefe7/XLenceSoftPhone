@@ -19,6 +19,7 @@
  */
 package org.linphone.activities.main.conference.fragments
 
+import android.app.Dialog
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
@@ -31,8 +32,11 @@ import org.linphone.activities.GenericFragment
 import org.linphone.activities.main.MainActivity
 import org.linphone.activities.main.conference.adapters.ScheduledConferencesAdapter
 import org.linphone.activities.main.conference.viewmodels.ScheduledConferencesViewModel
+import org.linphone.activities.main.viewmodels.DialogViewModel
 import org.linphone.activities.navigateToConferenceWaitingRoom
 import org.linphone.databinding.ConferencesScheduledFragmentBinding
+import org.linphone.utils.AppUtils
+import org.linphone.utils.DialogUtils
 import org.linphone.utils.RecyclerViewHeaderDecoration
 
 class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmentBinding>() {
@@ -40,6 +44,8 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
     private lateinit var adapter: ScheduledConferencesAdapter
 
     override fun getLayoutId(): Int = R.layout.conferences_scheduled_fragment
+
+    private var deleteConferenceInfoDialog: Dialog? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -97,7 +103,25 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
             viewLifecycleOwner,
             {
                 it.consume { data ->
-                    viewModel.deleteConferenceInfo(data)
+                    val dialogViewModel = DialogViewModel(AppUtils.getString(R.string.conference_info_confirm_removal))
+                    deleteConferenceInfoDialog = DialogUtils.getVoipDialog(requireContext(), dialogViewModel)
+
+                    dialogViewModel.showCancelButton(
+                        {
+                            deleteConferenceInfoDialog?.dismiss()
+                        },
+                        getString(R.string.dialog_cancel)
+                    )
+
+                    dialogViewModel.showDeleteButton(
+                        {
+                            viewModel.deleteConferenceInfo(data)
+                            deleteConferenceInfoDialog?.dismiss()
+                        },
+                        getString(R.string.dialog_delete)
+                    )
+
+                    deleteConferenceInfoDialog?.show()
                 }
             }
         )

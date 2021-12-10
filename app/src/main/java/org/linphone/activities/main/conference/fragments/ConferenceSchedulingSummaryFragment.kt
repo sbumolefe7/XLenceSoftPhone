@@ -55,6 +55,7 @@ class ConferenceSchedulingSummaryFragment : GenericFragment<ConferenceScheduling
             {
                 it.consume { pair ->
                     if (viewModel.scheduleForLater.value == true) {
+                        (requireActivity() as MainActivity).showSnackBar(R.string.conference_schedule_info_created)
                         goToScheduledConferences()
                     } else {
                         navigateToConferenceWaitingRoom(pair.first, pair.second)
