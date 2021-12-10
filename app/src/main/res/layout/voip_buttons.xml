@@ -14,8 +14,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="@dimen/voip_buttons_fragment_size"
-        android:layout_marginTop="10dp">
+        android:layout_height="@dimen/voip_buttons_fragment_size">
 
         <ImageView
             android:id="@+id/hangup"

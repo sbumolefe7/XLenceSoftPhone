@@ -138,6 +138,8 @@ class ControlsViewModel : ViewModel() {
             isOutgoingEarlyMedia.value = state == Call.State.OutgoingEarlyMedia
             if (state == Call.State.StreamsRunning) {
                 isVideoUpdateInProgress.value = false
+            } else if (state == Call.State.PausedByRemote) {
+                fullScreenMode.value = false
             }
 
             if (coreContext.isVideoCallOrConferenceActive() && !PermissionHelper.get().hasCameraPermission()) {
