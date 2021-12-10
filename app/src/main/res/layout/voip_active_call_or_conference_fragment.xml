@@ -124,8 +124,8 @@
             <ViewStub
                 android:id="@+id/stubbed_paused_call"
                 android:layout="@layout/voip_call_paused"
-                android:visibility="@{callsViewModel.currentCallData.isPaused ? View.VISIBLE : View.GONE, default=gone}"
-                app:inflatedVisibility="@{callsViewModel.currentCallData.isPaused ? View.VISIBLE : View.GONE}"
+                android:visibility="@{callsViewModel.currentCallData.isPaused &amp;&amp; !conferenceViewModel.conferenceExists ? View.VISIBLE : View.GONE, default=gone}"
+                app:inflatedVisibility="@{callsViewModel.currentCallData.isPaused &amp;&amp; !conferenceViewModel.conferenceExists ? View.VISIBLE : View.GONE}"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_marginBottom="10dp"
