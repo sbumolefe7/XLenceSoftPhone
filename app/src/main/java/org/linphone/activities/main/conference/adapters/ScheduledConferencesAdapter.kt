@@ -77,14 +77,21 @@ class ScheduledConferencesAdapter(
     }
 
     override fun getHeaderViewForPosition(context: Context, position: Int): View {
-        val conferenceInfo = getItem(position)
+        val data = getItem(position)
         val binding: ConferenceScheduleListHeaderBinding = DataBindingUtil.inflate(
             LayoutInflater.from(context),
             R.layout.conference_schedule_list_header, null, false
         )
-        binding.title = conferenceInfo.date.value
+        binding.title = formatDate(context, data.conferenceInfo.dateTime)
         binding.executePendingBindings()
         return binding.root
+    }
+
+    private fun formatDate(context: Context, date: Long): String {
+        if (TimestampUtils.isToday(date)) {
+            return context.getString(R.string.today)
+        }
+        return TimestampUtils.toString(date, onlyDate = true, shortDate = false, hideYear = false)
     }
 
     inner class ViewHolder(
