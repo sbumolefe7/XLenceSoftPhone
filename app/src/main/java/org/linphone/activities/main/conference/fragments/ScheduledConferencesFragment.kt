@@ -117,6 +117,7 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
                         {
                             viewModel.deleteConferenceInfo(data)
                             deleteConferenceInfoDialog?.dismiss()
+                            (requireActivity() as MainActivity).showSnackBar(R.string.conference_info_removed)
                         },
                         getString(R.string.dialog_delete)
                     )

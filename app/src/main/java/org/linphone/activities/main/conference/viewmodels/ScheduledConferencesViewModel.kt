@@ -53,7 +53,9 @@ class ScheduledConferencesViewModel : ViewModel() {
 
         val conferencesList = arrayListOf<ScheduledConferenceData>()
 
-        for (conferenceInfo in coreContext.core.futureConferenceInformationList) {
+        val now = System.currentTimeMillis() / 1000 // Linphone uses time_t in seconds
+        val oneHourAgo = now - 3600 // Show all conferences from 1 hour ago and forward
+        for (conferenceInfo in coreContext.core.getConferenceInformationListAfterTime(oneHourAgo)) {
             val data = ScheduledConferenceData(conferenceInfo)
             conferencesList.add(data)
         }
