@@ -58,14 +58,29 @@
             android:text="@{data.conferenceDate, default=`Mon. October 9th, 2021`}"
             app:drawableStartCompat="@drawable/icon_schedule_date" />
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:drawablePadding="5dp"
-            style="@style/conference_invite_desc_font"
-            android:text="@{data.conferenceTime + ` (` + data.conferenceDuration + `)`, default=`5:35 PM (2 hours)`}"
-            app:drawableStartCompat="@drawable/icon_schedule_time" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:drawablePadding="5dp"
+                style="@style/conference_invite_desc_font"
+                android:text="@{data.conferenceTime, default=`5:35 PM`}"
+                app:drawableStartCompat="@drawable/icon_schedule_time" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="5dp"
+                style="@style/conference_invite_desc_font"
+                android:visibility="@{data.showDuration ? View.VISIBLE : View.GONE}"
+                android:text="@{`(` + data.conferenceDuration + `)`, default=`(2h)`}" />
+
+        </LinearLayout>
 
         <TextView
             android:visibility="@{data.conferenceDescription.length() == 0 ? View.GONE : View.VISIBLE}"

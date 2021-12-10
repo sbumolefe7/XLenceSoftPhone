@@ -40,29 +40,43 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="5dp"
-                android:layout_marginEnd="5dp"
-                android:orientation="horizontal">
+                android:layout_marginEnd="5dp">
 
-                <TextView
+                <LinearLayout
                     android:id="@+id/time"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentStart="true"
-                    android:drawablePadding="5dp"
-                    style="@style/conference_invite_desc_font"
-                    android:text="@{data.time + ` (` + data.duration + `)`}"
-                    app:drawableStartCompat="@drawable/icon_schedule_time" />
+                    android:orientation="horizontal"
+                    android:layout_alignParentStart="true">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:drawablePadding="5dp"
+                        style="@style/conference_invite_desc_font"
+                        android:text="@{data.time, default=`5:35 PM`}"
+                        app:drawableStartCompat="@drawable/icon_schedule_time" />
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="5dp"
+                        style="@style/conference_invite_desc_font"
+                        android:visibility="@{data.showDuration ? View.VISIBLE : View.GONE}"
+                        android:text="@{`(` + data.duration + `)`, default=`(2h)`}" />
+
+                </LinearLayout>
 
                 <TextView
-                    android:layout_toEndOf="@id/time"
+                    style="@style/conference_invite_desc_font"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentEnd="true"
                     android:layout_marginStart="2dp"
                     android:layout_marginEnd="5dp"
+                    android:layout_toEndOf="@id/time"
                     android:ellipsize="end"
                     android:gravity="end"
-                    style="@style/conference_invite_desc_font"
                     android:text="@{@string/conference_schedule_organizer + ` ` + data.organizer}" />
 
             </RelativeLayout>

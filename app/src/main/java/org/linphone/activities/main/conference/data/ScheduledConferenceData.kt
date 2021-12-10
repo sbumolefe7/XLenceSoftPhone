@@ -39,6 +39,7 @@ class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
     val organizer = MutableLiveData<String>()
     val participantsShort = MutableLiveData<String>()
     val participantsExpanded = MutableLiveData<String>()
+    val showDuration = MutableLiveData<Boolean>()
 
     init {
         expanded.value = false
@@ -54,6 +55,7 @@ class ScheduledConferenceData(val conferenceInfo: ConferenceInfo) {
         val hours = TimeUnit.MINUTES.toHours(minutes.toLong())
         val remainMinutes = minutes - TimeUnit.HOURS.toMinutes(hours).toInt()
         duration.value = TimestampUtils.durationToString(hours.toInt(), remainMinutes)
+        showDuration.value = minutes > 0
 
         val organizerAddress = conferenceInfo.organizer
         if (organizerAddress != null) {

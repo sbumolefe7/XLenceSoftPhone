@@ -86,6 +86,7 @@ class ChatMessageContentData(
     val conferenceTime = MutableLiveData<String>()
     val conferenceDuration = MutableLiveData<String>()
     var conferenceAddress = MutableLiveData<String>()
+    val showDuration = MutableLiveData<Boolean>()
 
     val isAlone: Boolean
         get() {
@@ -286,6 +287,7 @@ class ChatMessageContentData(
             val hours = TimeUnit.MINUTES.toHours(minutes.toLong())
             val remainMinutes = minutes - TimeUnit.HOURS.toMinutes(hours).toInt()
             conferenceDuration.value = TimestampUtils.durationToString(hours.toInt(), remainMinutes)
+            showDuration.value = minutes > 0
 
             conferenceParticipantCount.value = String.format(AppUtils.getString(R.string.conference_invite_participants_count), conferenceInfo.participants.size + 1) // +1 for organizer
         } else if (conferenceInfo == null) {

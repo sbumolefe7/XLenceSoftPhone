@@ -106,12 +106,20 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         }
 
         override fun onConferenceInfoCreated(core: Core, conferenceInfo: ConferenceInfo) {
-            Log.i("[Conference Creation] Conference info created, address will be ${conferenceInfo.uri?.asStringUriOnly()}")
-            address.value = conferenceInfo.uri
+            val conferenceAddress = conferenceInfo.uri
+            Log.i("[Conference Creation] Conference info created, address will be ${conferenceAddress?.asStringUriOnly()}")
+            conferenceAddress ?: return
 
-            // Send conference info even when conf is not scheduled for later
-            // as the conference server doesn't invite participants automatically
-            sendConferenceInfo(conferenceInfo)
+            address.value = conferenceAddress
+
+            if (sendInviteViaChat.value == true) {
+                // Send conference info even when conf is not scheduled for later
+                // as the conference server doesn't invite participants automatically
+                sendConferenceInfo(conferenceInfo)
+            } else {
+                conferenceCreationInProgress.value = false
+                conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), subject.value))
+            }
         }
     }
 
