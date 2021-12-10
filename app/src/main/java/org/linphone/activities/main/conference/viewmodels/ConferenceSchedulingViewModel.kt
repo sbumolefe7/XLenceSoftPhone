@@ -230,8 +230,6 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             params.startTime = startTime
             val duration = duration.value?.value ?: 0
             if (duration != 0) params.endTime = startTime + duration
-        } else {
-            // TODO: Set startTime to -1?
         }
         core.createConferenceOnServer(params, localAddress, participants)
     }
