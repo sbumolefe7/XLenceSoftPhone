@@ -49,6 +49,7 @@ import javax.crypto.spec.GCMParameterSpec
 import kotlin.math.abs
 import kotlinx.coroutines.*
 import org.linphone.BuildConfig
+import org.linphone.LinphoneApplication
 import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
 import org.linphone.compatibility.Compatibility
@@ -369,13 +370,27 @@ class CoreContext(val context: Context, coreConfig: Config) {
 
         for (account in core.accountList) {
             if (account.params.identityAddress?.domain == corePreferences.defaultDomain) {
-                // Ensure conference URI is set on sip.linphone.org proxy configs
+                // Ensure conference factory URI is set on sip.linphone.org proxy configs
                 if (account.params.conferenceFactoryUri == null) {
                     val params = account.params.clone()
                     val uri = corePreferences.conferenceServerUri
                     Log.i("[Context] Setting conference factory on proxy config ${params.identityAddress?.asString()} to default value: $uri")
                     params.conferenceFactoryUri = uri
                     account.params = params
+                }
+
+                // Ensure audio/video conference factory URI is set on sip.linphone.org proxy configs
+                if (account.params.audioVideoConferenceFactoryAddress == null) {
+                    val params = account.params.clone()
+                    val uri = corePreferences.audioVideoConferenceServerUri
+                    val address = core.interpretUrl(uri)
+                    if (address != null) {
+                        Log.i("[Context] Setting audio/video conference factory on proxy config ${params.identityAddress?.asString()} to default value: $uri")
+                        params.audioVideoConferenceFactoryAddress = address
+                        account.params = params
+                    } else {
+                        Log.e("[Context] Failed to parse audio/video conference factory URI: $uri")
+                    }
                 }
 
                 // Ensure LIME server URL is set if at least one sip.linphone.org proxy

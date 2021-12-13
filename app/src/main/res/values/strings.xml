@@ -611,6 +611,8 @@
     <string name="account_settings_apply_prefix_for_calls_title">Apply prefix for outgoing calls and chat</string>
     <string name="account_settings_apply_prefix_for_calls_summary">If a number is entered, apply prefix to number</string>
     <string name="account_settings_escape_plus_title">Replace + by 00</string>
+    <string name="account_setting_conference_factory_address">Conference factory URI</string>
+    <string name="account_setting_audio_video_conference_factory_address">Audio/video conference factory URI</string>
 
     <!-- Notifications -->
     <string name="notification_channel_service_id" translatable="false">linphone_notification_service_id</string>
