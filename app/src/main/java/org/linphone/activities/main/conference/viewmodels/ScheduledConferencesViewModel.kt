@@ -23,16 +23,32 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.linphone.LinphoneApplication.Companion.coreContext
 import org.linphone.activities.main.conference.data.ScheduledConferenceData
+import org.linphone.core.ConferenceInfo
+import org.linphone.core.Core
+import org.linphone.core.CoreListenerStub
 import org.linphone.core.tools.Log
 
 class ScheduledConferencesViewModel : ViewModel() {
     val conferences = MutableLiveData<ArrayList<ScheduledConferenceData>>()
 
+    private val listener = object : CoreListenerStub() {
+        override fun onConferenceInfoReceived(core: Core, conferenceInfo: ConferenceInfo) {
+            Log.i("[Scheduled Conferences] New conference info received")
+            val conferencesList = arrayListOf<ScheduledConferenceData>()
+            conferencesList.addAll(conferences.value.orEmpty())
+            val data = ScheduledConferenceData(conferenceInfo)
+            conferencesList.add(data)
+            conferences.value = conferencesList
+        }
+    }
+
     init {
+        coreContext.core.addListener(listener)
         computeConferenceInfoList()
     }
 
     override fun onCleared() {
+        coreContext.core.removeListener(listener)
         conferences.value.orEmpty().forEach(ScheduledConferenceData::destroy)
         super.onCleared()
     }

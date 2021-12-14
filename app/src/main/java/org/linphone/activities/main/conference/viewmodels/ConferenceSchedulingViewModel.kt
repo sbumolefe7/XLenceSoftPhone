@@ -69,6 +69,8 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     var hour: Int = 0
     var minutes: Int = 0
 
+    private val conferenceScheduler = coreContext.core.createConferenceScheduler()
+
     private val chatRoomListener = object : ChatRoomListenerStub() {
         override fun onStateChanged(room: ChatRoom, state: ChatRoom.State) {
             if (state == ChatRoom.State.Created) {
@@ -81,44 +83,54 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         }
     }
 
-    private val listener = object : CoreListenerStub() {
-        override fun onConferenceInfoSent(core: Core, conferenceInfo: ConferenceInfo) {
-            Log.i("[Conference Creation] Conference information successfully sent to all participants")
-            conferenceCreationInProgress.value = false
+    private val listener = object : ConferenceSchedulerListenerStub() {
+        override fun onStateChanged(
+            conferenceScheduler: ConferenceScheduler,
+            state: ConferenceSchedulerState
+        ) {
+            Log.i("[Conference Creation] Conference scheduler state is $state")
+            if (state == ConferenceSchedulerState.Ready) {
+                val conferenceAddress = conferenceScheduler.info?.uri
+                Log.i("[Conference Creation] Conference info created, address will be ${conferenceAddress?.asStringUriOnly()}")
+                conferenceAddress ?: return
 
-            val conferenceAddress = conferenceInfo.uri
-            if (conferenceAddress == null) {
-                Log.e("[Conference Creation] Conference address is null!")
-            } else {
-                conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), conferenceInfo.subject))
+                address.value = conferenceAddress
+
+                if (sendInviteViaChat.value == true) {
+                    // Send conference info even when conf is not scheduled for later
+                    // as the conference server doesn't invite participants automatically
+                    val chatRoomParams = coreContext.core.createDefaultChatRoomParams()
+                    chatRoomParams.backend = ChatRoomBackend.FlexisipChat
+                    chatRoomParams.enableGroup(false)
+                    chatRoomParams.enableEncryption(true)
+                    chatRoomParams.subject = subject.value
+                    conferenceScheduler.sendInvitations(chatRoomParams)
+                } else {
+                    conferenceCreationInProgress.value = false
+                    conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), conferenceScheduler.info?.subject))
+                }
             }
         }
 
-        override fun onConferenceInfoParticipantError(
-            core: Core,
-            conferenceInfo: ConferenceInfo,
-            participant: Address,
-            error: ConferenceInfoError?
+        override fun onInvitationsSent(
+            conferenceScheduler: ConferenceScheduler,
+            failedInvitations: Array<out Address>?
         ) {
-            Log.e("[Conference Creation] Conference information wasn't sent to participant ${participant.asStringUriOnly()}")
-            onMessageToNotifyEvent.value = Event(R.string.conference_schedule_info_not_sent_to_participant)
+            Log.i("[Conference Creation] Conference information successfully sent to all participants")
             conferenceCreationInProgress.value = false
-        }
 
-        override fun onConferenceInfoCreated(core: Core, conferenceInfo: ConferenceInfo) {
-            val conferenceAddress = conferenceInfo.uri
-            Log.i("[Conference Creation] Conference info created, address will be ${conferenceAddress?.asStringUriOnly()}")
-            conferenceAddress ?: return
+            if (failedInvitations?.isNotEmpty() == true) {
+                for (address in failedInvitations) {
+                    Log.e("[Conference Creation] Conference information wasn't sent to participant ${address.asStringUriOnly()}")
+                }
+                onMessageToNotifyEvent.value = Event(R.string.conference_schedule_info_not_sent_to_participant)
+            }
 
-            address.value = conferenceAddress
-
-            if (sendInviteViaChat.value == true) {
-                // Send conference info even when conf is not scheduled for later
-                // as the conference server doesn't invite participants automatically
-                sendConferenceInfo(conferenceInfo)
+            val conferenceAddress = conferenceScheduler.info?.uri
+            if (conferenceAddress == null) {
+                Log.e("[Conference Creation] Conference address is null!")
             } else {
-                conferenceCreationInProgress.value = false
-                conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), subject.value))
+                conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), conferenceScheduler.info?.subject))
             }
         }
     }
@@ -153,11 +165,11 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             continueEnabled.value = allMandatoryFieldsFilled()
         }
 
-        coreContext.core.addListener(listener)
+        conferenceScheduler.addListener(listener)
     }
 
     override fun onCleared() {
-        coreContext.core.removeListener(listener)
+        conferenceScheduler.removeListener(listener)
         participantsData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
 
         super.onCleared()
@@ -221,17 +233,18 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         }
         // END OF TODO
 
-        val params = core.createConferenceParams()
-        params.isVideoEnabled = true
-        params.subject = subject.value
-        params.description = description.value
+        val conferenceInfo = Factory.instance().createConferenceInfo()
+        conferenceInfo.organizer = localAddress
+        conferenceInfo.subject = subject.value
+        conferenceInfo.description = description.value
+        conferenceInfo.setParticipants(participants)
         if (scheduleForLater.value == true) {
             val startTime = getConferenceStartTimestamp()
-            params.startTime = startTime
+            conferenceInfo.dateTime = startTime
             val duration = duration.value?.value ?: 0
-            if (duration != 0) params.endTime = startTime + duration
+            conferenceInfo.duration = duration
         }
-        core.createConferenceOnServer(params, localAddress, participants)
+        conferenceScheduler.info = conferenceInfo // Will trigger the conference creation automatically
     }
 
     private fun computeTimeZonesList(): List<TimeZoneData> {
@@ -252,18 +265,6 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
                             !formattedTime.value.isNullOrEmpty()
                         )
                 )
-    }
-
-    private fun sendConferenceInfo(conferenceInfo: ConferenceInfo) {
-        val conferenceAddress = conferenceInfo.uri
-        if (conferenceAddress == null) {
-            Log.e("[Conference Creation] Remote conference address is null!")
-            return
-        }
-        coreContext.core.sendConferenceInformation(conferenceInfo, "")
-
-        conferenceCreationInProgress.value = false
-        conferenceCreationCompletedEvent.value = Event(Pair(conferenceAddress.asStringUriOnly(), subject.value))
     }
 
     private fun getConferenceStartTimestamp(): Long {

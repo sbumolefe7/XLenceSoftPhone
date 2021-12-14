@@ -49,7 +49,6 @@ import javax.crypto.spec.GCMParameterSpec
 import kotlin.math.abs
 import kotlinx.coroutines.*
 import org.linphone.BuildConfig
-import org.linphone.LinphoneApplication
 import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
 import org.linphone.compatibility.Compatibility
