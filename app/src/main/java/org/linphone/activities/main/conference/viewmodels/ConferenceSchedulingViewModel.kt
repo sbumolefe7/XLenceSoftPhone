@@ -220,7 +220,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         val localAddress = core.defaultAccount?.params?.identityAddress
 
         // TODO: Temporary workaround for chat room, to be removed once we can get matching chat room from conference
-        val chatRoomParams = core.createDefaultChatRoomParams()
+        /*val chatRoomParams = core.createDefaultChatRoomParams()
         chatRoomParams.backend = ChatRoomBackend.FlexisipChat
         chatRoomParams.enableGroup(true)
         chatRoomParams.subject = subject.value
@@ -230,7 +230,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         } else {
             Log.i("[Conference Creation] Creating chat room with same subject [${subject.value}] & participants as for conference")
             chatRoom.addListener(chatRoomListener)
-        }
+        }*/
         // END OF TODO
 
         val conferenceInfo = Factory.instance().createConferenceInfo()
