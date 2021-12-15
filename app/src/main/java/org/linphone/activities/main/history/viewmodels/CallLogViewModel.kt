@@ -31,6 +31,7 @@ import org.linphone.activities.main.conference.data.ConferenceSchedulingParticip
 import org.linphone.contact.GenericContactViewModel
 import org.linphone.core.*
 import org.linphone.core.tools.Log
+import org.linphone.utils.AppUtils
 import org.linphone.utils.Event
 import org.linphone.utils.LinphoneUtils
 import org.linphone.utils.TimestampUtils
@@ -141,7 +142,11 @@ class CallLogViewModel(val callLog: CallLog) : GenericContactViewModel(callLog.r
         val conferenceInfo = callLog.conferenceInfo
         if (conferenceInfo != null) {
             conferenceTime.value = TimestampUtils.timeToString(conferenceInfo.dateTime)
-            conferenceDate.value = TimestampUtils.toString(conferenceInfo.dateTime, onlyDate = true, shortDate = false, hideYear = false)
+            conferenceDate.value = if (TimestampUtils.isToday(conferenceInfo.dateTime)) {
+                AppUtils.getString(R.string.today)
+            } else {
+                TimestampUtils.toString(conferenceInfo.dateTime, onlyDate = true, shortDate = false, hideYear = false)
+            }
             val list = arrayListOf<ConferenceSchedulingParticipantData>()
             for (participant in conferenceInfo.participants) {
                 list.add(ConferenceSchedulingParticipantData(participant, false))
