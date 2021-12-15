@@ -74,7 +74,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
-                android:text="@{callsViewModel.currentCallData.contact.fullName ?? callsViewModel.currentCallData.displayName, default=`Bilbo Baggins`}" />
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="@{callsViewModel.currentCallData.remoteConferenceSubject ?? callsViewModel.currentCallData.contact.fullName ?? callsViewModel.currentCallData.displayName, default=`Bilbo Baggins`}" />
 
             <TextView
                 style="@style/call_header_subtitle"
@@ -82,7 +84,9 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
                 android:gravity="center"
-                android:text="@{callsViewModel.currentCallData.address, default=`sip:bilbo.baggins@sip.linphone.org`}" />
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:text="@{callsViewModel.currentCallData.remoteConferenceSubject.length > 0 ? @string/conference : callsViewModel.currentCallData.address, default=`sip:bilbo.baggins@sip.linphone.org`}" />
 
         </LinearLayout>
 

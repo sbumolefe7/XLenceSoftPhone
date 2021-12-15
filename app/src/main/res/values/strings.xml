@@ -229,6 +229,7 @@
     <string name="recordings_empty_list">No recordings</string>
 
     <!-- Conferencing -->
+    <string name="conference">Conference</string>
     <string name="conference_schedule_title">Start a conference</string>
     <string name="conference_schedule_later">Do you want to schedule this conference for later?</string>
     <string name="conference_schedule_mandatory_field">Mandatory</string>
