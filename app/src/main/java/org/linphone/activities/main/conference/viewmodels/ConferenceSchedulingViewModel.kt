@@ -252,8 +252,8 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     }
 
     private fun computeDurationList(): List<Duration> {
-        // Duration value is in seconds to match SDK time_t
-        return arrayListOf(Duration(1800, "30min"), Duration(3600, "1h"), Duration(7200, "2h"))
+        // Duration value is in minutes as according to conferenceInfo.setDuration() doc
+        return arrayListOf(Duration(30, "30min"), Duration(60, "1h"), Duration(120, "2h"))
     }
 
     private fun allMandatoryFieldsFilled(): Boolean {
