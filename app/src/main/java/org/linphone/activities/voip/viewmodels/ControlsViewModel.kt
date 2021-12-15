@@ -58,8 +58,6 @@ class ControlsViewModel : ViewModel() {
 
     val isSwitchCameraAvailable = MutableLiveData<Boolean>()
 
-    val isVideoPreviewResizedForPip = MutableLiveData<Boolean>()
-
     val isOutgoingEarlyMedia = MutableLiveData<Boolean>()
 
     val showExtras = MutableLiveData<Boolean>()

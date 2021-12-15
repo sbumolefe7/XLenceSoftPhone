@@ -207,7 +207,7 @@
 
                 <org.linphone.activities.voip.views.RoundCornersTextureView
                     android:id="@+id/local_preview_video_surface"
-                    android:layout_size="@{controlsViewModel.isVideoPreviewResizedForPip ? @dimen/video_preview_pip_max_size : @dimen/video_preview_max_size}"
+                    android:layout_size="@{controlsViewModel.pipMode ? @dimen/video_preview_pip_max_size : @dimen/video_preview_max_size}"
                     android:layout_width="0dp"
                     android:layout_height="0dp"
                     app:layout_constraintHeight_max="200dp"
@@ -218,7 +218,7 @@
 
                 <ImageView
                     android:onClick="@{() -> controlsViewModel.switchCamera()}"
-                    android:visibility="@{controlsViewModel.isSwitchCameraAvailable &amp;&amp; !controlsViewModel.isVideoPreviewResizedForPip ? View.VISIBLE : View.GONE, default=gone}"
+                    android:visibility="@{controlsViewModel.isSwitchCameraAvailable &amp;&amp; !controlsViewModel.pipMode ? View.VISIBLE : View.GONE, default=gone}"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="5dp"

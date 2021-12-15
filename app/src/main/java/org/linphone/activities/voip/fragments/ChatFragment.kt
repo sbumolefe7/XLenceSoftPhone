@@ -127,7 +127,7 @@ class ChatFragment : GenericFragment<VoipChatFragmentBinding>() {
         )[ChatMessageSendingViewModel::class.java]
         binding.chatSendingViewModel = chatSendingViewModel
 
-        val listSelectionViewModel = ViewModelProvider(this).get(ListTopBarViewModel::class.java)
+        val listSelectionViewModel = ViewModelProvider(this)[ListTopBarViewModel::class.java]
         adapter = ChatMessagesListAdapter(listSelectionViewModel, this)
         // SubmitList is done on a background thread
         // We need this adapter data observer to know when to scroll

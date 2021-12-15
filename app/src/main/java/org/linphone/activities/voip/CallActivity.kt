@@ -72,10 +72,10 @@ class CallActivity : ProximitySensorActivity() {
         val navController = binding.navHostFragment.findNavController()
         val navControllerStoreOwner = navController.getViewModelStoreOwner(R.id.call_nav_graph)
 
-        controlsViewModel = ViewModelProvider(navControllerStoreOwner).get(ControlsViewModel::class.java)
+        controlsViewModel = ViewModelProvider(navControllerStoreOwner)[ControlsViewModel::class.java]
         binding.controlsViewModel = controlsViewModel
 
-        callsViewModel = ViewModelProvider(navControllerStoreOwner).get(CallsViewModel::class.java)
+        callsViewModel = ViewModelProvider(navControllerStoreOwner)[CallsViewModel::class.java]
 
         callsViewModel.noMoreCallEvent.observe(
             this,
@@ -139,8 +139,6 @@ class CallActivity : ProximitySensorActivity() {
         if (::controlsViewModel.isInitialized) {
             // To hide UI except for TextureViews
             controlsViewModel.pipMode.value = isInPictureInPictureMode
-            // To reduce the size of the preview in the PiP window
-            controlsViewModel.isVideoPreviewResizedForPip.value = isInPictureInPictureMode
         }
     }
 
