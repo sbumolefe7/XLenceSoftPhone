@@ -138,7 +138,7 @@ class CallActivity : ProximitySensorActivity() {
         Log.i("[Call] Activity is in PiP mode? $isInPictureInPictureMode")
         if (::controlsViewModel.isInitialized) {
             // To hide UI except for TextureViews
-            controlsViewModel.fullScreenMode.value = isInPictureInPictureMode
+            controlsViewModel.pipMode.value = isInPictureInPictureMode
             // To reduce the size of the preview in the PiP window
             controlsViewModel.isVideoPreviewResizedForPip.value = isInPictureInPictureMode
         }

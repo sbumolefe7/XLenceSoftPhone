@@ -22,7 +22,7 @@
 
         <LinearLayout
             android:id="@+id/header"
-            android:visibility="@{controlsViewModel.fullScreenMode ? View.GONE : View.VISIBLE}"
+            android:visibility="@{controlsViewModel.fullScreenMode || controlsViewModel.pipMode ? View.GONE : View.VISIBLE}"
             android:layout_width="match_parent"
             android:layout_height="@dimen/voip_call_header_height"
             android:layout_marginBottom="10dp"

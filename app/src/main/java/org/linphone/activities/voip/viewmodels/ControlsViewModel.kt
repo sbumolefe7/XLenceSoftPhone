@@ -66,6 +66,8 @@ class ControlsViewModel : ViewModel() {
 
     val fullScreenMode = MutableLiveData<Boolean>()
 
+    val pipMode = MutableLiveData<Boolean>()
+
     val chatRoomCreationInProgress = MutableLiveData<Boolean>()
 
     val numpadVisible = MutableLiveData<Boolean>()
