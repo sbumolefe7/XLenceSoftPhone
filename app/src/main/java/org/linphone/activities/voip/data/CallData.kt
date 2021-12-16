@@ -89,7 +89,7 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
         update()
         initChatRoom()
 
-        val conferenceInfo = coreContext.core.getConferenceInformationFromUri(call.remoteAddress)
+        val conferenceInfo = coreContext.core.findConferenceInformationFromUri(call.remoteAddress)
         if (conferenceInfo != null) {
             Log.i("[Call] Found matching conference info with subject: ${conferenceInfo.subject}")
             remoteConferenceSubject.value = conferenceInfo.subject
