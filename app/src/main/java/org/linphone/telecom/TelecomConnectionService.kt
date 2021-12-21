@@ -19,6 +19,7 @@
  */
 package org.linphone.telecom
 
+import android.annotation.TargetApi
 import android.content.ComponentName
 import android.content.Intent
 import android.net.Uri
@@ -29,6 +30,7 @@ import org.linphone.core.Core
 import org.linphone.core.CoreListenerStub
 import org.linphone.core.tools.Log
 
+@TargetApi(26)
 class TelecomConnectionService : ConnectionService() {
     private val listener: CoreListenerStub = object : CoreListenerStub() {
         override fun onCallStateChanged(
@@ -109,13 +111,13 @@ class TelecomConnectionService : ConnectionService() {
             }
 
             val connection = NativeCallWrapper(callId)
-            connection.setDialing()
 
             val providedHandle = request.address
             connection.setAddress(providedHandle, TelecomManager.PRESENTATION_ALLOWED)
             connection.setCallerDisplayName(displayName, TelecomManager.PRESENTATION_ALLOWED)
-            Log.i("[Telecom Connection Service] Address is $providedHandle")
+            Log.i("[Telecom Connection Service] Address is ${connection.address}, display name is ${connection.callerDisplayName}, presentation is ${connection.callerDisplayNamePresentation}")
 
+            connection.setDialing()
             TelecomHelper.get().connections.add(connection)
             connection
         } else {
@@ -153,14 +155,14 @@ class TelecomConnectionService : ConnectionService() {
             Log.i("[Telecom Connection Service] Incoming connection is for call [$callId] with display name [$displayName]")
 
             val connection = NativeCallWrapper(callId)
-            connection.setRinging()
 
             val providedHandle =
                 incomingExtras?.getParcelable<Uri>(TelecomManager.EXTRA_INCOMING_CALL_ADDRESS)
             connection.setAddress(providedHandle, TelecomManager.PRESENTATION_ALLOWED)
             connection.setCallerDisplayName(displayName, TelecomManager.PRESENTATION_ALLOWED)
-            Log.i("[Telecom Connection Service] Address is $providedHandle")
+            Log.i("[Telecom Connection Service] Address is ${connection.address}, display name is ${connection.callerDisplayName}, presentation is ${connection.callerDisplayNamePresentation}")
 
+            connection.setRinging()
             TelecomHelper.get().connections.add(connection)
             connection
         } else {

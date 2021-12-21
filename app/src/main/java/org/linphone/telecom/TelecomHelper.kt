@@ -43,7 +43,7 @@ import org.linphone.utils.PermissionHelper
 import org.linphone.utils.SingletonHolder
 
 @TargetApi(26)
-class TelecomHelper private constructor(context: Context) {
+class TelecomHelper private constructor(private val context: Context) {
     companion object : SingletonHolder<TelecomHelper, Context>(::TelecomHelper)
 
     private val telecomManager: TelecomManager = context.getSystemService(Context.TELECOM_SERVICE) as TelecomManager
@@ -80,7 +80,7 @@ class TelecomHelper private constructor(context: Context) {
     }
 
     fun isIncomingCallPermitted(): Boolean {
-        val incomingCallPermitted = telecomManager.isIncomingCallPermitted(account.accountHandle)
+        val incomingCallPermitted = telecomManager.isIncomingCallPermitted(getAccountHandle())
         Log.i("[Telecom Helper] Is incoming call permitted? $incomingCallPermitted")
         return incomingCallPermitted
     }
@@ -102,19 +102,11 @@ class TelecomHelper private constructor(context: Context) {
     @SuppressLint("MissingPermission")
     fun findExistingAccount(context: Context): PhoneAccount? {
         if (PermissionHelper.required(context).hasReadPhoneStateOrPhoneNumbersPermission()) {
-            var account: PhoneAccount? = null
-            val phoneAccountHandleList: List<PhoneAccountHandle> =
-                telecomManager.selfManagedPhoneAccounts
-            val connectionService = ComponentName(context, TelecomConnectionService::class.java)
-            for (phoneAccountHandle in phoneAccountHandleList) {
-                val phoneAccount: PhoneAccount = telecomManager.getPhoneAccount(phoneAccountHandle)
-                if (phoneAccountHandle.componentName == connectionService) {
-                    Log.i("[Telecom Helper] Found existing phone account: $phoneAccount")
-                    account = phoneAccount
-                    break
-                }
-            }
-            if (account == null) {
+            val phoneAccount: PhoneAccount? = telecomManager.getPhoneAccount(getAccountHandle())
+            if (phoneAccount != null) {
+                Log.i("[Telecom Helper] Found existing phone account: $phoneAccount")
+                account = phoneAccount
+            } else {
                 Log.w("[Telecom Helper] Existing phone account not found")
             }
             return account
@@ -155,11 +147,14 @@ class TelecomHelper private constructor(context: Context) {
         return account
     }
 
-    private fun createAccount(context: Context): PhoneAccount {
-        val accountHandle = PhoneAccountHandle(
+    private fun getAccountHandle(): PhoneAccountHandle {
+        return PhoneAccountHandle(
             ComponentName(context, TelecomConnectionService::class.java),
             context.packageName
         )
+    }
+
+    private fun createAccount(context: Context): PhoneAccount {
         // Take care that identity may be parsed, otherwise Android OS may crash during startup
         // and user will have to do a factory reset...
         val identity = coreContext.core.defaultAccount?.params?.identityAddress?.asStringUriOnly()
@@ -168,7 +163,7 @@ class TelecomHelper private constructor(context: Context) {
 
         val address = Uri.parse(identity)
             ?: throw Exception("[Telecom Helper] Identity address for phone account is null!")
-        val account = PhoneAccount.builder(accountHandle, context.getString(R.string.app_name))
+        val account = PhoneAccount.builder(getAccountHandle(), context.getString(R.string.app_name))
             .setAddress(address)
             .setIcon(Icon.createWithResource(context, R.drawable.linphone_logo_tinted))
             .setCapabilities(PhoneAccount.CAPABILITY_SELF_MANAGED)
@@ -187,10 +182,11 @@ class TelecomHelper private constructor(context: Context) {
 
         val extras = prepareBundle(call)
         telecomManager.addNewIncomingCall(
-            account.accountHandle,
+            getAccountHandle(),
             Bundle().apply {
                 putBundle(EXTRA_INCOMING_CALL_EXTRAS, extras)
-                putParcelable(EXTRA_PHONE_ACCOUNT_HANDLE, account.accountHandle)
+                putParcelable(EXTRA_PHONE_ACCOUNT_HANDLE, getAccountHandle())
+                extras.putParcelable(EXTRA_INCOMING_CALL_ADDRESS, Uri.parse(call.remoteAddress.asStringUriOnly()))
             }
         )
     }
@@ -204,7 +200,7 @@ class TelecomHelper private constructor(context: Context) {
             Uri.parse(call.remoteAddress.asStringUriOnly()),
             Bundle().apply {
                 putBundle(EXTRA_OUTGOING_CALL_EXTRAS, extras)
-                putParcelable(EXTRA_PHONE_ACCOUNT_HANDLE, account.accountHandle)
+                putParcelable(EXTRA_PHONE_ACCOUNT_HANDLE, getAccountHandle())
             }
         )
     }

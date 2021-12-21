@@ -19,6 +19,7 @@
  */
 package org.linphone.telecom
 
+import android.annotation.TargetApi
 import android.graphics.drawable.Icon
 import android.os.Bundle
 import android.telecom.CallAudioState
@@ -29,22 +30,28 @@ import org.linphone.LinphoneApplication.Companion.coreContext
 import org.linphone.R
 import org.linphone.core.Call
 import org.linphone.core.tools.Log
+import org.linphone.utils.AppUtils
 import org.linphone.utils.AudioRouteUtils
 
+@TargetApi(26)
 class NativeCallWrapper(var callId: String) : Connection() {
     init {
+        setInitializing()
+        connectionProperties = PROPERTY_SELF_MANAGED
         val capabilities = connectionCapabilities or CAPABILITY_MUTE or CAPABILITY_SUPPORT_HOLD or CAPABILITY_HOLD
         connectionCapabilities = capabilities
         audioModeIsVoip = true
         statusHints = StatusHints(
-            "",
+            AppUtils.getString(R.string.app_name),
             Icon.createWithResource(coreContext.context, R.drawable.linphone_logo_tinted),
             Bundle()
         )
+        Log.i(" [Connection] Created, state is ${stateToString(state)}")
+        setInitialized()
     }
 
     override fun onStateChanged(state: Int) {
-        Log.i("[Connection] Telecom state changed [$state] for call with id: $callId")
+        Log.i("[Connection] Telecom state changed [${stateToString(state)}] for call with id: $callId")
         super.onStateChanged(state)
     }
 
