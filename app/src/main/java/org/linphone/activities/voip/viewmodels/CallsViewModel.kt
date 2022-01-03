@@ -149,13 +149,11 @@ class CallsViewModel : ViewModel() {
         super.onCleared()
     }
 
-    fun mergeCallsIntoLocalConference() {
+    fun mergeCallsIntoConference() {
+        Log.i("[Calls] Merging all calls into new conference")
         val core = coreContext.core
-
         val params = core.createConferenceParams()
-        params.isVideoEnabled = false // We disable video for local conferencing
-
-        val conference = core.conference ?: core.createConferenceWithParams(params)
+        val conference = core.createConferenceWithParams(params)
         conference?.addParticipants(core.calls)
     }
 

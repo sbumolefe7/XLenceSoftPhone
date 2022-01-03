@@ -232,6 +232,19 @@ class ConferenceViewModel : ViewModel() {
         updateConferenceLayout(conference)
     }
 
+    fun addCallsToConference() {
+        Log.i("[Conference] Trying to merge all calls into existing conference")
+        val conf = conference.value
+        conf ?: return
+
+        for (call in coreContext.core.calls) {
+            if (call.conference == null) {
+                Log.i("[Conference] Adding call [$call] as participant for conference [$conf]")
+                conf.addParticipant(call)
+            }
+        }
+    }
+
     private fun updateConferenceLayout(conference: Conference) {
         val layout = conference.layout
         conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.None
