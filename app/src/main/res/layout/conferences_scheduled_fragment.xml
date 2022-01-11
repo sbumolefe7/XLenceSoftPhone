@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <data>
         <import type="android.view.View" />
         <variable
             name="backClickListener"
+            type="android.view.View.OnClickListener"/>
+        <variable
+            name="newConferenceClickListener"
             type="android.view.View.OnClickListener"/>
         <variable
             name="viewModel"
@@ -47,11 +49,15 @@
                 android:padding="15dp"
                 android:text="@string/conference_scheduled"/>
 
-            <View
+            <ImageView
+                android:onClick="@{newConferenceClickListener}"
+                android:contentDescription="@string/content_description_create_conference"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="0.2"
-                android:visibility="invisible" />
+                android:background="?attr/button_background_drawable"
+                android:padding="5dp"
+                android:src="@drawable/icon_video_conf_new" />
 
         </LinearLayout>
 

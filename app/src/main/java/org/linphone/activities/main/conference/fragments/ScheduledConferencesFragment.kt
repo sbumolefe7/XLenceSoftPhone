@@ -33,6 +33,7 @@ import org.linphone.activities.main.MainActivity
 import org.linphone.activities.main.conference.adapters.ScheduledConferencesAdapter
 import org.linphone.activities.main.conference.viewmodels.ScheduledConferencesViewModel
 import org.linphone.activities.main.viewmodels.DialogViewModel
+import org.linphone.activities.navigateToConferenceScheduling
 import org.linphone.activities.navigateToConferenceWaitingRoom
 import org.linphone.databinding.ConferencesScheduledFragmentBinding
 import org.linphone.utils.AppUtils
@@ -129,6 +130,10 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
 
         binding.setBackClickListener {
             goBack()
+        }
+
+        binding.setNewConferenceClickListener {
+            navigateToConferenceScheduling()
         }
     }
 }

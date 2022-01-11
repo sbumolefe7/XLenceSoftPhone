@@ -242,6 +242,14 @@ internal fun ScheduledConferencesFragment.navigateToConferenceWaitingRoom(
     )
 }
 
+internal fun ScheduledConferencesFragment.navigateToConferenceScheduling() {
+    findMasterNavController().navigate(
+        R.id.action_global_conferenceSchedulingFragment,
+        null,
+        popupTo(R.id.conferenceSchedulingFragment, true)
+    )
+}
+
 /* Chat related */
 
 internal fun MasterChatRoomsFragment.navigateToChatRoom(args: Bundle) {
