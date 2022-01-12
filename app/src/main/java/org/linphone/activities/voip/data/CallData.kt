@@ -20,6 +20,7 @@
 package org.linphone.activities.voip.data
 
 import android.view.View
+import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import java.util.*
 import kotlinx.coroutines.*
@@ -46,6 +47,7 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
 
     val isInRemoteConference = MutableLiveData<Boolean>()
     val remoteConferenceSubject = MutableLiveData<String>()
+    val isActiveAndNotInConference = MediatorLiveData<Boolean>()
 
     val isOutgoing = MutableLiveData<Boolean>()
     val isIncoming = MutableLiveData<Boolean>()
@@ -85,6 +87,17 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
     init {
         call.addListener(listener)
         isRemotelyRecorded.value = call.remoteParams?.isRecording
+
+        isActiveAndNotInConference.value = true
+        isActiveAndNotInConference.addSource(isPaused) {
+            updateActiveAndNotInConference()
+        }
+        isActiveAndNotInConference.addSource(isRemotelyPaused) {
+            updateActiveAndNotInConference()
+        }
+        isActiveAndNotInConference.addSource(isInRemoteConference) {
+            updateActiveAndNotInConference()
+        }
 
         update()
         initChatRoom()
@@ -289,5 +302,9 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
             30000
         )
         Log.i("[Call] Starting 30 seconds timer to automatically decline video request")
+    }
+
+    private fun updateActiveAndNotInConference() {
+        isActiveAndNotInConference.value = isPaused.value == false && isRemotelyPaused.value == false && isInRemoteConference.value == false
     }
 }
