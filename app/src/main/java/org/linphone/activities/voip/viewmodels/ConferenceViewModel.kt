@@ -165,7 +165,15 @@ class ConferenceViewModel : ViewModel() {
 
         subject.value = AppUtils.getString(R.string.conference_default_title)
 
-        val conference = coreContext.core.conference ?: coreContext.core.currentCall?.conference
+        var conference = coreContext.core.conference ?: coreContext.core.currentCall?.conference
+        if (conference == null) {
+            for (call in coreContext.core.calls) {
+                if (call.conference != null) {
+                    conference = call.conference
+                    break
+                }
+            }
+        }
         if (conference != null) {
             Log.i("[Conference] Found an existing conference: $conference")
             initConference(conference)
@@ -242,6 +250,10 @@ class ConferenceViewModel : ViewModel() {
                 Log.i("[Conference] Adding call [$call] as participant for conference [$conf]")
                 conf.addParticipant(call)
             }
+        }
+        if (!conf.isIn) {
+            Log.i("[Conference] Conference was paused, resuming it")
+            conf.enter()
         }
     }
 
