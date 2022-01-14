@@ -27,6 +27,7 @@ import org.linphone.contact.GenericContactData
 import org.linphone.core.MediaDirection
 import org.linphone.core.ParticipantDevice
 import org.linphone.core.ParticipantDeviceListenerStub
+import org.linphone.core.StreamType
 import org.linphone.core.tools.Log
 
 class ConferenceParticipantDeviceData(
@@ -59,12 +60,25 @@ class ConferenceParticipantDeviceData(
             isInConference.value = false
         }
 
-        override fun onVideoDirectionChanged(
+        override fun onStreamCapabilityChanged(
             participantDevice: ParticipantDevice,
-            direction: MediaDirection?
+            direction: MediaDirection,
+            streamType: StreamType
         ) {
-            Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] video stream direction changed: $direction")
-            videoEnabled.value = direction == MediaDirection.SendOnly || direction == MediaDirection.SendRecv
+            if (streamType == StreamType.Video) {
+                Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] video capability changed to $direction")
+            }
+        }
+
+        override fun onStreamAvailabilityChanged(
+            participantDevice: ParticipantDevice,
+            available: Boolean,
+            streamType: StreamType
+        ) {
+            if (streamType == StreamType.Video) {
+                Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] video availability changed to ${if (available) "available" else "unavailable"}")
+                videoEnabled.value = available
+            }
         }
     }
 
@@ -73,11 +87,11 @@ class ConferenceParticipantDeviceData(
         participantDevice.addListener(listener)
 
         activeSpeaker.value = false
-
-        videoEnabled.value = participantDevice.videoDirection == MediaDirection.SendOnly || participantDevice.videoDirection == MediaDirection.SendRecv
-
+        videoEnabled.value = participantDevice.getStreamAvailability(StreamType.Video)
         isInConference.value = participantDevice.isInConference
-        Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}], is in conf? ${isInConference.value}, is video enabled? ${videoEnabled.value}")
+
+        val videoCapability = participantDevice.getStreamCapability(StreamType.Video)
+        Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}], is in conf? ${isInConference.value}, is video enabled? ${videoEnabled.value} ($videoCapability)")
     }
 
     override fun destroy() {
