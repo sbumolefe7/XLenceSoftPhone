@@ -123,6 +123,18 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
             }
         )
 
+        conferenceViewModel.conference.observe(
+            viewLifecycleOwner,
+            { conference ->
+                if (conference != null && conference.currentParams.isVideoEnabled) {
+                    if (conference.me.devices.find { it.getStreamAvailability(StreamType.Video) } != null) {
+                        Log.i("[Call] Conference is video & our device has video enabled, enabling full screen mode")
+                        controlsViewModel.fullScreenMode.value = true
+                    }
+                }
+            }
+        )
+
         callsViewModel.currentCallData.observe(
             viewLifecycleOwner,
             {
