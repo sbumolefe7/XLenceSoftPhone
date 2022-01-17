@@ -82,6 +82,7 @@
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 android:src="@drawable/shape_conference_active_speaker_border"
+                android:adjustViewBounds="true"
                 android:contentDescription="@null"/>
 
             <TextView
