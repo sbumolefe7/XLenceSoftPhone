@@ -34,6 +34,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navGraphViewModels
 import com.google.android.material.snackbar.Snackbar
 import org.linphone.LinphoneApplication.Companion.coreContext
+import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
 import org.linphone.activities.*
 import org.linphone.activities.main.MainActivity
@@ -126,10 +127,12 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
         conferenceViewModel.conference.observe(
             viewLifecycleOwner,
             { conference ->
-                if (conference != null && conference.currentParams.isVideoEnabled) {
-                    if (conference.me.devices.find { it.getStreamAvailability(StreamType.Video) } != null) {
-                        Log.i("[Call] Conference is video & our device has video enabled, enabling full screen mode")
-                        controlsViewModel.fullScreenMode.value = true
+                if (corePreferences.enableFullScreenWhenJoiningVideoConference) {
+                    if (conference != null && conference.currentParams.isVideoEnabled) {
+                        if (conference.me.devices.find { it.getStreamAvailability(StreamType.Video) } != null) {
+                            Log.i("[Call] Conference is video & our device has video enabled, enabling full screen mode")
+                            controlsViewModel.fullScreenMode.value = true
+                        }
                     }
                 }
             }
