@@ -681,8 +681,15 @@ class NotificationsManager(private val context: Context) {
         val pictureUri = contact?.getContactThumbnailPictureUri()
         val roundPicture = ImageUtils.getRoundBitmapFromUri(context, pictureUri)
         val displayName = contact?.fullName ?: LinphoneUtils.getDisplayName(message.fromAddress)
+        var text = ""
 
-        var text: String = message.contents.find { content -> content.isText }?.utf8Text ?: ""
+        val isConferenceInvite = message.contents.firstOrNull()?.isIcalendar ?: false
+        text = if (isConferenceInvite) {
+            AppUtils.getString(R.string.conference_invitation_received_notification)
+        } else {
+            message.contents.find { content -> content.isText }?.utf8Text ?: ""
+        }
+
         if (text.isEmpty()) {
             for (content in message.contents) {
                 text += content.name
