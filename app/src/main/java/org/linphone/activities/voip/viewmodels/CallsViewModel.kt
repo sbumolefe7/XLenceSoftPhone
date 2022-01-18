@@ -74,7 +74,13 @@ class CallsViewModel : ViewModel() {
         }
 
         override fun onCallStateChanged(core: Core, call: Call, state: Call.State, message: String) {
-            Log.i("[Calls] Call state changed: $state")
+            Log.i("[Calls] Call with ID [${call.callLog.callId}] state changed: $state")
+
+            if (state == Call.State.IncomingEarlyMedia || state == Call.State.IncomingReceived || state == Call.State.OutgoingInit) {
+                if (!callDataAlreadyExists(call)) {
+                    addCallToList(call)
+                }
+            }
 
             val currentCall = core.currentCall
             if (currentCall != null && currentCallData.value?.call != currentCall) {
@@ -87,10 +93,6 @@ class CallsViewModel : ViewModel() {
                 removeCallFromList(call)
                 if (core.callsNb > 0) {
                     callEndedEvent.value = Event(call)
-                }
-            } else if (state == Call.State.IncomingEarlyMedia || state == Call.State.IncomingReceived || state == Call.State.OutgoingInit) {
-                if (call != core.currentCall) {
-                    addCallToList(call)
                 }
             } else if (call.state == Call.State.UpdatedByRemote) {
                 // If the correspondent asks to turn on video while audio call,
@@ -166,7 +168,7 @@ class CallsViewModel : ViewModel() {
             } else {
                 CallData(call)
             }
-            Log.i("[Calls] Adding call ${call.callLog.callId} to calls list")
+            Log.i("[Calls] Adding call with ID ${call.callLog.callId} to calls list")
             calls.add(data)
         }
 
@@ -174,7 +176,7 @@ class CallsViewModel : ViewModel() {
     }
 
     private fun addCallToList(call: Call) {
-        Log.i("[Calls] Adding call ${call.callLog.callId} to calls list")
+        Log.i("[Calls] Adding call with ID ${call.callLog.callId} to calls list")
 
         val calls = arrayListOf<CallData>()
         calls.addAll(callsData.value.orEmpty())
@@ -186,7 +188,7 @@ class CallsViewModel : ViewModel() {
     }
 
     private fun removeCallFromList(call: Call) {
-        Log.i("[Calls] Removing call ${call.callLog.callId} from calls list")
+        Log.i("[Calls] Removing call with ID ${call.callLog.callId} from calls list")
 
         val calls = arrayListOf<CallData>()
         calls.addAll(callsData.value.orEmpty())
@@ -231,12 +233,21 @@ class CallsViewModel : ViewModel() {
             }
         }
         if (!found) {
-            Log.w("[Calls] Call not found in calls data list, shouldn't happen!")
+            Log.w("[Calls] Call with ID [${callToUse.callLog.callId}] not found in calls data list, shouldn't happen!")
             val viewModel = CallData(callToUse)
             currentCallData.value = viewModel
         }
 
         updateUnreadChatCount()
+    }
+
+    private fun callDataAlreadyExists(call: Call): Boolean {
+        for (callData in callsData.value.orEmpty()) {
+            if (callData.call == call) {
+                return true
+            }
+        }
+        return false
     }
 
     private fun updateCallsAndChatCount(): Int {
