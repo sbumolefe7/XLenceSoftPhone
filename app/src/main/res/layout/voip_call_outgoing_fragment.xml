@@ -67,7 +67,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                app:data="@{callsViewModel.currentCallData}" />
+                app:data="@{callsViewModel.currentCallData}"
+                app:isConferenceCall="@{callsViewModel.currentCallData.remoteConferenceSubject.length > 0}" />
 
             <TextView
                 style="@style/call_header_title"

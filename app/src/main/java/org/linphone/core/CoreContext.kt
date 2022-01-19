@@ -206,7 +206,7 @@ class CoreContext(val context: Context, coreConfig: Config) {
                     }
                 }
 
-                if (corePreferences.routeAudioToSpeakerWhenVideoIsEnabled && call.currentParams.videoEnabled()) {
+                if (corePreferences.routeAudioToSpeakerWhenVideoIsEnabled && call.currentParams.isVideoEnabled) {
                     // Do not turn speaker on when video is enabled if headset or bluetooth is used
                     if (!AudioRouteUtils.isHeadsetAudioRouteAvailable() &&
                         !AudioRouteUtils.isBluetoothAudioRouteCurrentlyUsed(call)
@@ -605,7 +605,7 @@ class CoreContext(val context: Context, coreConfig: Config) {
         return if (conference != null && conference.isIn) {
             conference.currentParams.isVideoEnabled
         } else {
-            core.currentCall?.currentParams?.videoEnabled() ?: false
+            core.currentCall?.currentParams?.isVideoEnabled ?: false
         }
     }
 
