@@ -348,7 +348,7 @@ class ControlsViewModel : ViewModel() {
     }
 
     fun toggleFullScreen() {
-        if (isVideoEnabled.value == false) return
+        if (fullScreenMode.value == false && isVideoEnabled.value == false) return
         fullScreenMode.value = fullScreenMode.value != true
     }
 

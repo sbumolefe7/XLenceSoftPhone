@@ -87,7 +87,7 @@
 
             <ImageView
                 android:onClick="@{() -> conferenceViewModel.addCallsToConference()}"
-                android:enabled="@{callsViewModel.callsData.size() >= 2}"
+                android:enabled="@{callsViewModel.callsData.size() >= 2 &amp;&amp; conferenceViewModel.isMeAdmin}"
                 android:visibility="@{conferenceViewModel.conferenceExists ? View.VISIBLE : View.GONE, default=gone}"
                 android:layout_width="@dimen/voip_floating_button_size"
                 android:layout_height="@dimen/voip_floating_button_size"
