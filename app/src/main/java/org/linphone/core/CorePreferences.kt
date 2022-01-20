@@ -325,7 +325,7 @@ class CorePreferences constructor(private val context: Context) {
 
     // This won't be done if bluetooth or wired headset is used
     var routeAudioToSpeakerWhenVideoIsEnabled: Boolean
-        get() = config.getBool("app", "route_audio_to_speaker_when_video_enabled", false) // TODO: FIXME: set it back to true
+        get() = config.getBool("app", "route_audio_to_speaker_when_video_enabled", true)
         set(value) {
             config.setBool("app", "route_audio_to_speaker_when_video_enabled", value)
         }

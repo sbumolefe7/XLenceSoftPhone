@@ -441,6 +441,18 @@ class ControlsViewModel : ViewModel() {
 
     private fun updateVideoEnabled() {
         val enabled = coreContext.isVideoCallOrConferenceActive()
+        if (enabled && isVideoEnabled.value == false) {
+            Log.i("[Call Controls] Video is being turned on")
+            if (corePreferences.routeAudioToSpeakerWhenVideoIsEnabled) {
+                // Do not turn speaker on when video is enabled if headset or bluetooth is used
+                if (!AudioRouteUtils.isHeadsetAudioRouteAvailable() &&
+                    !AudioRouteUtils.isBluetoothAudioRouteCurrentlyUsed()
+                ) {
+                    Log.i("[Call Controls] Video enabled and no wired headset not bluetooth in use, routing audio to speaker")
+                    AudioRouteUtils.routeAudioToSpeaker()
+                }
+            }
+        }
         isVideoEnabled.value = enabled
         isSwitchCameraAvailable.value = enabled && coreContext.showSwitchCameraButton()
     }

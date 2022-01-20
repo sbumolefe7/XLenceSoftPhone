@@ -205,16 +205,6 @@ class CoreContext(val context: Context, coreConfig: Config) {
                         }
                     }
                 }
-
-                if (corePreferences.routeAudioToSpeakerWhenVideoIsEnabled && call.currentParams.isVideoEnabled) {
-                    // Do not turn speaker on when video is enabled if headset or bluetooth is used
-                    if (!AudioRouteUtils.isHeadsetAudioRouteAvailable() &&
-                        !AudioRouteUtils.isBluetoothAudioRouteCurrentlyUsed(call)
-                    ) {
-                        Log.i("[Context] Video enabled and no wired headset not bluetooth in use, routing audio to speaker")
-                        AudioRouteUtils.routeAudioToSpeaker(call)
-                    }
-                }
             } else if (state == Call.State.End || state == Call.State.Error || state == Call.State.Released) {
                 if (state == Call.State.Error) {
                     Log.w("[Context] Call error reason is ${call.errorInfo.protocolCode} / ${call.errorInfo.reason} / ${call.errorInfo.phrase}")
