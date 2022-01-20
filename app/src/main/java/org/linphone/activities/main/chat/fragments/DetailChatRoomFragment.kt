@@ -666,7 +666,7 @@ class DetailChatRoomFragment : MasterFragment<ChatRoomDetailFragmentBinding, Cha
                     val address = viewModel.onlyParticipantOnlyDeviceAddress
                     if (viewModel.oneParticipantOneDevice) {
                         if (address != null) {
-                            coreContext.startCall(address, true)
+                            coreContext.startCall(address, forceZRTP = true)
                         }
                     } else {
                         navigateToDevices()
@@ -682,7 +682,7 @@ class DetailChatRoomFragment : MasterFragment<ChatRoomDetailFragmentBinding, Cha
             val address = viewModel.onlyParticipantOnlyDeviceAddress
             if (viewModel.oneParticipantOneDevice) {
                 if (address != null) {
-                    coreContext.startCall(address, true)
+                    coreContext.startCall(address, forceZRTP = true)
                 }
             } else {
                 navigateToDevices()

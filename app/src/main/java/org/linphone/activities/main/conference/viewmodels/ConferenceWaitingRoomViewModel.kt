@@ -24,6 +24,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.linphone.LinphoneApplication.Companion.coreContext
 import org.linphone.core.AudioDevice
+import org.linphone.core.CallParams
 import org.linphone.core.Core
 import org.linphone.core.CoreListenerStub
 import org.linphone.core.tools.Log
@@ -36,7 +37,13 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
 
     val isMicrophoneMuted = MutableLiveData<Boolean>()
 
+    val audioRoutesEnabled = MutableLiveData<Boolean>()
+
+    val audioRoutesSelected = MutableLiveData<Boolean>()
+
     val isSpeakerSelected = MutableLiveData<Boolean>()
+
+    val isBluetoothHeadsetSelected = MutableLiveData<Boolean>()
 
     val isVideoAvailable = MutableLiveData<Boolean>()
 
@@ -52,21 +59,16 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
         MutableLiveData<Event<Boolean>>()
     }
 
-    val joinConferenceEvent: MutableLiveData<Event<Boolean>> by lazy {
-        MutableLiveData<Event<Boolean>>()
+    val joinConferenceEvent: MutableLiveData<Event<CallParams>> by lazy {
+        MutableLiveData<Event<CallParams>>()
     }
 
-    private val listener: CoreListenerStub = object : CoreListenerStub() {
-        override fun onAudioDeviceChanged(core: Core, audioDevice: AudioDevice) {
-            Log.i("[Conference Waiting Room] Audio device changed: ${audioDevice.deviceName}")
-            updateSpeakerState()
-        }
+    private val callParams: CallParams = coreContext.core.createCallParams(null)!!
 
+    private val listener: CoreListenerStub = object : CoreListenerStub() {
         override fun onAudioDevicesListUpdated(core: Core) {
             Log.i("[Conference Waiting Room] Audio devices list updated")
-            if (AudioRouteUtils.isHeadsetAudioRouteAvailable()) {
-                AudioRouteUtils.routeAudioToHeadset()
-            }
+            onAudioDevicesListUpdated()
         }
     }
 
@@ -74,15 +76,23 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
         val core = coreContext.core
         core.addListener(listener)
 
-        isVideoAvailable.value = core.videoCaptureEnabled() || core.videoPreviewEnabled()
-        isVideoEnabled.value = core.videoActivationPolicy.automaticallyInitiate && PermissionHelper.get().hasCameraPermission()
-        isSwitchCameraAvailable.value = isVideoEnabled.value == true && coreContext.showSwitchCameraButton()
-        if (isVideoEnabled.value == true) {
-            core.enableVideoPreview(true)
-        }
-
+        callParams.isMicEnabled = PermissionHelper.get().hasRecordAudioPermission()
+        Log.i("[Conference Waiting Room] Microphone will be ${if (callParams.isMicEnabled) "enabled" else "muted"}")
         updateMicState()
-        updateSpeakerState()
+
+        isVideoAvailable.value = core.videoCaptureEnabled() || core.videoPreviewEnabled()
+        callParams.isVideoEnabled = core.videoActivationPolicy.automaticallyInitiate
+        Log.i("[Conference Waiting Room] Video will be ${if (callParams.isVideoEnabled) "enabled" else "disabled"}")
+        updateVideoState()
+
+        if (AudioRouteUtils.isBluetoothAudioRouteAvailable()) {
+            setBluetoothAudioRoute()
+        } else if (isVideoAvailable.value == true && isVideoEnabled.value == true) {
+            setSpeakerAudioRoute()
+        } else {
+            setEarpieceAudioRoute()
+        }
+        updateAudioRouteState()
     }
 
     override fun onCleared() {
@@ -96,7 +106,7 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
     }
 
     fun start() {
-        joinConferenceEvent.value = Event(true)
+        joinConferenceEvent.value = Event(callParams)
     }
 
     fun toggleMuteMicrophone() {
@@ -105,29 +115,60 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
             return
         }
 
-        // TODO: currently doesn't work in SDK if there is no call
-        val micEnabled = coreContext.core.micEnabled()
-        coreContext.core.enableMic(!micEnabled)
-
+        callParams.isMicEnabled = !callParams.isMicEnabled
+        Log.i("[Conference Waiting Room] Microphone will be ${if (callParams.isMicEnabled) "enabled" else "muted"}")
         updateMicState()
     }
 
-    fun updateMicState() {
-        isMicrophoneMuted.value = !PermissionHelper.get().hasRecordAudioPermission() || !coreContext.core.micEnabled()
+    fun enableMic() {
+        Log.i("[Conference Waiting Room] Microphone will be enabled")
+        callParams.isMicEnabled = true
+        updateMicState()
     }
 
     fun toggleSpeaker() {
-        // TODO: currently doesn't work in SDK if there is no call
-        if (AudioRouteUtils.isSpeakerAudioRouteCurrentlyUsed()) {
-            forceEarpieceAudioRoute()
+        if (isSpeakerSelected.value == true) {
+            setEarpieceAudioRoute()
         } else {
-            forceSpeakerAudioRoute()
+            setSpeakerAudioRoute()
         }
-        updateSpeakerState()
     }
 
-    fun updateSpeakerState() {
-        isSpeakerSelected.value = AudioRouteUtils.isSpeakerAudioRouteCurrentlyUsed()
+    fun toggleAudioRoutesMenu() {
+        audioRoutesSelected.value = audioRoutesSelected.value != true
+    }
+
+    fun setBluetoothAudioRoute() {
+        Log.i("[Conference Waiting Room] Set default output audio device to Bluetooth")
+        callParams.outputAudioDevice = coreContext.core.audioDevices.find {
+            it.type == AudioDevice.Type.Bluetooth && it.hasCapability(AudioDevice.Capabilities.CapabilityPlay)
+        }
+        callParams.inputAudioDevice = coreContext.core.audioDevices.find {
+            it.type == AudioDevice.Type.Bluetooth && it.hasCapability(AudioDevice.Capabilities.CapabilityRecord)
+        }
+        updateAudioRouteState()
+    }
+
+    fun setSpeakerAudioRoute() {
+        Log.i("[Conference Waiting Room] Set default output audio device to Speaker")
+        callParams.outputAudioDevice = coreContext.core.audioDevices.find {
+            it.type == AudioDevice.Type.Speaker && it.hasCapability(AudioDevice.Capabilities.CapabilityPlay)
+        }
+        callParams.inputAudioDevice = coreContext.core.audioDevices.find {
+            it.type == AudioDevice.Type.Microphone && it.hasCapability(AudioDevice.Capabilities.CapabilityRecord)
+        }
+        updateAudioRouteState()
+    }
+
+    fun setEarpieceAudioRoute() {
+        Log.i("[Conference Waiting Room] Set default output audio device to Earpiece")
+        callParams.outputAudioDevice = coreContext.core.audioDevices.find {
+            it.type == AudioDevice.Type.Earpiece && it.hasCapability(AudioDevice.Capabilities.CapabilityPlay)
+        }
+        callParams.inputAudioDevice = coreContext.core.audioDevices.find {
+            it.type == AudioDevice.Type.Microphone && it.hasCapability(AudioDevice.Capabilities.CapabilityRecord)
+        }
+        updateAudioRouteState()
     }
 
     fun toggleVideo() {
@@ -135,26 +176,63 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
             askPermissionEvent.value = Event(Manifest.permission.CAMERA)
             return
         }
+        callParams.isVideoEnabled = !callParams.isVideoEnabled
+        Log.i("[Conference Waiting Room] Video will be ${if (callParams.isVideoEnabled) "enabled" else "disabled"}")
+        updateVideoState()
+    }
 
-        isVideoEnabled.value = isVideoEnabled.value == false
-        isSwitchCameraAvailable.value = isVideoEnabled.value == true && coreContext.showSwitchCameraButton()
-        coreContext.core.enableVideoPreview(isVideoEnabled.value == true)
+    fun enableVideo() {
+        Log.i("[Conference Waiting Room] Video will be enabled")
+        callParams.isVideoEnabled = true
+        updateVideoState()
     }
 
     fun switchCamera() {
+        Log.i("[Conference Waiting Room] Switching camera")
         coreContext.switchCamera()
     }
 
-    private fun forceEarpieceAudioRoute() {
-        if (AudioRouteUtils.isHeadsetAudioRouteAvailable()) {
-            Log.i("[Conference Waiting Room] Headset found, route audio to it instead of earpiece")
-            AudioRouteUtils.routeAudioToHeadset()
-        } else {
-            AudioRouteUtils.routeAudioToEarpiece()
-        }
+    private fun updateMicState() {
+        isMicrophoneMuted.value = !callParams.isMicEnabled
     }
 
-    private fun forceSpeakerAudioRoute() {
-        AudioRouteUtils.routeAudioToSpeaker()
+    private fun onAudioDevicesListUpdated() {
+        val bluetoothDeviceAvailable = AudioRouteUtils.isBluetoothAudioRouteAvailable()
+        audioRoutesEnabled.value = bluetoothDeviceAvailable
+
+        if (!bluetoothDeviceAvailable) {
+            audioRoutesSelected.value = false
+            Log.w("[Conference Waiting Room] Bluetooth device no longer available, switching back to default microphone & earpiece/speaker")
+            if (isBluetoothHeadsetSelected.value == true) {
+                for (audioDevice in coreContext.core.audioDevices) {
+                    if (isVideoEnabled.value == true) {
+                        if (audioDevice.type == AudioDevice.Type.Speaker) {
+                            callParams.outputAudioDevice = audioDevice
+                        }
+                    } else {
+                        if (audioDevice.type == AudioDevice.Type.Earpiece) {
+                            callParams.outputAudioDevice = audioDevice
+                        }
+                    }
+                    if (audioDevice.type == AudioDevice.Type.Microphone) {
+                        callParams.inputAudioDevice = audioDevice
+                    }
+                }
+            }
+        }
+
+        updateAudioRouteState()
+    }
+
+    private fun updateAudioRouteState() {
+        val outputDeviceType = callParams.outputAudioDevice?.type
+        isSpeakerSelected.value = outputDeviceType == AudioDevice.Type.Speaker
+        isBluetoothHeadsetSelected.value = outputDeviceType == AudioDevice.Type.Bluetooth
+    }
+
+    private fun updateVideoState() {
+        isVideoEnabled.value = callParams.isVideoEnabled
+        isSwitchCameraAvailable.value = callParams.isVideoEnabled && coreContext.showSwitchCameraButton()
+        coreContext.core.enableVideoPreview(callParams.isVideoEnabled)
     }
 }

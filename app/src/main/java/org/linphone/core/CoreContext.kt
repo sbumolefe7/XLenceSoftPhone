@@ -208,7 +208,7 @@ class CoreContext(val context: Context, coreConfig: Config) {
             } else if (state == Call.State.End || state == Call.State.Error || state == Call.State.Released) {
                 if (state == Call.State.Error) {
                     Log.w("[Context] Call error reason is ${call.errorInfo.protocolCode} / ${call.errorInfo.reason} / ${call.errorInfo.phrase}")
-                    val message = when (call.errorInfo.reason) {
+                    val toastMessage = when (call.errorInfo.reason) {
                         Reason.Busy -> context.getString(R.string.call_error_user_busy)
                         Reason.IOError -> context.getString(R.string.call_error_io_error)
                         Reason.NotAcceptable -> context.getString(R.string.call_error_incompatible_media_params)
@@ -217,15 +217,15 @@ class CoreContext(val context: Context, coreConfig: Config) {
                         Reason.TemporarilyUnavailable -> context.getString(R.string.call_error_temporarily_unavailable)
                         else -> context.getString(R.string.call_error_generic).format("${call.errorInfo.protocolCode} / ${call.errorInfo.phrase}")
                     }
-                    callErrorMessageResourceId.value = Event(message)
+                    callErrorMessageResourceId.value = Event(toastMessage)
                 } else if (state == Call.State.End &&
                     call.dir == Call.Dir.Outgoing &&
                     call.errorInfo.reason == Reason.Declined &&
                     core.callsNb == 0
                 ) {
                     Log.i("[Context] Call has been declined")
-                    val message = context.getString(R.string.call_error_declined)
-                    callErrorMessageResourceId.value = Event(message)
+                    val toastMessage = context.getString(R.string.call_error_declined)
+                    callErrorMessageResourceId.value = Event(toastMessage)
                 }
             }
 
@@ -523,14 +523,19 @@ class CoreContext(val context: Context, coreConfig: Config) {
         startCall(address)
     }
 
-    fun startCall(address: Address, forceZRTP: Boolean = false, localAddress: Address? = null) {
+    fun startCall(
+        address: Address,
+        callParams: CallParams? = null,
+        forceZRTP: Boolean = false,
+        localAddress: Address? = null
+    ) {
         if (!core.isNetworkReachable) {
             Log.e("[Context] Network unreachable, abort outgoing call")
             callErrorMessageResourceId.value = Event(context.getString(R.string.call_error_network_unreachable))
             return
         }
 
-        val params = core.createCallParams(null)
+        val params = callParams ?: core.createCallParams(null)
         if (params == null) {
             val call = core.inviteAddress(address)
             Log.w("[Context] Starting call $call without params")

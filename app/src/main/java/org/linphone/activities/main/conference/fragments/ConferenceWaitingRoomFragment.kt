@@ -63,18 +63,20 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
         viewModel.joinConferenceEvent.observe(
             viewLifecycleOwner,
             {
-                val conferenceUri = arguments?.getString("Address")
-                if (conferenceUri != null) {
-                    val conferenceAddress = coreContext.core.interpretUrl(conferenceUri)
-                    if (conferenceAddress != null) {
-                        Log.i("[Conference Waiting Room] Calling conference SIP URI: ${conferenceAddress.asStringUriOnly()}")
-                        coreContext.startCall(conferenceAddress)
-                        goBack()
+                it.consume { callParams ->
+                    val conferenceUri = arguments?.getString("Address")
+                    if (conferenceUri != null) {
+                        val conferenceAddress = coreContext.core.interpretUrl(conferenceUri)
+                        if (conferenceAddress != null) {
+                            Log.i("[Conference Waiting Room] Calling conference SIP URI: ${conferenceAddress.asStringUriOnly()}")
+                            coreContext.startCall(conferenceAddress, callParams)
+                            goBack()
+                        } else {
+                            Log.e("[Conference Waiting Room] Failed to parse conference SIP URI: $conferenceUri")
+                        }
                     } else {
-                        Log.e("[Conference Waiting Room] Failed to parse conference SIP URI: $conferenceUri")
+                        Log.e("[Conference Waiting Room] Failed to find conference SIP URI in arguments")
                     }
-                } else {
-                    Log.e("[Conference Waiting Room] Failed to find conference SIP URI in arguments")
                 }
             }
         )
@@ -134,11 +136,12 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
                 when (permissions[i]) {
                     Manifest.permission.RECORD_AUDIO -> if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                         Log.i("[Conference Waiting Room] RECORD_AUDIO permission has been granted")
-                        viewModel.updateMicState()
+                        viewModel.enableMic()
                     }
                     Manifest.permission.CAMERA -> if (grantResults[i] == PackageManager.PERMISSION_GRANTED) {
                         Log.i("[Conference Waiting Room] CAMERA permission has been granted")
                         coreContext.core.reloadVideoDevices()
+                        viewModel.enableVideo()
                     }
                 }
             }

@@ -428,7 +428,6 @@ class ControlsViewModel : ViewModel() {
 
         if (!bluetoothDeviceAvailable) {
             audioRoutesSelected.value = false
-            audioRoutesEnabled.value = false
         }
     }
 
