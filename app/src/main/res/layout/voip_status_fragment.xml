@@ -19,6 +19,7 @@
 
         <ImageView
             android:id="@+id/stats_button"
+            android:onClick="@{() -> viewModel.showCallStats()}"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentStart="true"

@@ -38,6 +38,10 @@ class StatusViewModel : StatusViewModel() {
         MutableLiveData<Event<Call>>()
     }
 
+    val showCallStatsEvent: MutableLiveData<Event<Boolean>> by lazy {
+        MutableLiveData<Event<Boolean>>()
+    }
+
     private val listener = object : CoreListenerStub() {
         override fun onCallStatsUpdated(core: Core, call: Call, stats: CallStats) {
             updateCallQualityIcon()
@@ -94,6 +98,10 @@ class StatusViewModel : StatusViewModel() {
         if (currentCall?.currentParams?.mediaEncryption == MediaEncryption.ZRTP) {
             showZrtpDialogEvent.value = Event(currentCall)
         }
+    }
+
+    fun showCallStats() {
+        showCallStatsEvent.value = Event(true)
     }
 
     fun updateEncryptionInfo(call: Call) {

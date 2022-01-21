@@ -66,8 +66,12 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
             update()
 
             if (call.state == Call.State.UpdatedByRemote) {
-                // User has 30 secs to accept or decline call update
-                startVideoUpdateAcceptanceTimer()
+                val remoteVideo = call.remoteParams?.videoEnabled() ?: false
+                val localVideo = call.currentParams.videoEnabled()
+                if (remoteVideo && !localVideo) {
+                    // User has 30 secs to accept or decline call update
+                    startVideoUpdateAcceptanceTimer()
+                }
             } else if (state == Call.State.End || state == Call.State.Released || state == Call.State.Error) {
                 timer?.cancel()
             } else if (state == Call.State.StreamsRunning) {

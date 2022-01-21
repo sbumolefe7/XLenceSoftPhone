@@ -75,6 +75,8 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        controlsViewModel.hideCallStats() // In case it was toggled on during incoming/outgoing fragment was visible
+
         binding.lifecycleOwner = viewLifecycleOwner
 
         binding.controlsViewModel = controlsViewModel
@@ -193,8 +195,10 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
                     if (call.state == Call.State.StreamsRunning) {
                         dialog?.dismiss()
                     } else if (call.state == Call.State.UpdatedByRemote) {
-                        if (coreContext.core.videoCaptureEnabled() || coreContext.core.videoDisplayEnabled()) {
-                            if (call.currentParams.videoEnabled() != call.remoteParams?.videoEnabled()) {
+                        if (coreContext.core.videoEnabled()) {
+                            val remoteVideo = call.remoteParams?.videoEnabled() ?: false
+                            val localVideo = call.currentParams.videoEnabled()
+                            if (remoteVideo && !localVideo) {
                                 showCallVideoUpdateDialog(call)
                             }
                         } else {

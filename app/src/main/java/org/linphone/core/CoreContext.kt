@@ -595,15 +595,6 @@ class CoreContext(val context: Context, coreConfig: Config) {
         return core.videoDevicesList.size > 2 // Count StaticImage camera
     }
 
-    fun isVideoCallOrConferenceActive(): Boolean {
-        val conference = core.conference
-        return if (conference != null && conference.isIn) {
-            conference.currentParams.isVideoEnabled
-        } else {
-            core.currentCall?.currentParams?.isVideoEnabled ?: false
-        }
-    }
-
     fun createCallOverlay() {
         if (!corePreferences.showCallOverlay || !corePreferences.systemWideCallOverlay || callOverlay != null) {
             return

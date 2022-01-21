@@ -142,7 +142,7 @@ class ControlsViewModel : ViewModel() {
                 fullScreenMode.value = false
             }
 
-            if (coreContext.isVideoCallOrConferenceActive() && !PermissionHelper.get().hasCameraPermission()) {
+            if (core.currentCall?.currentParams?.isVideoEnabled == true && !PermissionHelper.get().hasCameraPermission()) {
                 askPermissionEvent.value = Event(Manifest.permission.CAMERA)
             }
 
@@ -308,14 +308,7 @@ class ControlsViewModel : ViewModel() {
 
         val core = coreContext.core
         val currentCall = core.currentCall
-        val conference = core.conference
-
-        if (conference != null && conference.isIn) {
-            val params = core.createConferenceParams()
-            val videoEnabled = conference.currentParams.isVideoEnabled
-            params.isVideoEnabled = !videoEnabled
-            conference.updateParams(params)
-        } else if (currentCall != null) {
+        if (currentCall != null) {
             val state = currentCall.state
             if (state == Call.State.End || state == Call.State.Released || state == Call.State.Error)
                 return
@@ -439,7 +432,7 @@ class ControlsViewModel : ViewModel() {
     }
 
     private fun updateVideoEnabled() {
-        val enabled = coreContext.isVideoCallOrConferenceActive()
+        val enabled = coreContext.core.currentCall?.currentParams?.isVideoEnabled ?: false
         if (enabled && isVideoEnabled.value == false) {
             Log.i("[Call Controls] Video is being turned on")
             if (corePreferences.routeAudioToSpeakerWhenVideoIsEnabled) {
