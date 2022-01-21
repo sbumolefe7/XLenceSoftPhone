@@ -281,6 +281,7 @@
     <string name="conference_info_removed">Conference info has been deleted</string>
     <string name="conference_empty">You are currently alone in this conference</string>
     <string name="conference_invitation_received_notification">You have been invited to a conference</string>
+    <string name="conference_invitation">Conference invitation</string>
 
     <!-- Call -->
     <string name="call_incoming_title">Incoming Call</string>
