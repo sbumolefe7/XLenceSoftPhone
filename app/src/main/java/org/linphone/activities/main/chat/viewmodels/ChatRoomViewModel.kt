@@ -276,7 +276,8 @@ class ChatRoomViewModel(val chatRoom: ChatRoom) : ViewModel(), ContactDataInterf
                 ?: LinphoneUtils.getDisplayName(msg.fromAddress)
         var body = ""
         for (content in msg.contents) {
-            if (content.isFile || content.isFileTransfer) body += content.name + " "
+            if (content.isIcalendar) body += AppUtils.getString(R.string.conference_invitation_received_notification)
+            else if (content.isFile || content.isFileTransfer) body += content.name + " "
             else if (content.isText) body += content.utf8Text + " "
         }
 
