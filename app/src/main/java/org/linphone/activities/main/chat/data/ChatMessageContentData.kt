@@ -212,15 +212,17 @@ class ChatMessageContentData(
         spannable.setSpan(UnderlineSpan(), 0, spannable.length, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
         downloadLabel.value = spannable
 
+        isImage.value = false
+        isVideo.value = false
+        isAudio.value = false
+        isPdf.value = false
+        isVoiceRecording.value = false
+        isConferenceSchedule.value = false
+
         if (content.isFile || (content.isFileTransfer && chatMessage.isOutgoing)) {
             Log.i("[Content] Is content encrypted ? $isFileEncrypted")
             val path = if (isFileEncrypted) content.plainFilePath else content.filePath ?: ""
             downloadable.value = content.isFileTransfer && content.filePath.orEmpty().isEmpty()
-
-            isImage.value = false
-            isVideo.value = false
-            isAudio.value = false
-            isPdf.value = false
 
             val isVoiceRecord = content.isVoiceRecording
             isVoiceRecording.value = isVoiceRecord
@@ -251,11 +253,12 @@ class ChatMessageContentData(
                     }
                 }
             } else if (isConferenceIcs) {
+                Log.i("[Content] Found content with icalendar file")
                 parseConferenceInvite(content)
             } else {
                 Log.w("[Content] Found content with empty path...")
             }
-        } else {
+        } else if (content.isFileTransfer) {
             downloadable.value = true
             isImage.value = FileUtils.isExtensionImage(fileName.value!!)
             isVideo.value = FileUtils.isExtensionVideo(fileName.value!!)
@@ -263,6 +266,12 @@ class ChatMessageContentData(
             isPdf.value = FileUtils.isExtensionPdf(fileName.value!!)
             isVoiceRecording.value = false
             isConferenceSchedule.value = false
+        } else if (content.isIcalendar) {
+            Log.i("[Content] Found content with icalendar body")
+            isConferenceSchedule.value = true
+            parseConferenceInvite(content)
+        } else {
+            Log.w("[Content] Found content that's neither a file or a file transfer")
         }
 
         isGenericFile.value = !isPdf.value!! && !isAudio.value!! && !isVideo.value!! && !isImage.value!! && !isVoiceRecording.value!! && !isConferenceSchedule.value!!

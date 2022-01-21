@@ -165,9 +165,9 @@ class ChatMessageData(val chatMessage: ChatMessage) : GenericContactData(chatMes
         val list = arrayListOf<ChatMessageContentData>()
 
         val contentsList = chatMessage.contents
-        for (index in 0 until contentsList.size) {
+        for (index in contentsList.indices) {
             val content = contentsList[index]
-            if (content.isFileTransfer || content.isFile) {
+            if (content.isFileTransfer || content.isFile || content.isIcalendar) {
                 val data = ChatMessageContentData(chatMessage, index)
                 data.listener = contentListener
                 list.add(data)
@@ -175,6 +175,8 @@ class ChatMessageData(val chatMessage: ChatMessage) : GenericContactData(chatMes
                 val spannable = Spannable.Factory.getInstance().newSpannable(content.utf8Text)
                 LinkifyCompat.addLinks(spannable, Linkify.WEB_URLS)
                 text.value = spannable
+            } else {
+                Log.e("[Chat Message Data] Unexpected content with type: ${content.type}/${content.subtype}")
             }
         }
 
