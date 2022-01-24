@@ -118,7 +118,7 @@ class HorizontalScrollDotsView : View {
         getWindowVisibleDisplayFrame(screenRect)
         screenWidth = screenRect.width().toFloat()
         val marginBetweenItems = context.resources.getDimension(R.dimen.voip_active_speaker_miniature_margin)
-        itemWidth = context.resources.getDimension(R.dimen.voip_active_speaker_miniature_width) + marginBetweenItems
+        itemWidth = context.resources.getDimension(R.dimen.voip_active_speaker_miniature_size) + marginBetweenItems
         Log.d("[Horizontal Scroll Dots] Screen width is $screenWidth and item width is $itemWidth")
     }
 

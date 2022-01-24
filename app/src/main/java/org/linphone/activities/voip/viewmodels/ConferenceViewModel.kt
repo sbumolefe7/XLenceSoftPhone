@@ -21,7 +21,6 @@ package org.linphone.activities.voip.viewmodels
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.android.flexbox.FlexDirection
 import org.linphone.LinphoneApplication.Companion.coreContext
 import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
@@ -46,8 +45,6 @@ class ConferenceViewModel : ViewModel() {
     val conferenceParticipantDevices = MutableLiveData<List<ConferenceParticipantDeviceData>>()
     val conferenceMosaicDisplayMode = MutableLiveData<Boolean>()
     val conferenceActiveSpeakerDisplayMode = MutableLiveData<Boolean>()
-
-    val flexboxLayoutDirection = MutableLiveData<Int>()
 
     val isRecording = MutableLiveData<Boolean>()
     val isRemotelyRecorded = MutableLiveData<Boolean>()
@@ -164,8 +161,6 @@ class ConferenceViewModel : ViewModel() {
         conferenceParticipantDevices.value = arrayListOf()
         conferenceMosaicDisplayMode.value = false
         conferenceActiveSpeakerDisplayMode.value = false
-
-        flexboxLayoutDirection.value = FlexDirection.COLUMN
 
         subject.value = AppUtils.getString(R.string.conference_default_title)
 
@@ -328,12 +323,6 @@ class ConferenceViewModel : ViewModel() {
             Log.i("[Conference] Participant device for myself found: ${device.name} (${device.address.asStringUriOnly()})")
             val deviceData = ConferenceParticipantDeviceData(device, true)
             devices.add(deviceData)
-        }
-
-        flexboxLayoutDirection.value = if (devices.size > 3) {
-            FlexDirection.ROW
-        } else {
-            FlexDirection.COLUMN
         }
 
         conferenceParticipantDevices.value = devices

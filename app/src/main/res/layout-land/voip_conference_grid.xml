@@ -110,7 +110,7 @@
                 android:layout_height="match_parent"
                 app:entries="@{conferenceViewModel.conferenceParticipantDevices}"
                 app:layout="@{@layout/voip_conference_participant_remote_grid}"
-                app:flexDirection="column"
+                app:flexDirection="row"
                 app:flexWrap="wrap"
                 app:alignItems="stretch"
                 app:alignContent="stretch"

@@ -11,7 +11,7 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="150dp"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         app:layout_flexGrow="1">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -19,10 +19,11 @@
             android:layout_height="0dp"
             android:background="@{!data.isInConference ? @drawable/shape_remote_paused_background : data.videoEnabled ? @drawable/shape_remote_video_background : @drawable/shape_remote_background, default=@drawable/shape_remote_background}"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintWidth_max="@dimen/voip_views_max_width">
+            app:layout_constraintWidth_max="@dimen/voip_views_max_width"
+            app:layout_constraintDimensionRatio="1:1">
 
             <include
                 android:layout_width="0dp"
@@ -37,41 +38,29 @@
                 app:data="@{data}"
                 layout="@layout/voip_contact_avatar" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            <org.linphone.activities.voip.views.RoundCornersTextureView
+                android:id="@+id/participant_video_surface"
+                android:visibility="@{data.videoEnabled &amp;&amp; data.isInConference ? View.VISIBLE : View.GONE}"
+                participantTextureView="@{data}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:alignTopRight="false"
+                app:displayMode="hybrid"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-        <org.linphone.activities.voip.views.RoundCornersTextureView
-            android:id="@+id/participant_video_surface"
-            android:visibility="@{data.videoEnabled &amp;&amp; data.isInConference ? View.VISIBLE : View.GONE}"
-            participantTextureView="@{data}"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:alignTopRight="false"
-            app:displayMode="hybrid"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintWidth_max="@dimen/voip_views_max_width" />
-
-        <ImageView
-            android:visibility="@{data.isInConference ? View.GONE : View.VISIBLE, default=gone}"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/icon_pause"
-            android:background="@drawable/shape_button_background"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent" />
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintWidth_max="@dimen/voip_views_max_width">
+            <ImageView
+                android:visibility="@{data.isInConference ? View.GONE : View.VISIBLE, default=gone}"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/icon_pause"
+                android:background="@drawable/shape_button_background"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent" />
 
             <ImageView
                 android:visibility="@{data.activeSpeaker ? View.VISIBLE : View.GONE, default=gone}"
