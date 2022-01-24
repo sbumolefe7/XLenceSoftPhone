@@ -90,6 +90,9 @@
         android:id="@+id/action_global_advancedSettingsFragment"
         app:destination="@id/advancedSettingsFragment" />
     <action
+        android:id="@+id/action_global_conferencesSettingsFragment"
+        app:destination="@id/conferencesSettingsFragment"/>
+    <action
         android:id="@+id/action_global_audioSettingsFragment"
         app:destination="@id/audioSettingsFragment" />
     <fragment
@@ -133,4 +136,9 @@
             android:name="IsLinking"
             app:argType="boolean" />
     </fragment>
+    <fragment
+        android:id="@+id/conferencesSettingsFragment"
+        tools:layout="@layout/settings_conferences_fragment"
+        android:name="org.linphone.activities.main.settings.fragments.ConferencesSettingsFragment"
+        android:label="ConferencesSettingsFragment" />
 </navigation>

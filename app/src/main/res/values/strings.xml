@@ -417,6 +417,7 @@
     <string name="settings_network_title">Network</string>
     <string name="settings_contacts_title">Contacts</string>
     <string name="settings_advanced_title">Advanced</string>
+    <string name="settings_conferences_title">Conferences</string>
     <string name="settings_primary_account_title">Primary Account</string>
     <string name="settings_primary_account_display_name_title">Display Name</string>
     <string name="settings_primary_account_username_title">Username</string>
@@ -616,6 +617,9 @@
     <string name="account_settings_escape_plus_title">Replace + by 00</string>
     <string name="account_setting_conference_factory_address">Conference factory URI</string>
     <string name="account_setting_audio_video_conference_factory_address">Audio/video conference factory URI</string>
+
+    <!-- Conferences settings -->
+    <string name="conferences_settings_layout_title">Default layout</string>
 
     <!-- Notifications -->
     <string name="notification_channel_service_id" translatable="false">linphone_notification_service_id</string>

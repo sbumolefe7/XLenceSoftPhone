@@ -775,6 +775,19 @@ internal fun SettingsFragment.navigateToAdvancedSettings(slidingPane: SlidingPan
     }
 }
 
+internal fun SettingsFragment.navigateToConferencesSettings(slidingPane: SlidingPaneLayout) {
+    if (findNavController().currentDestination?.id == R.id.settingsFragment) {
+        val navHostFragment =
+            childFragmentManager.findFragmentById(R.id.settings_nav_container) as NavHostFragment
+        navHostFragment.navController.navigate(
+            R.id.action_global_conferencesSettingsFragment,
+            null,
+            popupTo(R.id.conferencesSettingsFragment, true)
+        )
+        if (!slidingPane.isOpen) slidingPane.openPane()
+    }
+}
+
 internal fun AccountSettingsFragment.navigateToPhoneLinking(args: Bundle?) {
     if (findNavController().currentDestination?.id == R.id.accountSettingsFragment) {
         findNavController().navigate(
@@ -820,6 +833,10 @@ internal fun CallSettingsFragment.navigateToEmptySetting() {
 }
 
 internal fun ChatSettingsFragment.navigateToEmptySetting() {
+    navigateToEmptySetting(findNavController())
+}
+
+internal fun ConferencesSettingsFragment.navigateToEmptySetting() {
     navigateToEmptySetting(findNavController())
 }
 

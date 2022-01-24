@@ -560,6 +560,9 @@ class CorePreferences constructor(private val context: Context) {
     val showAdvancedSettings: Boolean
         get() = config.getBool("app", "settings_advanced", true)
 
+    val showConferencesSettings: Boolean
+        get() = config.getBool("app", "settings_conferences", true)
+
     /* Assets stuff */
 
     val configPath: String

@@ -180,5 +180,11 @@ class SettingsFragment : SecureFragment<SettingsFragmentBinding>() {
                 navigateToAdvancedSettings(binding.slidingPane)
             }
         }
+
+        viewModel.conferencesSettingsListener = object : SettingListenerStub() {
+            override fun onClicked() {
+                navigateToConferencesSettings(binding.slidingPane)
+            }
+        }
     }
 }
