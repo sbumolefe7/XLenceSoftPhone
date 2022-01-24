@@ -41,6 +41,7 @@ class ConferenceViewModel : ViewModel() {
     val isMeAdmin = MutableLiveData<Boolean>()
 
     val conference = MutableLiveData<Conference>()
+    val conferenceCreationPending = MutableLiveData<Boolean>()
     val conferenceParticipants = MutableLiveData<List<ConferenceParticipantData>>()
     val conferenceParticipantDevices = MutableLiveData<List<ConferenceParticipantDeviceData>>()
     val conferenceMosaicDisplayMode = MutableLiveData<Boolean>()
@@ -124,6 +125,22 @@ class ConferenceViewModel : ViewModel() {
                 isConferenceLocallyPaused.value = true
             }
         }
+
+        override fun onStateChanged(conference: Conference, state: Conference.State) {
+            Log.i("[Conference] State changed: $state")
+            isVideoConference.value = conference.currentParams.isVideoEnabled
+
+            when (state) {
+                Conference.State.Created -> {
+                    configureConference(conference)
+                    conferenceCreationPending.value = false
+                }
+                Conference.State.TerminationPending -> {
+                    terminateConference(conference)
+                }
+                else -> {}
+            }
+        }
     }
 
     private val listener = object : CoreListenerStub() {
@@ -133,23 +150,10 @@ class ConferenceViewModel : ViewModel() {
             state: Conference.State
         ) {
             Log.i("[Conference] Conference state changed: $state")
-            isVideoConference.value = conference.currentParams.isVideoEnabled
-
-            when (state) {
-                Conference.State.Instantiated -> {
-                    initConference(conference)
-                }
-                Conference.State.Created -> {
-                    initConference(conference)
-                    configureConference(conference)
-                }
-                Conference.State.TerminationPending -> {
-                    terminateConference(conference)
-                }
-                else -> {}
+            if (state == Conference.State.Instantiated) {
+                conferenceCreationPending.value = true
+                initConference(conference)
             }
-
-            updateConferenceLayout(conference)
         }
     }
 
@@ -175,9 +179,16 @@ class ConferenceViewModel : ViewModel() {
             }
         }
         if (conference != null) {
-            Log.i("[Conference] Found an existing conference: $conference")
-            initConference(conference)
-            configureConference(conference)
+            val state = conference.state
+            Log.i("[Conference] Found an existing conference: $conference in state $state")
+            if (state != Conference.State.TerminationPending && state != Conference.State.Terminated) {
+                initConference(conference)
+                if (state == Conference.State.Created) {
+                    configureConference(conference)
+                } else {
+                    conferenceCreationPending.value = true
+                }
+            }
         }
     }
 
@@ -215,9 +226,13 @@ class ConferenceViewModel : ViewModel() {
 
     fun initConference(conference: Conference) {
         conferenceExists.value = true
+
         this@ConferenceViewModel.conference.value = conference
         conference.addListener(conferenceListener)
+
         isRecording.value = conference.isRecording
+
+        updateConferenceLayout(conference)
     }
 
     fun configureConference(conference: Conference) {
