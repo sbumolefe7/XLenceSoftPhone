@@ -181,7 +181,11 @@ class CoreContext(val context: Context, coreConfig: Config) {
                     }
                 }
             } else if (state == Call.State.OutgoingInit) {
-                onOutgoingStarted()
+                val conferenceInfo = core.findConferenceInformationFromUri(call.remoteAddress)
+                // Do not show outgoing call view for conference calls, wait for connected state
+                if (conferenceInfo == null) {
+                    onOutgoingStarted()
+                }
             } else if (state == Call.State.OutgoingProgress) {
                 if (core.callsNb == 1 && corePreferences.routeAudioToBluetoothIfAvailable) {
                     AudioRouteUtils.routeAudioToBluetooth(call)
@@ -768,7 +772,7 @@ class CoreContext(val context: Context, coreConfig: Config) {
         Log.i("[Context] Starting IncomingCallActivity")
         val intent = Intent(context, org.linphone.activities.voip.CallActivity::class.java)
         // This flag is required to start an Activity from a Service context
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         context.startActivity(intent)
     }
 
@@ -781,7 +785,7 @@ class CoreContext(val context: Context, coreConfig: Config) {
         Log.i("[Context] Starting OutgoingCallActivity")
         val intent = Intent(context, org.linphone.activities.voip.CallActivity::class.java)
         // This flag is required to start an Activity from a Service context
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_REORDER_TO_FRONT)
         context.startActivity(intent)
     }
 

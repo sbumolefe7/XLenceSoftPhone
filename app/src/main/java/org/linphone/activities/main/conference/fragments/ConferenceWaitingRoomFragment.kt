@@ -70,7 +70,8 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
                         if (conferenceAddress != null) {
                             Log.i("[Conference Waiting Room] Calling conference SIP URI: ${conferenceAddress.asStringUriOnly()}")
                             coreContext.startCall(conferenceAddress, callParams)
-                            goBack()
+                            // TODO: show spinner ?
+                            // goBack()
                         } else {
                             Log.e("[Conference Waiting Room] Failed to parse conference SIP URI: $conferenceUri")
                         }
