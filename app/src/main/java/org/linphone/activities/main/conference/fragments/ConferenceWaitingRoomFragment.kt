@@ -56,7 +56,22 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
         viewModel.cancelConferenceJoiningEvent.observe(
             viewLifecycleOwner,
             {
-                navigateToDialer()
+                it.consume {
+                    if (viewModel.joinInProgress.value == true) {
+                        val conferenceUri = arguments?.getString("Address")
+                        val callToCancel = coreContext.core.calls.find {
+                            call ->
+                            call.remoteAddress.asStringUriOnly() == conferenceUri
+                        }
+                        if (callToCancel != null) {
+                            Log.i("[Conference Waiting Room] Call to conference server with URI [$conferenceUri] was started, terminate it")
+                            callToCancel.terminate()
+                        } else {
+                            Log.w("[Conference Waiting Room] Call to conference server with URI [$conferenceUri] wasn't found!")
+                        }
+                    }
+                    navigateToDialer()
+                }
             }
         )
 
@@ -70,8 +85,6 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
                         if (conferenceAddress != null) {
                             Log.i("[Conference Waiting Room] Calling conference SIP URI: ${conferenceAddress.asStringUriOnly()}")
                             coreContext.startCall(conferenceAddress, callParams)
-                            // TODO: show spinner ?
-                            // goBack()
                         } else {
                             Log.e("[Conference Waiting Room] Failed to parse conference SIP URI: $conferenceUri")
                         }
@@ -88,6 +101,15 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
                 it.consume { permission ->
                     Log.i("[Conference Waiting Room] Asking for $permission permission")
                     requestPermissions(arrayOf(permission), 0)
+                }
+            }
+        )
+
+        viewModel.leaveWaitingRoomEvent.observe(
+            viewLifecycleOwner,
+            {
+                it.consume {
+                    goBack()
                 }
             }
         )

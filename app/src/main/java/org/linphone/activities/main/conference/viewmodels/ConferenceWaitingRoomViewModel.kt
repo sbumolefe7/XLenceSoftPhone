@@ -23,10 +23,7 @@ import android.Manifest
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.linphone.LinphoneApplication.Companion.coreContext
-import org.linphone.core.AudioDevice
-import org.linphone.core.CallParams
-import org.linphone.core.Core
-import org.linphone.core.CoreListenerStub
+import org.linphone.core.*
 import org.linphone.core.tools.Log
 import org.linphone.utils.AudioRouteUtils
 import org.linphone.utils.Event
@@ -51,6 +48,8 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
 
     val isSwitchCameraAvailable = MutableLiveData<Boolean>()
 
+    val joinInProgress = MutableLiveData<Boolean>()
+
     val askPermissionEvent: MutableLiveData<Event<String>> by lazy {
         MutableLiveData<Event<String>>()
     }
@@ -63,12 +62,28 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
         MutableLiveData<Event<CallParams>>()
     }
 
+    val leaveWaitingRoomEvent: MutableLiveData<Event<Boolean>> by lazy {
+        MutableLiveData<Event<Boolean>>()
+    }
+
     private val callParams: CallParams = coreContext.core.createCallParams(null)!!
 
     private val listener: CoreListenerStub = object : CoreListenerStub() {
         override fun onAudioDevicesListUpdated(core: Core) {
             Log.i("[Conference Waiting Room] Audio devices list updated")
             onAudioDevicesListUpdated()
+        }
+
+        override fun onCallStateChanged(
+            core: Core,
+            call: Call,
+            state: Call.State?,
+            message: String
+        ) {
+            if (state == Call.State.Connected) {
+                Log.i("[Conference Waiting Room] Call is now connected, leaving waiting room fragment")
+                leaveWaitingRoomEvent.value = Event(true)
+            }
         }
     }
 
@@ -106,6 +121,7 @@ class ConferenceWaitingRoomViewModel : ViewModel() {
     }
 
     fun start() {
+        joinInProgress.value = true
         joinConferenceEvent.value = Event(callParams)
     }
 
