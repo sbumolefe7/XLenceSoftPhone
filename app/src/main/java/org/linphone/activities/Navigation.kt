@@ -601,6 +601,20 @@ internal fun MasterCallLogsFragment.navigateToDialer(args: Bundle?) {
     )
 }
 
+internal fun MasterCallLogsFragment.navigateToConferenceWaitingRoom(
+    address: String,
+    subject: String?
+) {
+    val bundle = Bundle()
+    bundle.putString("Address", address)
+    bundle.putString("Subject", subject)
+    findMasterNavController().navigate(
+        R.id.action_global_conferenceWaitingRoomFragment,
+        bundle,
+        popupTo(R.id.dialerFragment, false)
+    )
+}
+
 internal fun DetailCallLogFragment.navigateToContacts(sipUriToAdd: String) {
     val deepLink = "linphone-android://contact/new/$sipUriToAdd"
     findMasterNavController().navigate(Uri.parse(deepLink))

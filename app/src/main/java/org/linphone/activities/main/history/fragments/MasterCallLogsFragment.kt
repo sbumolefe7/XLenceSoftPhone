@@ -35,6 +35,7 @@ import com.google.android.material.transition.MaterialSharedAxis
 import org.linphone.LinphoneApplication.Companion.coreContext
 import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
+import org.linphone.activities.*
 import org.linphone.activities.clearDisplayedCallHistory
 import org.linphone.activities.main.fragments.MasterFragment
 import org.linphone.activities.main.history.adapters.CallLogsListAdapter
@@ -227,7 +228,10 @@ class MasterCallLogsFragment : MasterFragment<HistoryMasterFragmentBinding, Call
             {
                 it.consume { callLogGroup ->
                     val remoteAddress = callLogGroup.lastCallLog.remoteAddress
-                    if (coreContext.core.callsNb > 0) {
+                    val conferenceInfo = coreContext.core.findConferenceInformationFromUri(remoteAddress)
+                    if (conferenceInfo != null) {
+                        navigateToConferenceWaitingRoom(remoteAddress.asStringUriOnly(), conferenceInfo.subject)
+                    } else if (coreContext.core.callsNb > 0) {
                         Log.i("[History] Starting dialer with pre-filled URI ${remoteAddress.asStringUriOnly()}, is transfer? ${sharedViewModel.pendingCallTransfer}")
                         sharedViewModel.updateDialerAnimationsBasedOnDestination.value = Event(R.id.masterCallLogsFragment)
                         val args = Bundle()
