@@ -30,7 +30,6 @@ import android.widget.LinearLayout
 import android.widget.RelativeLayout
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navGraphViewModels
 import com.google.android.material.snackbar.Snackbar
 import org.linphone.LinphoneApplication.Companion.coreContext
@@ -38,8 +37,6 @@ import org.linphone.LinphoneApplication.Companion.corePreferences
 import org.linphone.R
 import org.linphone.activities.*
 import org.linphone.activities.main.MainActivity
-import org.linphone.activities.main.chat.viewmodels.ChatRoomViewModel
-import org.linphone.activities.main.chat.viewmodels.ChatRoomViewModelFactory
 import org.linphone.activities.main.viewmodels.DialogViewModel
 import org.linphone.activities.navigateToCallsList
 import org.linphone.activities.navigateToConferenceParticipants
@@ -318,29 +315,11 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
     }
 
     private fun goToChat() {
-        val chatRoom = callsViewModel.currentCallData.value?.chatRoom
-        if (chatRoom != null) {
-            // Create the view model now so it won't be done in the ChatFragment's onCreate()
-            val chatViewModel = requireActivity().run {
-                ViewModelProvider(
-                    this,
-                    ChatRoomViewModelFactory(chatRoom)
-                )[ChatRoomViewModel::class.java]
-            }
-
-            val bundle = Bundle()
-            // Use chat room peer address to simply search process in ChatFragment
-            bundle.putString("RemoteSipUri", chatRoom.peerAddress.asStringUriOnly())
-
-            val localSipUri = coreContext.core.defaultAccount?.params?.identityAddress?.asStringUriOnly()
-            bundle.putString("LocalSipUri", localSipUri)
-
-            navigateToChat(bundle)
-        } else {
-            Log.e("[Call] Failed to get a valid chat room from current CallData object!")
-            controlsViewModel.chatRoomCreationInProgress.value = false
-            showSnackBar(R.string.chat_room_failed_to_create)
-        }
+        val intent = Intent()
+        intent.setClass(requireContext(), MainActivity::class.java)
+        intent.putExtra("Chat", true)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(intent)
     }
 
     private fun showSnackBar(resourceId: Int) {

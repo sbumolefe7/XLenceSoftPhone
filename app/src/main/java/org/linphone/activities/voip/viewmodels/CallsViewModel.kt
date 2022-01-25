@@ -238,7 +238,7 @@ class CallsViewModel : ViewModel() {
             currentCallData.value = viewModel
         }
 
-        updateUnreadChatCount()
+        // updateUnreadChatCount()
     }
 
     private fun callDataAlreadyExists(call: Call): Boolean {
@@ -255,7 +255,8 @@ class CallsViewModel : ViewModel() {
     }
 
     private fun updateUnreadChatCount() {
-        currentCallUnreadChatMessageCount.value = currentCallData.value?.chatRoom?.unreadMessagesCount ?: 0
+        // For now we don't display in-call chat, so use global unread chat messages count
+        currentCallUnreadChatMessageCount.value = coreContext.core.unreadChatMessageCountFromActiveLocals
     }
 
     private fun updateInactiveCallsCount() {

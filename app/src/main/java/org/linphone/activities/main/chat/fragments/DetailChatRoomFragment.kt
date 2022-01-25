@@ -375,6 +375,13 @@ class DetailChatRoomFragment : MasterFragment<ChatRoomDetailFragmentBinding, Cha
                                 path = file.absolutePath
                                 content.filePath = path
                                 Log.i("[Chat Message] Content file path was empty, created file from buffer at $path")
+                            } else if (content.isIcalendar) {
+                                val name = "conference.ics"
+                                val file = FileUtils.getFileStoragePath(name)
+                                FileUtils.writeIntoFile(content.buffer, file)
+                                path = file.absolutePath
+                                content.filePath = path
+                                Log.i("[Chat Message] Content file path was empty, created conference.ics from buffer at $path")
                             }
                         }
 

@@ -25,7 +25,6 @@ import android.widget.Toast
 import androidx.navigation.navGraphViewModels
 import org.linphone.R
 import org.linphone.activities.GenericFragment
-import org.linphone.activities.navigateToAddParticipants
 import org.linphone.activities.voip.viewmodels.CallsViewModel
 import org.linphone.activities.voip.viewmodels.ConferenceViewModel
 import org.linphone.core.tools.Log
@@ -76,7 +75,7 @@ class ConferenceParticipantsFragment : GenericFragment<VoipConferenceParticipant
         }
 
         binding.setEditClickListener {
-            navigateToAddParticipants()
+            // TODO: go to conferences view outside of call activity in edition mode
         }
     }
 }
