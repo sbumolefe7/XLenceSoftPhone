@@ -397,13 +397,9 @@ class AccountSettingsViewModel(val account: Account) : GenericSettingsViewModel(
         override fun onTextValueChanged(newValue: String) {
             val params = account.params.clone()
             val uri = coreContext.core.interpretUrl(newValue)
-            if (uri != null) {
-                Log.i("[Account Settings] Forcing audio/video conference factory on proxy config ${params.identityAddress?.asString()} to value: $newValue")
-                params.audioVideoConferenceFactoryAddress = uri
-                account.params = params
-            } else {
-                Log.e("[Account Settings] Failed to parse audio/video conference factory URI: $newValue")
-            }
+            Log.i("[Account Settings] Forcing audio/video conference factory on proxy config ${params.identityAddress?.asString()} to value: $newValue")
+            params.audioVideoConferenceFactoryAddress = uri
+            account.params = params
         }
     }
     val audioVideoConferenceFactoryUri = MutableLiveData<String>()
