@@ -47,43 +47,40 @@ class ConferenceLayoutFragment : GenericFragment<VoipConferenceLayoutFragmentBin
         }
 
         conferenceViewModel.conferenceMosaicDisplayMode.observe(
-            viewLifecycleOwner,
-            {
-                if (it) {
-                    Log.i("[Conference] Trying to change conference layout to Grid")
-                    val conference = conferenceViewModel.conference.value
-                    if (conference != null) {
-                        conference.layout = ConferenceLayout.Grid
-                    } else {
-                        Log.e("[Conference] Conference is null in ConferenceViewModel")
-                    }
+            viewLifecycleOwner
+        ) {
+            if (it) {
+                Log.i("[Conference] Trying to change conference layout to Grid")
+                val conference = conferenceViewModel.conference.value
+                if (conference != null) {
+                    conference.layout = ConferenceLayout.Grid
+                } else {
+                    Log.e("[Conference] Conference is null in ConferenceViewModel")
                 }
             }
-        )
+        }
 
         conferenceViewModel.conferenceActiveSpeakerDisplayMode.observe(
-            viewLifecycleOwner,
-            {
-                if (it) {
-                    Log.i("[Conference] Trying to change conference layout to ActiveSpeaker")
-                    val conference = conferenceViewModel.conference.value
-                    if (conference != null) {
-                        conference.layout = ConferenceLayout.ActiveSpeaker
-                    } else {
-                        Log.e("[Conference] Conference is null in ConferenceViewModel")
-                    }
+            viewLifecycleOwner
+        ) {
+            if (it) {
+                Log.i("[Conference] Trying to change conference layout to ActiveSpeaker")
+                val conference = conferenceViewModel.conference.value
+                if (conference != null) {
+                    conference.layout = ConferenceLayout.ActiveSpeaker
+                } else {
+                    Log.e("[Conference] Conference is null in ConferenceViewModel")
                 }
             }
-        )
+        }
 
         conferenceViewModel.conferenceParticipantDevices.observe(
-            viewLifecycleOwner,
-            {
-                if (it.size > conferenceViewModel.maxParticipantsForMosaicLayout) {
-                    showTooManyParticipantsForMosaicLayoutDialog()
-                }
+            viewLifecycleOwner
+        ) {
+            if (it.size > conferenceViewModel.maxParticipantsForMosaicLayout) {
+                showTooManyParticipantsForMosaicLayoutDialog()
             }
-        )
+        }
 
         binding.setDismissDialogClickListener {
             val dialog = binding.root.findViewById<LinearLayout>(R.id.too_many_participants_dialog)

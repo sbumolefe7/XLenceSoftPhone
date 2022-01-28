@@ -49,34 +49,31 @@ class OutgoingCallFragment : GenericFragment<VoipCallOutgoingFragmentBinding>() 
         binding.callsViewModel = callsViewModel
 
         callsViewModel.callConnectedEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    navigateToActiveCall()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                navigateToActiveCall()
             }
-        )
+        }
 
         callsViewModel.callEndedEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    navigateToActiveCall()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                navigateToActiveCall()
             }
-        )
+        }
 
         callsViewModel.currentCallData.observe(
-            viewLifecycleOwner,
-            {
-                if (it != null) {
-                    val timer = binding.root.findViewById<Chronometer>(R.id.outgoing_call_timer)
-                    timer.base =
-                        SystemClock.elapsedRealtime() - (1000 * it.call.duration) // Linphone timestamps are in seconds
-                    timer.start()
-                }
+            viewLifecycleOwner
+        ) {
+            if (it != null) {
+                val timer = binding.root.findViewById<Chronometer>(R.id.outgoing_call_timer)
+                timer.base =
+                    SystemClock.elapsedRealtime() - (1000 * it.call.duration) // Linphone timestamps are in seconds
+                timer.start()
             }
-        )
+        }
 
         binding.stubNumpad.setOnInflateListener { _, inflated ->
             val binding = DataBindingUtil.bind<ViewDataBinding>(inflated)

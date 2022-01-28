@@ -71,62 +71,60 @@ class ScheduledConferencesFragment : GenericFragment<ConferencesScheduledFragmen
         binding.conferenceInfoList.addItemDecoration(headerItemDecoration)
 
         viewModel.conferences.observe(
-            viewLifecycleOwner,
-            {
-                adapter.submitList(it)
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            adapter.submitList(it)
+        }
 
         adapter.copyAddressToClipboardEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { address ->
-                    val clipboard =
-                        requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                    val clip = ClipData.newPlainText("Conference address", address.asStringUriOnly())
-                    clipboard.setPrimaryClip(clip)
+            viewLifecycleOwner
+        ) {
+            it.consume { address ->
+                val clipboard =
+                    requireContext().getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                val clip = ClipData.newPlainText("Conference address", address.asStringUriOnly())
+                clipboard.setPrimaryClip(clip)
 
-                    (activity as MainActivity).showSnackBar(R.string.conference_schedule_address_copied_to_clipboard)
-                }
+                (activity as MainActivity).showSnackBar(R.string.conference_schedule_address_copied_to_clipboard)
             }
-        )
+        }
 
         adapter.joinConferenceEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { pair ->
-                    navigateToConferenceWaitingRoom(pair.first, pair.second)
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume { pair ->
+                navigateToConferenceWaitingRoom(pair.first, pair.second)
             }
-        )
+        }
 
         adapter.deleteConferenceInfoEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { data ->
-                    val dialogViewModel = DialogViewModel(AppUtils.getString(R.string.conference_info_confirm_removal))
-                    deleteConferenceInfoDialog = DialogUtils.getVoipDialog(requireContext(), dialogViewModel)
+            viewLifecycleOwner
+        ) {
+            it.consume { data ->
+                val dialogViewModel =
+                    DialogViewModel(AppUtils.getString(R.string.conference_info_confirm_removal))
+                deleteConferenceInfoDialog =
+                    DialogUtils.getVoipDialog(requireContext(), dialogViewModel)
 
-                    dialogViewModel.showCancelButton(
-                        {
-                            deleteConferenceInfoDialog?.dismiss()
-                        },
-                        getString(R.string.dialog_cancel)
-                    )
+                dialogViewModel.showCancelButton(
+                    {
+                        deleteConferenceInfoDialog?.dismiss()
+                    },
+                    getString(R.string.dialog_cancel)
+                )
 
-                    dialogViewModel.showDeleteButton(
-                        {
-                            viewModel.deleteConferenceInfo(data)
-                            deleteConferenceInfoDialog?.dismiss()
-                            (requireActivity() as MainActivity).showSnackBar(R.string.conference_info_removed)
-                        },
-                        getString(R.string.dialog_delete)
-                    )
+                dialogViewModel.showDeleteButton(
+                    {
+                        viewModel.deleteConferenceInfo(data)
+                        deleteConferenceInfoDialog?.dismiss()
+                        (requireActivity() as MainActivity).showSnackBar(R.string.conference_info_removed)
+                    },
+                    getString(R.string.dialog_delete)
+                )
 
-                    deleteConferenceInfoDialog?.show()
-                }
+                deleteConferenceInfoDialog?.show()
             }
-        )
+        }
 
         binding.setBackClickListener {
             goBack()

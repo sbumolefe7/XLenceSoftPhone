@@ -57,24 +57,22 @@ class StatusFragment : GenericFragment<VoipStatusFragmentBinding>() {
         }
 
         viewModel.showZrtpDialogEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { call ->
-                    if (call.state == Call.State.Connected || call.state == Call.State.StreamsRunning) {
-                        showZrtpDialog(call)
-                    }
+            viewLifecycleOwner
+        ) {
+            it.consume { call ->
+                if (call.state == Call.State.Connected || call.state == Call.State.StreamsRunning) {
+                    showZrtpDialog(call)
                 }
             }
-        )
+        }
 
         viewModel.showCallStatsEvent.observe(
-            this,
-            {
-                it.consume {
-                    controlsViewModel.showCallStats()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                controlsViewModel.showCallStats()
             }
-        )
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

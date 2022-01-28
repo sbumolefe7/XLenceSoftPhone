@@ -49,34 +49,31 @@ class IncomingCallFragment : GenericFragment<VoipCallIncomingFragmentBinding>() 
         binding.callsViewModel = callsViewModel
 
         callsViewModel.callConnectedEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    navigateToActiveCall()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                navigateToActiveCall()
             }
-        )
+        }
 
         callsViewModel.callEndedEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    navigateToActiveCall()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                navigateToActiveCall()
             }
-        )
+        }
 
         callsViewModel.currentCallData.observe(
-            viewLifecycleOwner,
-            {
-                if (it != null) {
-                    val timer = binding.root.findViewById<Chronometer>(R.id.incoming_call_timer)
-                    timer.base =
-                        SystemClock.elapsedRealtime() - (1000 * it.call.duration) // Linphone timestamps are in seconds
-                    timer.start()
-                }
+            viewLifecycleOwner
+        ) {
+            if (it != null) {
+                val timer = binding.root.findViewById<Chronometer>(R.id.incoming_call_timer)
+                timer.base =
+                    SystemClock.elapsedRealtime() - (1000 * it.call.duration) // Linphone timestamps are in seconds
+                timer.start()
             }
-        )
+        }
 
         val earlyMediaVideo = arguments?.getBoolean("earlyMediaVideo") ?: false
         if (earlyMediaVideo) {

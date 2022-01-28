@@ -51,27 +51,25 @@ class ConferenceSchedulingSummaryFragment : GenericFragment<ConferenceScheduling
         }
 
         viewModel.conferenceCreationCompletedEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { pair ->
-                    if (viewModel.scheduleForLater.value == true) {
-                        (requireActivity() as MainActivity).showSnackBar(R.string.conference_schedule_info_created)
-                        goToScheduledConferences()
-                    } else {
-                        navigateToConferenceWaitingRoom(pair.first, pair.second)
-                    }
+            viewLifecycleOwner
+        ) {
+            it.consume { pair ->
+                if (viewModel.scheduleForLater.value == true) {
+                    (requireActivity() as MainActivity).showSnackBar(R.string.conference_schedule_info_created)
+                    goToScheduledConferences()
+                } else {
+                    navigateToConferenceWaitingRoom(pair.first, pair.second)
                 }
             }
-        )
+        }
 
         viewModel.onMessageToNotifyEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { messageId ->
-                    (activity as MainActivity).showSnackBar(messageId)
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume { messageId ->
+                (activity as MainActivity).showSnackBar(messageId)
             }
-        )
+        }
 
         viewModel.computeParticipantsData()
     }

@@ -269,7 +269,7 @@ class ConferenceViewModel : ViewModel() {
 
     private fun updateConferenceLayout(conference: Conference) {
         val layout = conference.layout
-        conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.None
+        conferenceMosaicDisplayMode.value = layout == ConferenceLayout.Grid || layout == ConferenceLayout.Legacy
         conferenceActiveSpeakerDisplayMode.value = layout == ConferenceLayout.ActiveSpeaker
         Log.i("[Conference] Conference current layout is: $layout")
     }

@@ -67,39 +67,34 @@ class ConferenceSchedulingParticipantsListFragment : GenericFragment<ConferenceS
         }
 
         viewModel.contactsList.observe(
-            viewLifecycleOwner,
-            {
-                adapter.submitList(it)
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            adapter.submitList(it)
+        }
         viewModel.sipContactsSelected.observe(
-            viewLifecycleOwner,
-            {
-                viewModel.updateContactsList()
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            viewModel.updateContactsList()
+        }
 
         viewModel.selectedAddresses.observe(
-            viewLifecycleOwner,
-            {
-                adapter.updateSelectedAddresses(it)
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            adapter.updateSelectedAddresses(it)
+        }
         viewModel.filter.observe(
-            viewLifecycleOwner,
-            {
-                viewModel.applyFilter()
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            viewModel.applyFilter()
+        }
 
         adapter.selectedContact.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { searchResult ->
-                    viewModel.toggleSelectionForSearchResult(searchResult)
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume { searchResult ->
+                viewModel.toggleSelectionForSearchResult(searchResult)
             }
-        )
+        }
 
         if (!PermissionHelper.get().hasReadContactsPermission()) {
             Log.i("[Conference Creation] Asking for READ_CONTACTS permission")

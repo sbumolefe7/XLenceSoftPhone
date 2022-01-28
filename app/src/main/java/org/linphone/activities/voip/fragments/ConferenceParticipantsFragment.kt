@@ -46,29 +46,28 @@ class ConferenceParticipantsFragment : GenericFragment<VoipConferenceParticipant
         binding.conferenceViewModel = conferenceViewModel
 
         conferenceViewModel.conferenceExists.observe(
-            viewLifecycleOwner,
-            { exists ->
-                if (!exists) {
-                    Log.w("[Conference Participants] Conference no longer exists, going back")
-                    goBack()
-                }
+            viewLifecycleOwner
+        ) { exists ->
+            if (!exists) {
+                Log.w("[Conference Participants] Conference no longer exists, going back")
+                goBack()
             }
-        )
+        }
 
         conferenceViewModel.participantAdminStatusChangedEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { participantData ->
-                    val participantName = participantData.contact.value?.fullName ?: participantData.displayName.value
-                    val message = if (participantData.participant.isAdmin) {
-                        getString(R.string.conference_admin_set).format(participantName)
-                    } else {
-                        getString(R.string.conference_admin_unset).format(participantName)
-                    }
-                    Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+            viewLifecycleOwner
+        ) {
+            it.consume { participantData ->
+                val participantName =
+                    participantData.contact.value?.fullName ?: participantData.displayName.value
+                val message = if (participantData.participant.isAdmin) {
+                    getString(R.string.conference_admin_set).format(participantName)
+                } else {
+                    getString(R.string.conference_admin_unset).format(participantName)
                 }
+                Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
             }
-        )
+        }
 
         binding.setCancelClickListener {
             goBack()

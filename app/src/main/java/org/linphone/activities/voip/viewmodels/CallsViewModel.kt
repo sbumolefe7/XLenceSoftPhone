@@ -154,7 +154,7 @@ class CallsViewModel : ViewModel() {
     fun mergeCallsIntoConference() {
         Log.i("[Calls] Merging all calls into new conference")
         val core = coreContext.core
-        val params = core.createConferenceParams()
+        val params = core.createConferenceParams(null)
         val conference = core.createConferenceWithParams(params)
         conference?.addParticipants(core.calls)
     }

@@ -54,65 +54,60 @@ class ConferenceWaitingRoomFragment : GenericFragment<ConferenceWaitingRoomFragm
         viewModel.subject.value = conferenceSubject
 
         viewModel.cancelConferenceJoiningEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    if (viewModel.joinInProgress.value == true) {
-                        val conferenceUri = arguments?.getString("Address")
-                        val callToCancel = coreContext.core.calls.find {
-                            call ->
-                            call.remoteAddress.asStringUriOnly() == conferenceUri
-                        }
-                        if (callToCancel != null) {
-                            Log.i("[Conference Waiting Room] Call to conference server with URI [$conferenceUri] was started, terminate it")
-                            callToCancel.terminate()
-                        } else {
-                            Log.w("[Conference Waiting Room] Call to conference server with URI [$conferenceUri] wasn't found!")
-                        }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                if (viewModel.joinInProgress.value == true) {
+                    val conferenceUri = arguments?.getString("Address")
+                    val callToCancel = coreContext.core.calls.find { call ->
+                        call.remoteAddress.asStringUriOnly() == conferenceUri
                     }
-                    navigateToDialer()
+                    if (callToCancel != null) {
+                        Log.i("[Conference Waiting Room] Call to conference server with URI [$conferenceUri] was started, terminate it")
+                        callToCancel.terminate()
+                    } else {
+                        Log.w("[Conference Waiting Room] Call to conference server with URI [$conferenceUri] wasn't found!")
+                    }
                 }
+                navigateToDialer()
             }
-        )
+        }
 
         viewModel.joinConferenceEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { callParams ->
-                    val conferenceUri = arguments?.getString("Address")
-                    if (conferenceUri != null) {
-                        val conferenceAddress = coreContext.core.interpretUrl(conferenceUri)
-                        if (conferenceAddress != null) {
-                            Log.i("[Conference Waiting Room] Calling conference SIP URI: ${conferenceAddress.asStringUriOnly()}")
-                            coreContext.startCall(conferenceAddress, callParams)
-                        } else {
-                            Log.e("[Conference Waiting Room] Failed to parse conference SIP URI: $conferenceUri")
-                        }
+            viewLifecycleOwner
+        ) {
+            it.consume { callParams ->
+                val conferenceUri = arguments?.getString("Address")
+                if (conferenceUri != null) {
+                    val conferenceAddress = coreContext.core.interpretUrl(conferenceUri)
+                    if (conferenceAddress != null) {
+                        Log.i("[Conference Waiting Room] Calling conference SIP URI: ${conferenceAddress.asStringUriOnly()}")
+                        coreContext.startCall(conferenceAddress, callParams)
                     } else {
-                        Log.e("[Conference Waiting Room] Failed to find conference SIP URI in arguments")
+                        Log.e("[Conference Waiting Room] Failed to parse conference SIP URI: $conferenceUri")
                     }
+                } else {
+                    Log.e("[Conference Waiting Room] Failed to find conference SIP URI in arguments")
                 }
             }
-        )
+        }
 
         viewModel.askPermissionEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { permission ->
-                    Log.i("[Conference Waiting Room] Asking for $permission permission")
-                    requestPermissions(arrayOf(permission), 0)
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume { permission ->
+                Log.i("[Conference Waiting Room] Asking for $permission permission")
+                requestPermissions(arrayOf(permission), 0)
             }
-        )
+        }
 
         viewModel.leaveWaitingRoomEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    goBack()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                goBack()
             }
-        )
+        }
 
         if (Version.sdkAboveOrEqual(Version.API23_MARSHMALLOW_60)) {
             checkPermissions()

@@ -71,13 +71,12 @@ class CallsListFragment : GenericFragment<VoipCallsListFragmentBinding>() {
         }
 
         callsViewModel.callsData.observe(
-            viewLifecycleOwner,
-            {
-                for (data in it) {
-                    data.contextMenuClickListener = callContextMenuClickListener
-                }
+            viewLifecycleOwner
+        ) {
+            for (data in it) {
+                data.contextMenuClickListener = callContextMenuClickListener
             }
-        )
+        }
     }
 
     private fun showCallMenu(anchor: View, callData: CallData) {

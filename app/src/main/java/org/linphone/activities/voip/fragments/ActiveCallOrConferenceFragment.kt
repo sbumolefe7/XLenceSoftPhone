@@ -85,147 +85,139 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
         binding.statsViewModel = statsViewModel
 
         conferenceViewModel.conferenceMosaicDisplayMode.observe(
-            viewLifecycleOwner,
-            {
-                if (it) {
-                    startTimer(R.id.grid_conference_timer)
-                }
+            viewLifecycleOwner
+        ) {
+            if (it) {
+                startTimer(R.id.grid_conference_timer)
             }
-        )
+        }
 
         conferenceViewModel.conferenceActiveSpeakerDisplayMode.observe(
-            viewLifecycleOwner,
-            {
-                if (it) {
-                    startTimer(R.id.active_speaker_conference_timer)
+            viewLifecycleOwner
+        ) {
+            if (it) {
+                startTimer(R.id.active_speaker_conference_timer)
 
-                    if (conferenceViewModel.conferenceExists.value == true) {
-                        Log.i("[Call] Local participant is in conference and current layout is active speaker, updating Core's native window id")
-                        val layout = binding.root.findViewById<RelativeLayout>(R.id.conference_active_speaker_layout)
-                        val window = layout.findViewById<RoundCornersTextureView>(R.id.conference_active_speaker_remote_video)
-                        coreContext.core.nativeVideoWindowId = window
-                    } else {
-                        Log.i("[Call] Either not in conference or current layout isn't active speaker, updating Core's native window id")
-                        val layout = binding.root.findViewById<LinearLayout>(R.id.remote_layout)
-                        val window = layout.findViewById<RoundCornersTextureView>(R.id.remote_video_surface)
-                        coreContext.core.nativeVideoWindowId = window
-                    }
+                if (conferenceViewModel.conferenceExists.value == true) {
+                    Log.i("[Call] Local participant is in conference and current layout is active speaker, updating Core's native window id")
+                    val layout =
+                        binding.root.findViewById<RelativeLayout>(R.id.conference_active_speaker_layout)
+                    val window =
+                        layout.findViewById<RoundCornersTextureView>(R.id.conference_active_speaker_remote_video)
+                    coreContext.core.nativeVideoWindowId = window
+                } else {
+                    Log.i("[Call] Either not in conference or current layout isn't active speaker, updating Core's native window id")
+                    val layout = binding.root.findViewById<LinearLayout>(R.id.remote_layout)
+                    val window =
+                        layout.findViewById<RoundCornersTextureView>(R.id.remote_video_surface)
+                    coreContext.core.nativeVideoWindowId = window
                 }
             }
-        )
+        }
 
         conferenceViewModel.conferenceParticipantDevices.observe(
-            viewLifecycleOwner,
-            {
-                if (it.size > conferenceViewModel.maxParticipantsForMosaicLayout) {
-                    showSnackBar(R.string.conference_too_many_participants_for_mosaic_layout)
-                }
+            viewLifecycleOwner
+        ) {
+            if (it.size > conferenceViewModel.maxParticipantsForMosaicLayout) {
+                showSnackBar(R.string.conference_too_many_participants_for_mosaic_layout)
             }
-        )
+        }
 
         conferenceViewModel.conference.observe(
-            viewLifecycleOwner,
-            { conference ->
-                if (corePreferences.enableFullScreenWhenJoiningVideoConference) {
-                    if (conference != null && conference.currentParams.isVideoEnabled) {
-                        if (conference.me.devices.find { it.getStreamAvailability(StreamType.Video) } != null) {
-                            Log.i("[Call] Conference is video & our device has video enabled, enabling full screen mode")
-                            controlsViewModel.fullScreenMode.value = true
-                        }
+            viewLifecycleOwner
+        ) { conference ->
+            if (corePreferences.enableFullScreenWhenJoiningVideoConference) {
+                if (conference != null && conference.currentParams.isVideoEnabled) {
+                    if (conference.me.devices.find { it.getStreamAvailability(StreamType.Video) } != null) {
+                        Log.i("[Call] Conference is video & our device has video enabled, enabling full screen mode")
+                        controlsViewModel.fullScreenMode.value = true
                     }
                 }
             }
-        )
+        }
 
         callsViewModel.currentCallData.observe(
-            viewLifecycleOwner,
-            {
-                if (it != null) {
-                    val timer = binding.root.findViewById<Chronometer>(R.id.active_call_timer)
-                    timer.base =
-                        SystemClock.elapsedRealtime() - (1000 * it.call.duration) // Linphone timestamps are in seconds
-                    timer.start()
-                }
+            viewLifecycleOwner
+        ) {
+            if (it != null) {
+                val timer = binding.root.findViewById<Chronometer>(R.id.active_call_timer)
+                timer.base =
+                    SystemClock.elapsedRealtime() - (1000 * it.call.duration) // Linphone timestamps are in seconds
+                timer.start()
             }
-        )
+        }
 
         controlsViewModel.goToConferenceParticipantsListEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    navigateToConferenceParticipants()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                navigateToConferenceParticipants()
             }
-        )
+        }
 
         controlsViewModel.goToChatEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    goToChat()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                goToChat()
             }
-        )
+        }
 
         controlsViewModel.goToCallsListEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    navigateToCallsList()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                navigateToCallsList()
             }
-        )
+        }
 
         controlsViewModel.goToConferenceLayoutSettings.observe(
-            viewLifecycleOwner,
-            {
-                it.consume {
-                    navigateToConferenceLayout()
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume {
+                navigateToConferenceLayout()
             }
-        )
+        }
 
         callsViewModel.callUpdateEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { call ->
-                    if (call.state == Call.State.StreamsRunning) {
-                        dialog?.dismiss()
-                    } else if (call.state == Call.State.UpdatedByRemote) {
-                        if (coreContext.core.videoEnabled()) {
-                            val remoteVideo = call.remoteParams?.videoEnabled() ?: false
-                            val localVideo = call.currentParams.videoEnabled()
-                            if (remoteVideo && !localVideo) {
-                                showCallVideoUpdateDialog(call)
-                            }
-                        } else {
-                            Log.w("[Call] Video display & capture are disabled, don't show video dialog")
+            viewLifecycleOwner
+        ) {
+            it.consume { call ->
+                if (call.state == Call.State.StreamsRunning) {
+                    dialog?.dismiss()
+                } else if (call.state == Call.State.UpdatedByRemote) {
+                    if (coreContext.core.videoEnabled()) {
+                        val remoteVideo = call.remoteParams?.videoEnabled() ?: false
+                        val localVideo = call.currentParams.videoEnabled()
+                        if (remoteVideo && !localVideo) {
+                            showCallVideoUpdateDialog(call)
                         }
-                    }
-
-                    val conference = call.conference
-                    if (conference != null && conferenceViewModel.conference.value == null) {
-                        Log.i("[Call] Found conference attached to call and no conference in dedicated view model, init & configure it")
-                        conferenceViewModel.initConference(conference)
-                        conferenceViewModel.configureConference(conference)
+                    } else {
+                        Log.w("[Call] Video display & capture are disabled, don't show video dialog")
                     }
                 }
+
+                val conference = call.conference
+                if (conference != null && conferenceViewModel.conference.value == null) {
+                    Log.i("[Call] Found conference attached to call and no conference in dedicated view model, init & configure it")
+                    conferenceViewModel.initConference(conference)
+                    conferenceViewModel.configureConference(conference)
+                }
             }
-        )
+        }
 
         controlsViewModel.goToDialer.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { isCallTransfer ->
-                    val intent = Intent()
-                    intent.setClass(requireContext(), MainActivity::class.java)
-                    intent.putExtra("Dialer", true)
-                    intent.putExtra("Transfer", isCallTransfer)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    startActivity(intent)
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume { isCallTransfer ->
+                val intent = Intent()
+                intent.setClass(requireContext(), MainActivity::class.java)
+                intent.putExtra("Dialer", true)
+                intent.putExtra("Transfer", isCallTransfer)
+                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                startActivity(intent)
             }
-        )
+        }
 
         val remoteLayout = binding.root.findViewById<LinearLayout>(R.id.remote_layout)
         val remoteVideoView = remoteLayout.findViewById<RoundCornersTextureView>(R.id.remote_video_surface)

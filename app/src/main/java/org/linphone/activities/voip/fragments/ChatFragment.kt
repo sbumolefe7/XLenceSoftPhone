@@ -142,29 +142,27 @@ class ChatFragment : GenericFragment<VoipChatFragmentBinding>() {
         binding.chatMessagesList.layoutManager = layoutManager
 
         listViewModel.events.observe(
-            viewLifecycleOwner,
-            { events ->
-                adapter.submitList(events)
-            }
-        )
+            viewLifecycleOwner
+        ) { events ->
+            adapter.submitList(events)
+        }
 
         chatSendingViewModel.textToSend.observe(
-            viewLifecycleOwner,
-            {
-                chatSendingViewModel.onTextToSendChanged(it)
-            }
-        )
+            viewLifecycleOwner
+        ) {
+            chatSendingViewModel.onTextToSendChanged(it)
+        }
 
         adapter.replyMessageEvent.observe(
-            viewLifecycleOwner,
-            {
-                it.consume { chatMessage ->
-                    chatSendingViewModel.pendingChatMessageToReplyTo.value?.destroy()
-                    chatSendingViewModel.pendingChatMessageToReplyTo.value = ChatMessageData(chatMessage)
-                    chatSendingViewModel.isPendingAnswer.value = true
-                }
+            viewLifecycleOwner
+        ) {
+            it.consume { chatMessage ->
+                chatSendingViewModel.pendingChatMessageToReplyTo.value?.destroy()
+                chatSendingViewModel.pendingChatMessageToReplyTo.value =
+                    ChatMessageData(chatMessage)
+                chatSendingViewModel.isPendingAnswer.value = true
             }
-        )
+        }
     }
 
     override fun onResume() {
