@@ -179,7 +179,7 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <include
-            layout="@layout/wait_layout"
+            layout="@layout/voip_conference_creation_pending_wait_layout"
             bind:visibility="@{conferenceViewModel.conferenceCreationPending}"/>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
