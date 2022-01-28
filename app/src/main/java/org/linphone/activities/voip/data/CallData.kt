@@ -104,7 +104,7 @@ open class CallData(val call: Call) : GenericContactData(call.remoteAddress) {
         }
 
         update()
-        initChatRoom()
+        // initChatRoom()
 
         val conferenceInfo = coreContext.core.findConferenceInformationFromUri(call.remoteAddress)
         if (conferenceInfo != null) {

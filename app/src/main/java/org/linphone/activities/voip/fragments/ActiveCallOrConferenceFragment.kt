@@ -103,13 +103,13 @@ class ActiveCallOrConferenceFragment : GenericFragment<VoipActiveCallOrConferenc
                     val layout =
                         binding.root.findViewById<RelativeLayout>(R.id.conference_active_speaker_layout)
                     val window =
-                        layout.findViewById<RoundCornersTextureView>(R.id.conference_active_speaker_remote_video)
+                        layout?.findViewById<RoundCornersTextureView>(R.id.conference_active_speaker_remote_video)
                     coreContext.core.nativeVideoWindowId = window
                 } else {
                     Log.i("[Call] Either not in conference or current layout isn't active speaker, updating Core's native window id")
                     val layout = binding.root.findViewById<LinearLayout>(R.id.remote_layout)
                     val window =
-                        layout.findViewById<RoundCornersTextureView>(R.id.remote_video_surface)
+                        layout?.findViewById<RoundCornersTextureView>(R.id.remote_video_surface)
                     coreContext.core.nativeVideoWindowId = window
                 }
             }

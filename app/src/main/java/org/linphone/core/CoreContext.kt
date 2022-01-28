@@ -363,24 +363,25 @@ class CoreContext(val context: Context, coreConfig: Config) {
 
         for (account in core.accountList) {
             if (account.params.identityAddress?.domain == corePreferences.defaultDomain) {
+                var paramsChanged = false
+                val params = account.params.clone()
+
                 // Ensure conference factory URI is set on sip.linphone.org proxy configs
                 if (account.params.conferenceFactoryUri == null) {
-                    val params = account.params.clone()
                     val uri = corePreferences.conferenceServerUri
                     Log.i("[Context] Setting conference factory on proxy config ${params.identityAddress?.asString()} to default value: $uri")
                     params.conferenceFactoryUri = uri
-                    account.params = params
+                    paramsChanged = true
                 }
 
                 // Ensure audio/video conference factory URI is set on sip.linphone.org proxy configs
                 if (account.params.audioVideoConferenceFactoryAddress == null) {
-                    val params = account.params.clone()
                     val uri = corePreferences.audioVideoConferenceServerUri
                     val address = core.interpretUrl(uri)
                     if (address != null) {
                         Log.i("[Context] Setting audio/video conference factory on proxy config ${params.identityAddress?.asString()} to default value: $uri")
                         params.audioVideoConferenceFactoryAddress = address
-                        account.params = params
+                        paramsChanged = true
                     } else {
                         Log.e("[Context] Failed to parse audio/video conference factory URI: $uri")
                     }
@@ -388,9 +389,13 @@ class CoreContext(val context: Context, coreConfig: Config) {
 
                 // Enable Bundle mode by default
                 if (!account.params.isRtpBundleEnabled) {
-                    val params = account.params.clone()
                     Log.i("[Context] Enabling RTP bundle mode on proxy config ${params.identityAddress?.asString()}")
                     params.isRtpBundleEnabled = true
+                    paramsChanged = true
+                }
+
+                if (paramsChanged) {
+                    Log.i("[Context] Account params have been updated, apply changes")
                     account.params = params
                 }
 
