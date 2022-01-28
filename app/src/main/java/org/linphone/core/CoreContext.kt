@@ -386,6 +386,14 @@ class CoreContext(val context: Context, coreConfig: Config) {
                     }
                 }
 
+                // Enable Bundle mode by default
+                if (!account.params.isRtpBundleEnabled) {
+                    val params = account.params.clone()
+                    Log.i("[Context] Enabling RTP bundle mode on proxy config ${params.identityAddress?.asString()}")
+                    params.isRtpBundleEnabled = true
+                    account.params = params
+                }
+
                 // Ensure LIME server URL is set if at least one sip.linphone.org proxy
                 if (core.limeX3DhAvailable()) {
                     var url: String? = core.limeX3DhServerUrl

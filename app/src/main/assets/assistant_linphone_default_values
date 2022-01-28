@@ -17,6 +17,7 @@
     <entry name="conference_factory_uri" overwrite="true">sip:conference-factory@sip.linphone.org</entry>
     <entry name="audio_video_conference_factory_uri" overwrite="true">sip:videoconference-factory2@sip.linphone.org</entry>
     <entry name="push_notification_allowed" overwrite="true">1</entry>
+    <entry name="rtp_bundle" overwrite="true">1</entry>
   </section>
   <section name="nat_policy_default_values">
     <entry name="stun_server" overwrite="true">stun.linphone.org</entry>
