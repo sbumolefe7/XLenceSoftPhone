@@ -57,15 +57,11 @@ class CallsViewModel : ViewModel() {
 
     private val listener = object : CoreListenerStub() {
         override fun onChatRoomRead(core: Core, chatRoom: ChatRoom) {
-            if (chatRoom == currentCallData.value?.chatRoom) {
-                updateUnreadChatCount()
-            }
+            updateUnreadChatCount()
         }
 
         override fun onMessageReceived(core: Core, chatRoom: ChatRoom, message: ChatMessage) {
-            if (chatRoom == currentCallData.value?.chatRoom) {
-                updateUnreadChatCount()
-            }
+            updateUnreadChatCount()
         }
 
         override fun onLastCallEnded(core: Core) {
