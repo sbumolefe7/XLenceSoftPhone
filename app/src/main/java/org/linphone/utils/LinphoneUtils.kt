@@ -77,6 +77,11 @@ class LinphoneUtils {
             return core.defaultAccount?.params?.conferenceFactoryUri != null
         }
 
+        fun isRemoteConferencingAvailable(): Boolean {
+            val core = coreContext.core
+            return core.defaultAccount?.params?.audioVideoConferenceFactoryAddress != null || core.defaultAccount?.params?.conferenceFactoryUri != null
+        }
+
         fun createOneToOneChatRoom(participant: Address, isSecured: Boolean = false): ChatRoom? {
             val core: Core = coreContext.core
             val defaultAccount = core.defaultAccount

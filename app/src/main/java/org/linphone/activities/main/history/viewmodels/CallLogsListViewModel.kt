@@ -35,6 +35,8 @@ class CallLogsListViewModel : ViewModel() {
 
     val filter = MutableLiveData<CallLogsFilter>()
 
+    val showConferencesFilter = MutableLiveData<Boolean>()
+
     val contactsUpdatedEvent: MutableLiveData<Event<Boolean>> by lazy {
         MutableLiveData<Event<Boolean>>()
     }
@@ -64,6 +66,8 @@ class CallLogsListViewModel : ViewModel() {
     init {
         filter.value = CallLogsFilter.ALL
         updateCallLogs()
+
+        showConferencesFilter.value = LinphoneUtils.isRemoteConferencingAvailable()
 
         coreContext.core.addListener(listener)
         coreContext.contactsManager.addListener(contactsUpdatedListener)

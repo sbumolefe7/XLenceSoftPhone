@@ -143,6 +143,14 @@ internal fun TabsFragment.navigateToChatRooms() {
 
 /* Dialer related */
 
+internal fun DialerFragment.navigateToContacts(uriToAdd: String?) {
+    val deepLink = "linphone-android://contact/new/$uriToAdd"
+    findNavController().navigate(
+        Uri.parse(deepLink),
+        popupTo(R.id.masterContactsFragment, true)
+    )
+}
+
 internal fun DialerFragment.navigateToConfigFileViewer() {
     val bundle = bundleOf("Secure" to true)
     findMasterNavController().navigate(
