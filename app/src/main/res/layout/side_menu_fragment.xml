@@ -165,6 +165,7 @@
                 </LinearLayout>
 
                 <View
+                    android:visibility="@{viewModel.showAssistant ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?dividerColor" />
@@ -194,6 +195,7 @@
                 </LinearLayout>
 
                 <View
+                    android:visibility="@{viewModel.showSettings ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?dividerColor" />
@@ -223,6 +225,7 @@
                 </LinearLayout>
 
                 <View
+                    android:visibility="@{viewModel.showRecordings ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?dividerColor" />
@@ -252,6 +255,7 @@
                 </LinearLayout>
 
                 <View
+                    android:visibility="@{viewModel.showScheduledConferences ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?dividerColor" />
@@ -281,6 +285,7 @@
                 </LinearLayout>
 
                 <View
+                    android:visibility="@{viewModel.showAbout ? View.VISIBLE : View.GONE}"
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="?dividerColor" />
