@@ -41,6 +41,8 @@ class ConferenceParticipantDeviceData(
 
     val isInConference = MutableLiveData<Boolean>()
 
+    private var textureView: TextureView? = null
+
     private val listener = object : ParticipantDeviceListenerStub() {
         override fun onIsSpeakingChanged(
             participantDevice: ParticipantDevice,
@@ -53,11 +55,13 @@ class ConferenceParticipantDeviceData(
         override fun onConferenceJoined(participantDevice: ParticipantDevice) {
             Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] has joined the conference")
             isInConference.value = true
+            updateWindowId(textureView)
         }
 
         override fun onConferenceLeft(participantDevice: ParticipantDevice) {
             Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] has left the conference")
             isInConference.value = false
+            updateWindowId(null)
         }
 
         override fun onStreamCapabilityChanged(
@@ -78,6 +82,7 @@ class ConferenceParticipantDeviceData(
             if (streamType == StreamType.Video) {
                 Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] video availability changed to ${if (available) "available" else "unavailable"}")
                 videoEnabled.value = available
+                updateWindowId(if (available) textureView else null)
             }
         }
     }
@@ -108,28 +113,22 @@ class ConferenceParticipantDeviceData(
         return isMe && coreContext.showSwitchCameraButton()
     }
 
-    fun setTextureView(textureView: TextureView) {
-        if (textureView.isAvailable) {
+    fun setTextureView(tv: TextureView) {
+        textureView = tv
+
+        if (tv.isAvailable) {
             Log.i("[Conference Participant Device] Setting textureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}]")
-            if (isMe) {
-                coreContext.core.nativePreviewWindowId = textureView
-            } else {
-                participantDevice.nativeVideoWindowId = textureView
-            }
+            updateWindowId(textureView)
         } else {
             Log.i("[Conference Participant Device] Got textureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}], but it is not available yet")
-            textureView.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
+            tv.surfaceTextureListener = object : TextureView.SurfaceTextureListener {
                 override fun onSurfaceTextureAvailable(
                     surface: SurfaceTexture,
                     width: Int,
                     height: Int
                 ) {
                     Log.i("[Conference Participant Device] Setting textureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}]")
-                    if (isMe) {
-                        coreContext.core.nativePreviewWindowId = textureView
-                    } else {
-                        participantDevice.nativeVideoWindowId = textureView
-                    }
+                    updateWindowId(textureView)
                 }
 
                 override fun onSurfaceTextureSizeChanged(
@@ -140,12 +139,20 @@ class ConferenceParticipantDeviceData(
 
                 override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
                     Log.w("[Conference Participant Device] TextureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}] has been destroyed")
-                    participantDevice.nativeVideoWindowId = null
+                    updateWindowId(null)
                     return true
                 }
 
                 override fun onSurfaceTextureUpdated(surface: SurfaceTexture) { }
             }
+        }
+    }
+
+    private fun updateWindowId(windowId: Any?) {
+        if (isMe) {
+            coreContext.core.nativePreviewWindowId = windowId
+        } else {
+            participantDevice.nativeVideoWindowId = windowId
         }
     }
 }
