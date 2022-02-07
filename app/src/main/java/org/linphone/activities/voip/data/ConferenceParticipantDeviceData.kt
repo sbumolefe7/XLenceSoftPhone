@@ -61,7 +61,7 @@ class ConferenceParticipantDeviceData(
         override fun onConferenceLeft(participantDevice: ParticipantDevice) {
             Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] has left the conference")
             isInConference.value = false
-            updateWindowId(null)
+            // updateWindowId(null)
         }
 
         override fun onStreamCapabilityChanged(
@@ -82,7 +82,9 @@ class ConferenceParticipantDeviceData(
             if (streamType == StreamType.Video) {
                 Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] video availability changed to ${if (available) "available" else "unavailable"}")
                 videoEnabled.value = available
-                updateWindowId(if (available) textureView else null)
+                if (available) {
+                    updateWindowId(textureView)
+                }
             }
         }
     }
