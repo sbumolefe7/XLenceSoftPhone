@@ -103,9 +103,43 @@
 
         </LinearLayout>
 
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:background="@drawable/shape_remote_background"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/remote_recording"
+            android:layout_above="@id/miniatures">
+
+            <!--<include
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_margin="10dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintHeight_max="200dp"
+                app:data="@{viewModel}"
+                layout="@layout/voip_contact_avatar"/>
+
+            <TextView
+                android:text="@{viewModel.contact.fullName ?? viewModel.displayName}"
+                style="@style/call_remote_name_font"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginStart="10dp"
+                android:maxLines="1"
+                android:ellipsize="end"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>-->
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
         <org.linphone.activities.voip.views.RoundCornersTextureView
             android:id="@+id/conference_active_speaker_remote_video"
             android:onClick="@{() -> controlsViewModel.toggleFullScreen()}"
+            android:visibility="@{conferenceViewModel.isVideoConference &amp;&amp; !conferenceViewModel.isConferenceLocallyPaused ? View.VISIBLE : View.GONE}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_below="@id/remote_recording"
