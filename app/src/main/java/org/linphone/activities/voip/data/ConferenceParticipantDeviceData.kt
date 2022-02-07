@@ -31,7 +31,7 @@ import org.linphone.core.StreamType
 import org.linphone.core.tools.Log
 
 class ConferenceParticipantDeviceData(
-    private val participantDevice: ParticipantDevice,
+    val participantDevice: ParticipantDevice,
     val isMe: Boolean
 ) :
     GenericContactData(participantDevice.address) {
@@ -61,7 +61,7 @@ class ConferenceParticipantDeviceData(
         override fun onConferenceLeft(participantDevice: ParticipantDevice) {
             Log.i("[Conference Participant Device] Participant [${participantDevice.address.asStringUriOnly()}] has left the conference")
             isInConference.value = false
-            // updateWindowId(null)
+            updateWindowId(null)
         }
 
         override fun onStreamCapabilityChanged(
@@ -141,6 +141,7 @@ class ConferenceParticipantDeviceData(
 
                 override fun onSurfaceTextureDestroyed(surface: SurfaceTexture): Boolean {
                     Log.w("[Conference Participant Device] TextureView [$textureView] for participant [${participantDevice.address.asStringUriOnly()}] has been destroyed")
+                    textureView = null
                     updateWindowId(null)
                     return true
                 }

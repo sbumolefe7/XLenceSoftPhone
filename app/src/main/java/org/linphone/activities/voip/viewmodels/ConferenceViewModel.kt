@@ -78,7 +78,7 @@ class ConferenceViewModel : ViewModel() {
             participantDevice: ParticipantDevice
         ) {
             Log.i("[Conference] Participant device added: ${participantDevice.address.asStringUriOnly()}")
-            updateParticipantsDevicesList(conference)
+            addParticipantDevice(participantDevice)
         }
 
         override fun onParticipantDeviceRemoved(
@@ -86,7 +86,7 @@ class ConferenceViewModel : ViewModel() {
             participantDevice: ParticipantDevice
         ) {
             Log.i("[Conference] Participant device removed: ${participantDevice.address.asStringUriOnly()}")
-            updateParticipantsDevicesList(conference)
+            removeParticipantDevice(participantDevice)
         }
 
         override fun onParticipantAdminStatusChanged(
@@ -323,6 +323,41 @@ class ConferenceViewModel : ViewModel() {
             Log.i("[Conference] Participant device for myself found: ${device.name} (${device.address.asStringUriOnly()})")
             val deviceData = ConferenceParticipantDeviceData(device, true)
             devices.add(deviceData)
+        }
+
+        conferenceParticipantDevices.value = devices
+    }
+
+    private fun addParticipantDevice(device: ParticipantDevice) {
+        val devices = arrayListOf<ConferenceParticipantDeviceData>()
+        devices.addAll(conferenceParticipantDevices.value.orEmpty())
+
+        for (participantDevice in devices) {
+            if (participantDevice.participantDevice.address.asStringUriOnly() == device.address.asStringUriOnly()) {
+                Log.e("[Conference] Participant is already in devices list: ${device.name} (${device.address.asStringUriOnly()})")
+                return
+            }
+        }
+
+        Log.i("[Conference] New participant device found: ${device.name} (${device.address.asStringUriOnly()})")
+        val deviceData = ConferenceParticipantDeviceData(device, false)
+        devices.add(deviceData)
+
+        conferenceParticipantDevices.value = devices
+    }
+
+    private fun removeParticipantDevice(device: ParticipantDevice) {
+        val devices = arrayListOf<ConferenceParticipantDeviceData>()
+
+        for (participantDevice in conferenceParticipantDevices.value.orEmpty()) {
+            if (participantDevice.participantDevice.address.asStringUriOnly() != device.address.asStringUriOnly()) {
+                devices.add(participantDevice)
+            }
+        }
+        if (devices.size == conferenceParticipantDevices.value.orEmpty().size) {
+            Log.e("[Conference] Failed to remove participant device: ${device.name} (${device.address.asStringUriOnly()})")
+        } else {
+            Log.i("[Conference] Participant device removed: ${device.name} (${device.address.asStringUriOnly()})")
         }
 
         conferenceParticipantDevices.value = devices
