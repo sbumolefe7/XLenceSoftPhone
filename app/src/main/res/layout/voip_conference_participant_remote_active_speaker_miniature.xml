@@ -87,14 +87,14 @@
             <TextView
                 android:text="@{data.contact.fullName ?? data.displayName}"
                 style="@style/call_remote_name_font"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="5dp"
                 android:layout_marginStart="5dp"
-                android:maxLines="1"
-                android:ellipsize="end"
+                android:layout_marginEnd="5dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

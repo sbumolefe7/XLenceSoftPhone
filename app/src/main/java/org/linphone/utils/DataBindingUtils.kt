@@ -338,6 +338,7 @@ fun loadAvatarWithGlide(imageView: ImageView, path: Uri?) {
 @BindingAdapter("glideAvatar")
 fun loadAvatarWithGlide(imageView: ImageView, path: String?) {
     if (path != null) {
+        imageView.visibility = View.VISIBLE
         GlideApp
             .with(imageView)
             .load(path)

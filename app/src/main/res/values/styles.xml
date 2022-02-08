@@ -166,6 +166,12 @@
     <style name="call_remote_name_font" parent="@android:style/TextAppearance.Medium">
         <item name="android:textColor">@color/white_color</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:ellipsize">end</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeMaxTextSize">18sp</item>
+        <item name="autoSizeStepGranularity">@dimen/settings_granularity_step</item>
     </style>
 
     <style name="call_options_font" parent="@android:style/TextAppearance.Medium">
@@ -205,7 +211,7 @@
         <item name="android:singleLine">true</item>
         <item name="android:ellipsize">none</item>
         <item name="autoSizeTextType">uniform</item>
-        <item name="autoSizeMinTextSize">20sp</item>
+        <item name="autoSizeMinTextSize">15sp</item>
         <item name="autoSizeMaxTextSize">70sp</item>
         <item name="autoSizeStepGranularity">@dimen/settings_granularity_step</item>
     </style>
