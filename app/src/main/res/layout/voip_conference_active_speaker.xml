@@ -110,7 +110,7 @@
             android:layout_below="@id/remote_recording"
             android:layout_above="@id/miniatures">
 
-            <!--<include
+            <include
                 android:layout_width="0dp"
                 android:layout_height="0dp"
                 android:layout_margin="10dp"
@@ -119,11 +119,22 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintHeight_max="200dp"
-                app:data="@{viewModel}"
+                app:data="@{conferenceViewModel.speakingParticipant}"
                 layout="@layout/voip_contact_avatar"/>
 
+            <org.linphone.activities.voip.views.RoundCornersTextureView
+                android:id="@+id/conference_active_speaker_remote_video"
+                android:onClick="@{() -> controlsViewModel.toggleFullScreen()}"
+                android:visibility="@{!conferenceViewModel.isConferenceLocallyPaused &amp;&amp; conferenceViewModel.speakingParticipant.videoEnabled ? View.VISIBLE : View.GONE}"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
+
             <TextView
-                android:text="@{viewModel.contact.fullName ?? viewModel.displayName}"
+                android:text="@{conferenceViewModel.speakingParticipant.contact.fullName ?? conferenceViewModel.speakingParticipant.displayName}"
                 style="@style/call_remote_name_font"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -132,18 +143,9 @@
                 android:maxLines="1"
                 android:ellipsize="end"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"/>-->
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <org.linphone.activities.voip.views.RoundCornersTextureView
-            android:id="@+id/conference_active_speaker_remote_video"
-            android:onClick="@{() -> controlsViewModel.toggleFullScreen()}"
-            android:visibility="@{conferenceViewModel.isVideoConference &amp;&amp; !conferenceViewModel.isConferenceLocallyPaused ? View.VISIBLE : View.GONE}"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_below="@id/remote_recording"
-            android:layout_above="@id/miniatures"/>
 
         <HorizontalScrollView
             android:id="@+id/miniatures"

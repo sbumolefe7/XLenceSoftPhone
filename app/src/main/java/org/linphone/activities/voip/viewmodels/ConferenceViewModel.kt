@@ -55,6 +55,8 @@ class ConferenceViewModel : ViewModel() {
 
     val maxParticipantsForMosaicLayout = corePreferences.maxConferenceParticipantsForMosaicLayout
 
+    val speakingParticipant = MutableLiveData<ConferenceParticipantDeviceData>()
+
     private val conferenceListener = object : ConferenceListenerStub() {
         override fun onParticipantAdded(conference: Conference, participant: Participant) {
             Log.i("[Conference] Participant added: ${participant.address.asStringUriOnly()}")
@@ -120,6 +122,25 @@ class ConferenceViewModel : ViewModel() {
             if (conference.isMe(device.address)) {
                 Log.i("[Conference] Left conference")
                 isConferenceLocallyPaused.value = true
+            }
+        }
+
+        override fun onParticipantDeviceIsSpeakingChanged(
+            conference: Conference,
+            participantDevice: ParticipantDevice,
+            isSpeaking: Boolean
+        ) {
+            Log.i("[Conference] Participant [${participantDevice.address.asStringUriOnly()}] is ${if (isSpeaking) "speaking" else "not speaking"}")
+            if (isSpeaking) {
+                val device = conferenceParticipantDevices.value.orEmpty().find {
+                    it.participantDevice.address.weakEqual(participantDevice.address)
+                }
+                if (device != null) {
+                    Log.i("[Conference] Found participant device")
+                    speakingParticipant.value = device
+                } else {
+                    Log.w("[Conference] Participant device [${participantDevice.address.asStringUriOnly()}] is speaking but couldn't find it in devices list")
+                }
             }
         }
 
@@ -332,11 +353,12 @@ class ConferenceViewModel : ViewModel() {
         val devices = arrayListOf<ConferenceParticipantDeviceData>()
         devices.addAll(conferenceParticipantDevices.value.orEmpty())
 
-        for (participantDevice in devices) {
-            if (participantDevice.participantDevice.address.asStringUriOnly() == device.address.asStringUriOnly()) {
-                Log.e("[Conference] Participant is already in devices list: ${device.name} (${device.address.asStringUriOnly()})")
-                return
-            }
+        val existingDevice = devices.find {
+            it.participantDevice.address.weakEqual(device.address)
+        }
+        if (existingDevice != null) {
+            Log.e("[Conference] Participant is already in devices list: ${device.name} (${device.address.asStringUriOnly()})")
+            return
         }
 
         Log.i("[Conference] New participant device found: ${device.name} (${device.address.asStringUriOnly()})")
