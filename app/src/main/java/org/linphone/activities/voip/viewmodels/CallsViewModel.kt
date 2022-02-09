@@ -23,9 +23,11 @@ import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import org.linphone.LinphoneApplication.Companion.coreContext
+import org.linphone.R
 import org.linphone.activities.voip.data.CallData
 import org.linphone.core.*
 import org.linphone.core.tools.Log
+import org.linphone.utils.AppUtils
 import org.linphone.utils.Event
 
 class CallsViewModel : ViewModel() {
@@ -151,6 +153,7 @@ class CallsViewModel : ViewModel() {
         Log.i("[Calls] Merging all calls into new conference")
         val core = coreContext.core
         val params = core.createConferenceParams(null)
+        params.subject = AppUtils.getString(R.string.conference_local_title)
         val conference = core.createConferenceWithParams(params)
         conference?.addParticipants(core.calls)
     }
