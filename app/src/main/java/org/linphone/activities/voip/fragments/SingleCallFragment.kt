@@ -216,7 +216,7 @@ class SingleCallFragment : GenericVideoPreviewFragment<VoipSingleCallFragmentBin
     private fun updateHingeRelatedConstraints(feature: FoldingFeature) {
         Log.i("[Single Call] Updating constraint layout hinges: $feature")
 
-        val constraintLayout = binding.constraintLayout
+        val constraintLayout = binding.singleCallLayout
         val set = ConstraintSet()
         set.clone(constraintLayout)
 
