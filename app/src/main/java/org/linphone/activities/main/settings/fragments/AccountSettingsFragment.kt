@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 import org.linphone.R
 import org.linphone.activities.main.settings.viewmodels.AccountSettingsViewModel
 import org.linphone.activities.main.settings.viewmodels.AccountSettingsViewModelFactory
+import org.linphone.activities.navigateToAccountLinking
 import org.linphone.activities.navigateToPhoneLinking
 import org.linphone.core.tools.Log
 import org.linphone.databinding.SettingsAccountFragmentBinding
@@ -72,6 +73,12 @@ class AccountSettingsFragment : GenericSettingFragment<SettingsAccountFragmentBi
                     args.putString("HA1", authInfo.ha1)
                     navigateToPhoneLinking(args)
                 }
+            }
+        }
+
+        viewModel.linkAccountEvent.observe(viewLifecycleOwner) {
+            it.consume {
+                navigateToAccountLinking()
             }
         }
 

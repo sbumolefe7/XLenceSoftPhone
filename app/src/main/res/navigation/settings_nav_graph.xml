@@ -151,4 +151,10 @@
         tools:layout="@layout/settings_conferences_fragment"
         android:name="org.linphone.activities.main.settings.fragments.ConferencesSettingsFragment"
         android:label="ConferencesSettingsFragment" />
+    <fragment
+        android:id="@+id/accountLinkingFragment"
+        android:name="org.linphone.activities.assistant.fragments.AccountLinkingFragment"
+        android:label="AccountLinkingFragment"
+        tools:layout="@layout/assistant_account_linking_fragment"/>
+    <action android:id="@+id/action_global_accountLinkingFragment" app:destination="@id/accountLinkingFragment"/>
 </navigation>

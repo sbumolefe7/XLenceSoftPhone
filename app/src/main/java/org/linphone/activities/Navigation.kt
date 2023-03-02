@@ -803,6 +803,16 @@ internal fun AccountSettingsFragment.navigateToPhoneLinking(args: Bundle?) {
     }
 }
 
+internal fun AccountSettingsFragment.navigateToAccountLinking() {
+    if (findNavController().currentDestination?.id == R.id.accountSettingsFragment) {
+        findNavController().navigate(
+            R.id.action_global_accountLinkingFragment,
+            null,
+            popupTo()
+        )
+    }
+}
+
 internal fun PhoneAccountLinkingFragment.navigateToPhoneAccountValidation(args: Bundle?) {
     if (findNavController().currentDestination?.id == R.id.phoneAccountLinkingFragment) {
         findNavController().navigate(
@@ -1093,6 +1103,16 @@ internal fun GenericAccountLoginFragment.navigateToEchoCancellerCalibration() {
     if (findNavController().currentDestination?.id == R.id.genericAccountLoginFragment) {
         findNavController().navigate(
             R.id.action_genericAccountLoginFragment_to_echoCancellerCalibrationFragment,
+            null,
+            popupTo()
+        )
+    }
+}
+
+internal fun GenericAccountLoginFragment.navigateToAccountLinking() {
+    if (findNavController().currentDestination?.id == R.id.genericAccountLoginFragment) {
+        findNavController().navigate(
+            R.id.action_global_accountLinkingFragment,
             null,
             popupTo()
         )

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <data>
+        <import type="android.view.View"/>
+        <variable
+            name="data"
+            type="org.linphone.activities.assistant.data.AccountData" />
+    </data>
+
+    <LinearLayout
+        android:onClick="@{() -> data.toggleSelection()}"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="?attr/backgroundColor">
+
+        <CheckBox
+            android:checked="@{data.selectedForLinking}"
+            android:visibility="@{data.alreadyLinked ? View.INVISIBLE : View.VISIBLE}"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="start|center_vertical"
+            android:enabled="@{!data.alreadyLinked}"
+            android:text="@{data.account.params.identity, default=`sip:toto@sip.linphone.org`}"/>
+
+    </LinearLayout>
+
+</layout>

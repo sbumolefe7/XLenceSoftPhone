@@ -141,6 +141,11 @@
 
                 <include
                     layout="@layout/settings_widget_basic"
+                    linphone:title="@{@string/account_settings_link_account_title}"
+                    linphone:listener="@{viewModel.linkAccountListener}"/>
+
+                <include
+                    layout="@layout/settings_widget_basic"
                     linphone:title="@{@string/account_settings_delete_title}"
                     linphone:listener="@{viewModel.deleteListener}"/>
 

@@ -32,7 +32,7 @@ import org.linphone.activities.assistant.viewmodels.GenericLoginViewModel
 import org.linphone.activities.assistant.viewmodels.GenericLoginViewModelFactory
 import org.linphone.activities.assistant.viewmodels.SharedAssistantViewModel
 import org.linphone.activities.main.viewmodels.DialogViewModel
-import org.linphone.activities.navigateToEchoCancellerCalibration
+import org.linphone.activities.navigateToAccountLinking
 import org.linphone.databinding.AssistantGenericAccountLoginFragmentBinding
 import org.linphone.utils.DialogUtils
 
@@ -61,11 +61,12 @@ class GenericAccountLoginFragment : GenericFragment<AssistantGenericAccountLogin
                 val isLinphoneAccount = viewModel.domain.value.orEmpty() == corePreferences.defaultDomain
                 coreContext.newAccountConfigured(isLinphoneAccount)
 
-                if (coreContext.core.isEchoCancellerCalibrationRequired) {
+                navigateToAccountLinking()
+                /*if (coreContext.core.isEchoCancellerCalibrationRequired) {
                     navigateToEchoCancellerCalibration()
                 } else {
                     requireActivity().finish()
-                }
+                }*/
             }
         }
 

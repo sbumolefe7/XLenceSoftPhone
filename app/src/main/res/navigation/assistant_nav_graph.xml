@@ -162,4 +162,10 @@
             android:id="@+id/action_phoneAccountLinkingFragment_to_echoCancellerCalibrationFragment"
             app:destination="@id/echoCancellerCalibrationFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/accountLinkingFragment"
+        android:name="org.linphone.activities.assistant.fragments.AccountLinkingFragment"
+        android:label="AccountLinkingFragment"
+        tools:layout="@layout/assistant_account_linking_fragment"/>
+    <action android:id="@+id/action_global_accountLinkingFragment" app:destination="@id/accountLinkingFragment"/>
 </navigation>

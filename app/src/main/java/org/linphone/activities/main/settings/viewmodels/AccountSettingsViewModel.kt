@@ -410,6 +410,13 @@ class AccountSettingsViewModel(val account: Account) : GenericSettingsViewModel(
     val linkPhoneNumberEvent = MutableLiveData<Event<Boolean>>()
     val hideLinkPhoneNumber = MutableLiveData<Boolean>()
 
+    val linkAccountListener = object : SettingListenerStub() {
+        override fun onClicked() {
+            linkAccountEvent.value = Event(true)
+        }
+    }
+    val linkAccountEvent = MutableLiveData<Event<Boolean>>()
+
     val conferenceFactoryUriListener = object : SettingListenerStub() {
         override fun onTextValueChanged(newValue: String) {
             val params = account.params.clone()

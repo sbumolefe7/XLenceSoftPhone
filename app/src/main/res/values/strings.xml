@@ -679,6 +679,7 @@
     <string name="account_settings_disable_title">Disable</string>
     <string name="account_settings_default_title">Used as default</string>
     <string name="account_settings_link_phone_number_title">Link your account</string>
+    <string name="account_settings_link_account_title">Link Account with sip.linphone.org account</string>
     <string name="account_settings_delete_title">Delete</string>
     <string name="account_settings_advanced_title">Advanced</string>
     <string name="account_settings_push_notification_title">Allow push notification</string>
