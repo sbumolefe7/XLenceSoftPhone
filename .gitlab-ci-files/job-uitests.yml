@@ -8,7 +8,7 @@
 variables:
   android_api: "33" #android 13
   emulator_type: "apis" #atd for api < 30 more efficient
-  system_architecture: "arm64-v8a" #x86_64 or x86 for Intels
+  system_architecture: "x86_64" #x86_64 or x86 for Intels, arm64-v8a for Mac M1
   android_system_image: "system-images;android-$android_api;google_$emulator_type;$system_architecture" # 'sdkmanager --list | grep system-images' to have all existing configs
   emulator_device: "pixel_6"
   emulator_name: "$emulator_device-api_$android_api-google_$emulator_type-arch_$system_architecture"
@@ -18,12 +18,16 @@ variables:
 job-android-uitests:
 
   stage: uitests
-  tags: [ "macos-xcode13" ]
+  tags: [ "macbookpro-x86" ]
 
   dependencies:
     - job-android
 
   before_script:
+    - echo $SHELL
+    - echo $PATH
+    - python3 --version
+    - export PATH=$PATH
     - git submodule update --init
     - mkdir logs && mkdir reports && mkdir apks
 
@@ -70,7 +74,7 @@ job-android-uitests:
     - mv app/build/outputs/apk/release/linphone-android-release-*.apk apks/release
     - mv app/build/reports/androidTests/connected/* reports
     - .gitlab-ci-files/html2xml-report -p reports
-    
+
   artifacts:
     paths:
       - reports/*
