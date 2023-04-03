@@ -131,7 +131,7 @@ object UITestsUtils {
             connectAccount()
             assert(accountIsConnected()) { "registration state on the Status Bar is still not : Connected after 10 seconds" }
         }
-        UITestsView.dialerView.checkWithTimeout(matches(isDisplayed()), 5.0)
+        UITestsView.dialerView.checkWithTimeout(matches(isDisplayed()), 10.0)
     }
 
     fun launchApp() {

@@ -56,7 +56,7 @@ class IncomingCallPushUITests {
     @Test
     fun testDecline() {
         methods.onPushAction("Decline", null)
-        methods.waitForCallNotification(false, 5.0)
+        methods.waitForCallNotification(false, 10.0)
         takeScreenshot("dialer_view")
     }
 

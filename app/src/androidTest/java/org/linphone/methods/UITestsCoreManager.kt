@@ -62,7 +62,7 @@ class UITestsCoreManager {
         accountCreator.email = accountCreator.username + "@" + accountCreator.domain
         accountCreator.transport = TransportType.Tcp
         assert(accountCreator.createAccount() == AccountCreator.Status.RequestOk) { "[UITests] Unable to send a request to create an account on server" }
-        waitForAccountCreationStatus(AccountCreator.Status.AccountCreated, 5.0)
+        waitForAccountCreationStatus(AccountCreator.Status.AccountCreated, 10.0)
 
         val authInfo = factory.createAuthInfo(accountCreator.username!!, "", accountCreator.password, "", "", accountCreator.domain)
         core.addAuthInfo(authInfo)

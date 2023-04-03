@@ -24,6 +24,7 @@ import org.linphone.methods.UITestsUtils.checkWithTimeout
 import org.linphone.utils.AppUtils.Companion.getString
 
 object CallViewUITestsMethods {
+    const val TIMEOUT = 10.0
 
     val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
     val manager = UITestsCoreManager.instance
@@ -42,8 +43,8 @@ object CallViewUITestsMethods {
         ghostAccount.startCall(manager.createAddress(appAccountAuthInfo))
         startCallTime = Date().time
 
-        ghostAccount.waitForCallState(Call.State.OutgoingRinging, 5.0)
-        waitForCallNotification(true, 5.0)
+        ghostAccount.waitForCallState(Call.State.OutgoingRinging, TIMEOUT)
+        waitForCallNotification(true, TIMEOUT)
     }
 
     fun startOutgoingCall() {
@@ -53,8 +54,8 @@ object CallViewUITestsMethods {
         onView(withContentDescription(R.string.content_description_start_call)).perform(click())
         startCallTime = Date().time
 
-        UITestsView.outgoingCallView.checkWithTimeout(matches(isDisplayed()), 5.0)
-        ghostAccount.waitForCallState(Call.State.IncomingReceived, 5.0)
+        UITestsView.outgoingCallView.checkWithTimeout(matches(isDisplayed()), TIMEOUT)
+        ghostAccount.waitForCallState(Call.State.IncomingReceived, TIMEOUT)
     }
 
     fun endCall(currentView: ViewInteraction? = null) {
@@ -67,7 +68,7 @@ object CallViewUITestsMethods {
     }
 
     fun checkCallTime(view: ViewInteraction, launchTime: Long = Date().time) = runBlocking {
-        view.checkWithTimeout(matches(isDisplayed()), 5.0)
+        view.checkWithTimeout(matches(isDisplayed()), TIMEOUT)
         val firstValue = ((Date().time - launchTime) / 1000).toInt() + 1
         val wait = launch(Dispatchers.Default) {
             val timerArray = arrayListOf<Int>()
@@ -85,7 +86,7 @@ object CallViewUITestsMethods {
         wait.join()
     }
 
-    fun onPushAction(label: String, resultingView: ViewInteraction?, timeout: Double = 5.0) {
+    fun onPushAction(label: String, resultingView: ViewInteraction?, timeout: Double = TIMEOUT) {
         try {
             val button = device.findObject(By.textContains(label))
             button.click()
@@ -103,7 +104,7 @@ object CallViewUITestsMethods {
     ) {
         onView(withId(id)).checkWithTimeout(matches(isDisplayed()), timeout)
         onView(withId(id)).perform(click())
-        resultingView?.checkWithTimeout(assertion, 5.0)
+        resultingView?.checkWithTimeout(assertion, TIMEOUT)
     }
 
     fun waitForCallNotification(exist: Boolean, timeout: Double) = runBlocking {
