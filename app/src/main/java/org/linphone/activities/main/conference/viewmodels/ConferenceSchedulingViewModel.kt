@@ -30,6 +30,7 @@ import org.linphone.activities.main.conference.data.TimeZoneData
 import org.linphone.contact.ContactsSelectionViewModel
 import org.linphone.core.*
 import org.linphone.core.tools.Log
+import org.linphone.utils.AppUtils
 import org.linphone.utils.Event
 import org.linphone.utils.LinphoneUtils
 import org.linphone.utils.TimestampUtils
@@ -41,6 +42,9 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     val scheduleForLater = MutableLiveData<Boolean>()
     val isUpdate = MutableLiveData<Boolean>()
 
+    val mode = MutableLiveData<String>()
+    val modesList: List<String>
+
     val formattedDate = MutableLiveData<String>()
     val formattedTime = MutableLiveData<String>()
 
@@ -50,6 +54,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     val sendInviteViaEmail = MutableLiveData<Boolean>()
 
     val participantsData = MutableLiveData<List<ConferenceSchedulingParticipantData>>()
+    val speakersData = MutableLiveData<List<ConferenceSchedulingParticipantData>>()
 
     val address = MutableLiveData<Address>()
 
@@ -73,6 +78,8 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
     private var confInfo: ConferenceInfo? = null
     private val conferenceScheduler = coreContext.core.createConferenceScheduler()
+
+    private val selectedSpeakersAddresses = MutableLiveData<ArrayList<Address>>()
 
     private val listener = object : ConferenceSchedulerListenerStub() {
         override fun onStateChanged(
@@ -154,6 +161,12 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         scheduleForLater.value = false
         isUpdate.value = false
 
+        modesList = arrayListOf(
+            AppUtils.getString(R.string.conference_schedule_mode_meeting),
+            AppUtils.getString(R.string.conference_schedule_mode_broadcast)
+        )
+        mode.value = modesList.first()
+
         isEncrypted.value = false
         sendInviteViaChat.value = true
         sendInviteViaEmail.value = false
@@ -185,6 +198,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     override fun onCleared() {
         conferenceScheduler.removeListener(listener)
         participantsData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
+        speakersData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
 
         super.onCleared()
     }
@@ -213,10 +227,16 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         scheduleForLater.value = conferenceDuration > 0
 
         val participantsList = arrayListOf<Address>()
-        for (participant in conferenceInfo.participants) {
+        val speakersList = arrayListOf<Address>()
+        for (info in conferenceInfo.participantInfos) {
+            val participant = info.address
             participantsList.add(participant)
+            if (info.role == Participant.Role.Speaker) {
+                speakersList.add(participant)
+            }
         }
         selectedAddresses.value = participantsList
+        selectedSpeakersAddresses.value = speakersList
         computeParticipantsData()
     }
 
@@ -241,14 +261,56 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
     fun computeParticipantsData() {
         participantsData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
-        val list = arrayListOf<ConferenceSchedulingParticipantData>()
+        speakersData.value.orEmpty().forEach(ConferenceSchedulingParticipantData::destroy)
+
+        val participantsList = arrayListOf<ConferenceSchedulingParticipantData>()
+        val speakersList = arrayListOf<ConferenceSchedulingParticipantData>()
 
         for (address in selectedAddresses.value.orEmpty()) {
-            val data = ConferenceSchedulingParticipantData(address, isEncrypted.value == true)
-            list.add(data)
+            val data = ConferenceSchedulingParticipantData(
+                address,
+                showLimeBadge = isEncrypted.value == true,
+                showBroadcastControls = isModeBroadcastCurrentlySelected(),
+                speaker = false,
+                onAddedToSpeakers = { data ->
+                    Log.i(
+                        "[Conference Creation] Participant [${address.asStringUriOnly()}] added to speakers"
+                    )
+                    val participants = arrayListOf<ConferenceSchedulingParticipantData>()
+                    participants.addAll(participantsData.value.orEmpty())
+                    participants.remove(data)
+                    participantsData.value = participants
+
+                    val speakers = arrayListOf<ConferenceSchedulingParticipantData>()
+                    speakers.addAll(speakersData.value.orEmpty())
+                    speakers.add(data)
+                    speakersData.value = speakers
+                },
+                onRemovedFromSpeakers = { data ->
+                    Log.i(
+                        "[Conference Creation] Participant [${address.asStringUriOnly()}] removed from speakers"
+                    )
+                    val speakers = arrayListOf<ConferenceSchedulingParticipantData>()
+                    speakers.addAll(speakersData.value.orEmpty())
+                    speakers.remove(data)
+                    speakersData.value = speakers
+
+                    val participants = arrayListOf<ConferenceSchedulingParticipantData>()
+                    participants.addAll(participantsData.value.orEmpty())
+                    participants.add(data)
+                    participantsData.value = participants
+                }
+            )
+
+            if (address in selectedSpeakersAddresses.value.orEmpty()) {
+                speakersList.add(data)
+            } else {
+                participantsList.add(data)
+            }
         }
 
-        participantsData.value = list
+        participantsData.value = participantsList
+        speakersData.value = speakersList
     }
 
     fun createConference() {
@@ -260,8 +322,6 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
 
         conferenceCreationInProgress.value = true
         val core = coreContext.core
-        val participants = arrayOfNulls<Address>(selectedAddresses.value.orEmpty().size)
-        selectedAddresses.value?.toArray(participants)
         val localAccount = core.defaultAccount
         val localAddress = localAccount?.params?.identityAddress
 
@@ -273,7 +333,25 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         conferenceInfo.organizer = localAddress
         conferenceInfo.subject = subject.value
         conferenceInfo.description = description.value
-        conferenceInfo.setParticipants(participants)
+
+        val participants = arrayOfNulls<ParticipantInfo>(selectedAddresses.value.orEmpty().size)
+        var index = 0
+        val isBroadcast = isModeBroadcastCurrentlySelected()
+        for (participant in participantsData.value.orEmpty()) {
+            val info = Factory.instance().createParticipantInfo(participant.sipAddress)
+            // For meetings, all participants must have Speaker role
+            info?.role = if (isBroadcast) Participant.Role.Listener else Participant.Role.Speaker
+            participants[index] = info
+            index += 1
+        }
+        for (speaker in speakersData.value.orEmpty()) {
+            val info = Factory.instance().createParticipantInfo(speaker.sipAddress)
+            info?.role = Participant.Role.Speaker
+            participants[index] = info
+            index += 1
+        }
+        conferenceInfo.setParticipantInfos(participants)
+
         if (scheduleForLater.value == true) {
             val startTime = getConferenceStartTimestamp()
             conferenceInfo.dateTime = startTime
@@ -285,6 +363,10 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         conferenceScheduler.account = localAccount
         // Will trigger the conference creation/update automatically
         conferenceScheduler.info = conferenceInfo
+    }
+
+    fun isModeBroadcastCurrentlySelected(): Boolean {
+        return mode.value == AppUtils.getString(R.string.conference_schedule_mode_broadcast)
     }
 
     private fun computeTimeZonesList(): List<TimeZoneData> {

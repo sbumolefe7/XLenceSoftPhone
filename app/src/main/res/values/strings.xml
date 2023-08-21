@@ -279,6 +279,9 @@
     <string name="conference_schedule_date">Date</string>
     <string name="conference_schedule_time">Time</string>
     <string name="conference_schedule_duration">Duration</string>
+    <string name="conference_schedule_mode">Mode</string>
+    <string name="conference_schedule_mode_meeting">Meeting</string>
+    <string name="conference_schedule_mode_broadcast">Broadcast</string>
     <string name="conference_schedule_timezone">Timezone</string>
     <string name="conference_schedule_send_invite_chat">Send invite via &appName;</string>
     <string name="conference_schedule_send_updated_invite_chat">Send update via &appName;</string>
@@ -287,11 +290,17 @@
     <string name="conference_schedule_encryption">Would you like to encrypt the meeting?</string>
     <string name="conference_schedule_send_invite_chat_summary">Invite will be sent out from my &appName; account</string>
     <string name="conference_schedule_participants_list">Participants list</string>
+    <string name="conference_schedule_speakers_list">Speakers list</string>
+    <string name="conference_schedule_speakers_list_empty">Select at least one speaker</string>
+    <string name="conference_schedule_participants_list_empty">Select at least one participant</string>
     <string name="conference_organizer">Organizer</string>
     <string name="conference_schedule_summary">Meeting info</string>
     <string name="conference_group_call_summary">Group call info</string>
+    <string name="conference_schedule_broadcast_summary">Broadcast info</string>
     <string name="conference_schedule_start">Schedule meeting</string>
     <string name="conference_schedule_edit">Edit meeting</string>
+    <string name="conference_broadcast_start">Schedule broadcast</string>
+    <string name="conference_broadcast_edit">Edit broadcast</string>
     <string name="conference_group_call_create">Start group call</string>
     <string name="conference_schedule_address_copied_to_clipboard">Meeting address copied into clipboard</string>
     <string name="conference_schedule_info_not_sent_to_participant">Failed to send meeting info to a participant</string>
