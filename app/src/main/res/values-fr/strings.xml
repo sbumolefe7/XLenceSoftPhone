@@ -808,4 +808,10 @@
     <string name="conference_schedule_participants_list_empty">Choisissez au moins un participant</string>
     <string name="conference_broadcast_start">Planifier un webinar</string>
     <string name="conference_broadcast_edit">Modifier le webinar</string>
+    <string name="conference_meeting_title">Réunion :</string>
+    <string name="conference_broadcast_title">Webinar :</string>
+    <string name="conference_invite_speakers_list_title">Intervenants</string>
+    <string name="conference_invite_participants_list_title">Participants</string>
+    <string name="conference_broadcast_invite_title">Invitation au webinar :</string>
+    <string name="conference_broadcast_invite_you_are_speaker">(vous êtes un intervenant)</string>
 </resources>

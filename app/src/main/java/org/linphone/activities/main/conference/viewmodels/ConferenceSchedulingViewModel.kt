@@ -165,7 +165,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
             AppUtils.getString(R.string.conference_schedule_mode_meeting),
             AppUtils.getString(R.string.conference_schedule_mode_broadcast)
         )
-        mode.value = modesList.first()
+        mode.value = modesList.first() // Meeting by default
 
         isEncrypted.value = false
         sendInviteViaChat.value = true
@@ -209,6 +209,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
     }
 
     fun populateFromConferenceInfo(conferenceInfo: ConferenceInfo) {
+        // Pre-set data from existing conference info, used when editing an already scheduled broadcast or meeting
         confInfo = conferenceInfo
 
         address.value = conferenceInfo.uri
@@ -235,8 +236,18 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
                 speakersList.add(participant)
             }
         }
+        if (participantsList.count() == speakersList.count()) {
+            // All participants are speaker, this is a meeting, clear speakers
+            Log.i("[Conference Creation] Conference info is a meeting")
+            speakersList.clear()
+            mode.value = modesList.first()
+        } else {
+            Log.i("[Conference Creation] Conference info is a broadcast")
+            mode.value = modesList.last()
+        }
         selectedAddresses.value = participantsList
         selectedSpeakersAddresses.value = speakersList
+
         computeParticipantsData()
     }
 
@@ -267,11 +278,12 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
         val speakersList = arrayListOf<ConferenceSchedulingParticipantData>()
 
         for (address in selectedAddresses.value.orEmpty()) {
+            val isSpeaker = address in selectedSpeakersAddresses.value.orEmpty()
             val data = ConferenceSchedulingParticipantData(
                 address,
                 showLimeBadge = isEncrypted.value == true,
                 showBroadcastControls = isModeBroadcastCurrentlySelected(),
-                speaker = false,
+                speaker = isSpeaker,
                 onAddedToSpeakers = { data ->
                     Log.i(
                         "[Conference Creation] Participant [${address.asStringUriOnly()}] added to speakers"
@@ -302,7 +314,7 @@ class ConferenceSchedulingViewModel : ContactsSelectionViewModel() {
                 }
             )
 
-            if (address in selectedSpeakersAddresses.value.orEmpty()) {
+            if (isSpeaker) {
                 speakersList.add(data)
             } else {
                 participantsList.add(data)
