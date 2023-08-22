@@ -274,6 +274,7 @@
     <string name="conference_schedule_subject_hint">Meeting subject</string>
     <string name="conference_group_call_subject_hint">Group call subject</string>
     <string name="conference_schedule_address_title">Meeting address</string>
+    <string name="conference_schedule_broadcast_address_title">Broadcast address</string>
     <string name="conference_schedule_description_title">Add a description</string>
     <string name="conference_schedule_description_hint">Description</string>
     <string name="conference_schedule_date">Date</string>

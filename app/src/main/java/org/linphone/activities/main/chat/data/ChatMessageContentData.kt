@@ -381,6 +381,7 @@ class ChatMessageContentData(
             val organizer = conferenceInfo.organizer
             var organizerFound = false
             var allSpeaker = true
+            isSpeaker.value = true
             for (info in conferenceInfo.participantInfos) {
                 val participant = info.address
                 if (participant.weakEqual(chatMessage.chatRoom.localAddress)) {

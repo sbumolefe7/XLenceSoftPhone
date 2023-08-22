@@ -295,7 +295,7 @@
                     android:layout_marginStart="10dp"
                     android:layout_marginEnd="10dp"
                     android:visibility="@{data.isConferenceCancelled ? View.GONE : View.VISIBLE}"
-                    android:text="@string/conference_schedule_address_title"/>
+                    android:text="@{data.isBroadcast ? @string/conference_schedule_broadcast_address_title : @string/conference_schedule_address_title, default=@string/conference_schedule_address_title}"/>
 
                 <LinearLayout
                     android:layout_width="match_parent"
