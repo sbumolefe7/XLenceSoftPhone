@@ -248,7 +248,6 @@
                     linphone:title="@{@string/account_setting_audio_video_conference_factory_address}"
                     linphone:listener="@{viewModel.audioVideoConferenceFactoryUriListener}"
                     linphone:defaultValue="@{viewModel.audioVideoConferenceFactoryUri}"
-                    android:visibility="gone"
                     linphone:inputType="@{InputType.TYPE_CLASS_TEXT}"/>
 
                 <include

@@ -815,4 +815,5 @@
     <string name="conference_broadcast_invite_title">Invitation au webinar :</string>
     <string name="conference_broadcast_invite_you_are_speaker">(vous êtes un intervenant)</string>
     <string name="conference_schedule_broadcast_address_title">Adresse du webinar</string>
+    <string name="conference_waiting_room_listener_broadcast">Vous n\'êtes pas un intervenant de ce webinar</string>
 </resources>
